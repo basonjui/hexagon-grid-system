@@ -15,7 +15,7 @@ public class Hexagon {
   // CONSTANTS
   protected final double SQRT_3 = Math.sqrt(3);
 
-  Hexagon(Coordinates centroid, float circumradius) {
+  public Hexagon(Coordinates centroid, float circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * SQRT_3 / 2;
