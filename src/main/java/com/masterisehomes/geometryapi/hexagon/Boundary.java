@@ -14,7 +14,7 @@ public class Boundary {
     private Coordinates start, end;
     
     // Builder pattern to take in dimension , 
-    Boundary(float x, float y, int width, int height) {
+    public Boundary(float x, float y, int width, int height) {
       this.start = new Coordinates(x, y);
       this.width = width;
       this.height = height;

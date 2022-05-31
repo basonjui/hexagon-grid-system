@@ -17,7 +17,7 @@ public class Tessellation {
             centroidsD6;
 
     // Constructors
-    Tessellation(Coordinates origin, int circumradius, Boundary boundary) {
+    public Tessellation(Coordinates origin, int circumradius, Boundary boundary) {
         this.originHexagon = new Hexagon(origin, circumradius);
         this.origin = originHexagon.getCentroid();
         this.boundary = boundary;

@@ -4,11 +4,11 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import java.util.Hashtable;
 
-class Neighbors {
+public class Neighbors {
     private Hashtable<Integer, Coordinates> centroids;
     private Hexagon hexagon;
     
-    Neighbors(Hexagon hexagon) {
+    public Neighbors(Hexagon hexagon) {
       this.hexagon = hexagon;
       this.centroids = generateCentroids();
     }

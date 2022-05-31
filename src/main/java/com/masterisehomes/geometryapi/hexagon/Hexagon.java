@@ -4,16 +4,16 @@ import java.util.Hashtable;
 import java.lang.Math;
 
 public class Hexagon {
-  protected Coordinates centroid;
-  protected double circumradius;
-  protected double inradius;
-  protected Hashtable<Integer, Coordinates> vertices;
+  private Coordinates centroid;
+  private double circumradius;
+  private double inradius;
+  private Hashtable<Integer, Coordinates> vertices;
   
   // Store 6 neighbors (object)
   //protected Hashtable<Integer, Coordinates> neighborCentroids; 
   
   // CONSTANTS
-  protected final double SQRT_3 = Math.sqrt(3);
+  private final double SQRT_3 = Math.sqrt(3);
 
   public Hexagon(Coordinates centroid, float circumradius) {
     this.centroid = centroid;
