@@ -10,33 +10,37 @@ import com.masterisehomes.geometryapi.hexagon.*;
  *
  */
 public class App {
+    public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public static void main(String[] args) {
-        Gson gson = new Gson();
 
+        // String jsonString = "{\"latitude\": 150, \"longitude\": 150, \"radius\":
+        // 100}";
 
-        String jsonString = "{\"latitude\": 150, \"longitude\": 150, \"radius\": 100}";
+        // System.out.println(jsonObject.get("latitude").getAsDouble());
 
-        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+        post("/api/hexagon", "application/json", (req, res) -> {
+            try {
+                // Parse request payload to a JSONObject with Gson
+                JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
+                // Get GIS data from payload with keys
+                Double latitude = jsonObj.get("latitude").getAsDouble();
+                Double longitude = jsonObj.get("longitude").getAsDouble();
+                Integer circumradius = jsonObj.get("radius").getAsInt();
 
+                // Initialize a hexagon with client's data
+                Coordinates clientCentroid = new Coordinates(latitude, longitude);
+                Hexagon clientHexagon = new Hexagon(clientCentroid, circumradius);
 
-        System.out.println(jsonObject.get("latitude").getAsDouble());
+                return gson.toJson(clientHexagon);
 
-        // post("/api/hexagon", "application/json", (req, res) -> {
-        //     Double latitude = Double.parseDouble(req.queryParams("latitude"));
-        //     Double longitude = Double.parseDouble(req.queryParams("longitude"));
-        //     Integer circumradius = Integer.parseInt(req.queryParams("radius"));
+            } catch (Exception e) {
+                return "Invalid JSON string: " + e;
+            }
+        });
 
-        //     Coordinates hexCoord = new Coordinates(latitude, longitude);
-        //     Hexagon hexagon = new Hexagon(hexCoord, circumradius);
-
-            
-
-        //     return gson.toJson(req.body());
-        // });
-
-        // get("/api/neighbors", (req, res) -> {
-        //     return "Neighbor API Endpoint";
-        // });
+        get("/api/neighbors", (req, res) -> {
+            return "Neighbor API Endpoint";
+        });
     }
 }

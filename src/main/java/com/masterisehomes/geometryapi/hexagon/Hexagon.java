@@ -1,5 +1,6 @@
 package com.masterisehomes.geometryapi.hexagon;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.lang.Math;
 
@@ -7,25 +8,23 @@ public class Hexagon {
   private Coordinates centroid;
   private double circumradius;
   private double inradius;
-  private Hashtable<Integer, Coordinates> vertices;
+  private HashMap<Integer, Coordinates> vertices;
 
   // Store 6 neighbors (object)
   // protected Hashtable<Integer, Coordinates> neighborCentroids;
 
-  // CONSTANTS
-  private final double SQRT_3 = Math.sqrt(3);
-
   public Hexagon(Coordinates centroid, float circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
-    this.inradius = circumradius * SQRT_3 / 2;
+    this.inradius = circumradius * Math.sqrt(3) / 2;
     this.vertices = generateVertices(centroid);
     // this.neighborCentroids = generateNeighborCentroids(centroid);
   }
 
   // Methods
-  private Hashtable<Integer, Coordinates> generateVertices(Coordinates centroid) {
-    Hashtable<Integer, Coordinates> vertices = new Hashtable<Integer, Coordinates>();
+  private HashMap<Integer, Coordinates> generateVertices(Coordinates centroid) {
+    final double SQRT_3 = Math.sqrt(3);
+    HashMap<Integer, Coordinates> vertices = new HashMap<Integer, Coordinates>();
     double centroidX = centroid.getLatitude();
     double centroidY = centroid.getLongitude();
 
@@ -64,7 +63,7 @@ public class Hexagon {
     return this.inradius;
   }
 
-  public Hashtable<Integer, Coordinates> getVertices() {
+  public HashMap<Integer, Coordinates> getVertices() {
     return this.vertices;
   }
 
