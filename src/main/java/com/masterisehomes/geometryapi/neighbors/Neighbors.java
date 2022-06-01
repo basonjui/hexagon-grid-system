@@ -15,8 +15,8 @@ public class Neighbors {
     
     public Hashtable<Integer, Coordinates> generateCentroids() {
       final double SQRT_3 = Math.sqrt(3);
-      double centroidX = hexagon.getCentroid().getX();
-      double centroidY = hexagon.getCentroid().getY();
+      double centroidX = hexagon.getCentroid().getLatitude();
+      double centroidY = hexagon.getCentroid().getLongitude();
       double inradius = hexagon.getInradius();
       
       /* Neighbors are ordered in a clock-wise rotation, this aims to achieve some 

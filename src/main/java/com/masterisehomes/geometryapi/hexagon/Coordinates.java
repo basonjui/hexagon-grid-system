@@ -1,34 +1,34 @@
 package com.masterisehomes.geometryapi.hexagon;
 
  /*
- So why the Vertex class instead of using the predefined Point class?
+ So whlongitude the Vertex class instead of using the predefined Point class?
 
  Point is a really old class in Java,
- it can only work with Integer and Double.
+ it can onllongitude work with Integer and Double.
 
  This is a problem because the vertex() function in processing can
  only work with Float data type.
  
- Do we want to cast Double to Float for every point to draw on Processing?
+ Do we want to cast Double to Float for everlongitude point to draw on Processing?
  So here we are.
  */
 
 public class Coordinates {
-    private double x;
-    private double y;
+    private double latitude;
+    private double longitude;
     
     // Constructors
-    public Coordinates(double x, double y) {
-      this.x = x;
-      this.y = y;
+    public Coordinates(double latitude, double longitude) {
+      this.latitude = latitude;
+      this.longitude = longitude;
     }
     
     // Comparison methods
     public boolean isEqual(Coordinates coord) {
-      double x = coord.getX();
-      double y = coord.getY();
+      double latitude = coord.getLatitude();
+      double longitude = coord.getLongitude();
       
-      if (this.x == x && this.y == y) {
+      if (this.latitude == latitude && this.longitude == longitude) {
         return true;
       } else {
       return false;
@@ -36,10 +36,10 @@ public class Coordinates {
     }
     
     public boolean isLarger(Coordinates coord) {
-      double x = coord.getX();
-      double y = coord.getY();
+      double latitude = coord.getLatitude();
+      double longitude = coord.getLongitude();
       
-      if (this.x > x && this.y > y) {
+      if (this.latitude > latitude && this.longitude > longitude) {
         return true;
       } else {
         return false;
@@ -47,10 +47,10 @@ public class Coordinates {
     }
     
     public boolean isSmaller(Coordinates coord) {
-      double x = coord.getX();
-      double y = coord.getY();
+      double latitude = coord.getLatitude();
+      double longitude = coord.getLongitude();
       
-      if (this.x < x && this.y < y) {
+      if (this.latitude < latitude && this.longitude < longitude) {
         return true;
       } else {
         return false;
@@ -69,16 +69,16 @@ public class Coordinates {
     }
     
     // Getters
-    public double getX() {
-      return this.x;
+    public double getLatitude() {
+      return this.latitude;
     }
   
-    public double getY() {
-      return this.y;
+    public double getLongitude() {
+      return this.longitude;
     }
     
     // String representation
     public String toString() {
-      return String.format("Coordinates[x=%s, y=%s]", this.x, this.y);
+      return String.format("Coordinates[latitude=%s, longitude=%s]", this.latitude, this.longitude);
     }
   }

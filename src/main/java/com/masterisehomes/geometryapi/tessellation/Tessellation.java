@@ -39,8 +39,8 @@ public class Tessellation {
          * This function uses inradius and coordinates of the originHexagon, to find all
          * centroids of hexagons that can be extended directly from origin centroid.
          */
-        final double originX = origin.getX();
-        final double originY = origin.getY();
+        final double originX = origin.getLatitude();
+        final double originY = origin.getLongitude();
         final double inradius = originHexagon.getInradius();
         final double SQRT_3 = Math.sqrt(3);
         Coordinates previousCentroid = origin;
