@@ -1,7 +1,6 @@
 package com.masterisehomes.geometryapi.hexagon;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.lang.Math;
 
 public class Hexagon {
