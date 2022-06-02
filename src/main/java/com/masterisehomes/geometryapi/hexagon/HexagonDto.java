@@ -20,7 +20,7 @@ public class HexagonDto {
         this.coordinates = convertToArray(hexagon.getVertices());
     }
 
-    public List<List<Double>> convertToArray(List<Coordinates> hexVertices) {
+    private List<List<Double>> convertToArray(List<Coordinates> hexVertices) {
         List<List<Double>> coordinatesArray = new ArrayList<>();
 
         hexVertices.forEach((vertex) -> coordinatesArray.add(vertex.toArray()));

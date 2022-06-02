@@ -9,7 +9,7 @@ import com.masterisehomes.geometryapi.hexagon.*;
  * Hello world!
  *
  */
-public class App {
+public class GeometryApi {
     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     // public final static Gson gson = new Gson();
 
