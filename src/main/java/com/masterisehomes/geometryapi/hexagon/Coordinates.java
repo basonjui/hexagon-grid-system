@@ -3,6 +3,9 @@ package com.masterisehomes.geometryapi.hexagon;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Arrays;
+import java.util.List;
+
 /*
 So why the Vertex class instead of using the predefined Point class?
 Point is a really old class in Java, it can only work with Integer and Double.
@@ -69,5 +72,11 @@ public class Coordinates {
     } else {
       return false;
     }
+  }
+
+  // Conversion methods
+  public List<Double> toArray() {
+    List<Double> coordinatesArray = Arrays.asList(this.latitude, this.longitude);
+    return coordinatesArray;
   }
 }

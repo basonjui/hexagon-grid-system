@@ -11,6 +11,7 @@ import com.masterisehomes.geometryapi.hexagon.*;
  */
 public class App {
     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    // public final static Gson gson = new Gson();
 
     public static void main(String[] args) {
 

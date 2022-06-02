@@ -15,14 +15,14 @@ This class aims to serve as a formal management system for the boundary aspect:
 @Getter
 @ToString
 public class Boundary {
-    private final int width, height;
-    private Coordinates start, end;
-    
-    // Builder pattern to take in dimension , 
-    public Boundary(float x, float y, int width, int height) {
-      this.start = new Coordinates(x, y);
-      this.width = width;
-      this.height = height;
-      this.end = new Coordinates(x+width, y+height);
-    }
+  private final int width, height;
+  private Coordinates start, end;
+
+  // Builder pattern to take in dimension ,
+  public Boundary(float x, float y, int width, int height) {
+    this.start = new Coordinates(x, y);
+    this.width = width;
+    this.height = height;
+    this.end = new Coordinates(x + width, y + height);
   }
+}
