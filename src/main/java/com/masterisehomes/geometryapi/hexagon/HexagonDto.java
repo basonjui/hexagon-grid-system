@@ -11,11 +11,20 @@ import lombok.ToString;
 @ToString
 public class HexagonDto {
     private final String type = "Polygon";
-    @Setter private List<Coordinates> vertices;
+    @Setter private List<Coordinates> coordinates;
 
     public HexagonDto() {}
 
     public HexagonDto(Hexagon hexagon) {
-        this.vertices = hexagon.getVertices();
+        this.coordinates = hexagon.getVertices();
+    }
+
+    public static void main(String[] args) {
+        Coordinates centroid = new Coordinates(100, 100);
+        Hexagon myHex = new Hexagon(centroid, 150);
+        HexagonDto myDto = new HexagonDto(myHex);
+
+        System.out.println(myDto.coordinates.get(0).getLatitude());
+
     }
 }

@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public class Hexagon {
   private Coordinates centroid;
   private double circumradius;
@@ -37,29 +42,5 @@ public class Hexagon {
     vertices.add(new Coordinates(centroidX - circumradius, centroidY));
 
     return vertices;
-  }
-
-  // Getters
-  public Coordinates getCentroid() {
-    return this.centroid;
-  }
-
-  public double getCircumradius() {
-    return this.circumradius;
-  }
-
-  public double getInradius() {
-    return this.inradius;
-  }
-
-  public List<Coordinates> getVertices() {
-    return this.vertices;
-  }
-
-  public String toString() {
-    return String.format("Hexagon[centroid: %s, circumradius: %s, vertices: %s]", 
-      this.centroid, this.circumradius, 
-      this.vertices
-    );
   }
 }

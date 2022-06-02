@@ -1,5 +1,8 @@
 package com.masterisehomes.geometryapi.hexagon;
 
+import lombok.Getter;
+import lombok.ToString;
+
 /*
 So why the Vertex class instead of using the predefined Point class?
 Point is a really old class in Java, it can only work with Integer and Double.
@@ -11,6 +14,8 @@ Do we want to cast Double to Float for every point to draw on Processing?
 So here we are.
 */
 
+@Getter
+@ToString
 public class Coordinates {
   private double latitude;
   private double longitude;
@@ -64,19 +69,5 @@ public class Coordinates {
     } else {
       return false;
     }
-  }
-
-  // Getters
-  public double getLatitude() {
-    return this.latitude;
-  }
-
-  public double getLongitude() {
-    return this.longitude;
-  }
-
-  // String representation
-  public String toString() {
-    return String.format("Coordinates[latitude=%s, longitude=%s]", this.latitude, this.longitude);
   }
 }
