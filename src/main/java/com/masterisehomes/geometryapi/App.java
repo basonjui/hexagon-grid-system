@@ -1,46 +1,46 @@
-package com.masterisehomes.geometryapi;
+// package com.masterisehomes.geometryapi;
 
-import static spark.Spark.*;
+// import static spark.Spark.*;
 
-import com.google.gson.*;
-import com.masterisehomes.geometryapi.hexagon.*;
+// import com.google.gson.*;
+// import com.masterisehomes.geometryapi.hexagon.*;
 
-/**
- * Hello world!
- *
- */
-public class App {
-    public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+// /**
+//  * Hello world!
+//  *
+//  */
+// public class App {
+//     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void main(String[] args) {
+//     public static void main(String[] args) {
 
-        // String jsonString = "{\"latitude\": 150, \"longitude\": 150, \"radius\":
-        // 100}";
+//         // String jsonString = "{\"latitude\": 150, \"longitude\": 150, \"radius\":
+//         // 100}";
 
-        // System.out.println(jsonObject.get("latitude").getAsDouble());
+//         // System.out.println(jsonObject.get("latitude").getAsDouble());
 
-        post("/api/hexagon", "application/json", (req, res) -> {
-            try {
-                // Parse request payload to a JSONObject with Gson
-                JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
-                // Get GIS data from payload with keys
-                Double latitude = jsonObj.get("latitude").getAsDouble();
-                Double longitude = jsonObj.get("longitude").getAsDouble();
-                Integer circumradius = jsonObj.get("radius").getAsInt();
+//         post("/api/hexagon", "application/json", (req, res) -> {
+//             try {
+//                 // Parse request payload to a JSONObject with Gson
+//                 JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
+//                 // Get GIS data from payload with keys
+//                 Double latitude = jsonObj.get("latitude").getAsDouble();
+//                 Double longitude = jsonObj.get("longitude").getAsDouble();
+//                 Integer circumradius = jsonObj.get("radius").getAsInt();
 
-                // Initialize a hexagon with client's data
-                Coordinates clientCentroid = new Coordinates(latitude, longitude);
-                Hexagon clientHexagon = new Hexagon(clientCentroid, circumradius);
+//                 // Initialize a hexagon with client's data
+//                 Coordinates clientCentroid = new Coordinates(latitude, longitude);
+//                 Hexagon clientHexagon = new Hexagon(clientCentroid, circumradius);
 
-                return gson.toJson(clientHexagon);
+//                 return gson.toJson(clientHexagon);
 
-            } catch (Exception e) {
-                return "Invalid JSON string: " + e;
-            }
-        });
+//             } catch (Exception e) {
+//                 return "Invalid JSON string: " + e;
+//             }
+//         });
 
-        get("/api/neighbors", (req, res) -> {
-            return "Neighbor API Endpoint";
-        });
-    }
-}
+//         get("/api/neighbors", (req, res) -> {
+//             return "Neighbor API Endpoint";
+//         });
+//     }
+// }
