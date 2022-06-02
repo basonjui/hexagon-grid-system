@@ -33,6 +33,6 @@ public class HexagonDto {
     }
 
     public String toString() {
-        return "type: " + type + ", coordinates: " + coordinates;
+        return "type: " + type + ", centroid: " + centroid + ", vertices: " + vertices;
     }
 }
