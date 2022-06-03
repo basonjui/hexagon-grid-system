@@ -1,9 +1,14 @@
 package com.masterisehomes.geometryapi.geojson;
 
-public class Feature {
-    String type = "Feature";
-    
-    
-    public Feature() {}
+import java.util.List;
 
+public class Feature extends GeoJsonDataType{
+    List<Property> properties;
+    Geometry geometry;
+
+    public Feature() {
+        super();
+        this.type = "Feature";
+        checkType(this.type);
+    }
 }

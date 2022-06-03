@@ -2,13 +2,13 @@ package com.masterisehomes.geometryapi.geojson;
 
 import java.util.List;
 
-public class FeatureCollection extends GeoJsonObject{
+public class FeatureCollection extends GeoJsonDataType{
     List<Feature> features;
 
     public FeatureCollection() {
         super();
-        this.type = "FeatureCollection";
         checkType(this.type);
+        this.type = "FeatureCollection";
     }
 
     // Methods
