@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
 
+// This class acts as 
+
 @Getter
 @ToString
 public class HexagonDto {
@@ -17,11 +19,12 @@ public class HexagonDto {
     }
 
     public HexagonDto(Hexagon hexagon) {
-        this.coordinates = convertToArray(hexagon.getVertices());
+        List<Coordinates> verticesCoordinates = hexagon.getVertices();
+        this.coordinates = toGeoJsonCoordinates(verticesCoordinates);
     }
 
-    private List<List<Double>> convertToArray(List<Coordinates> hexVertices) {
-        List<List<Double>> coordinatesArray = new ArrayList<>();
+    private List<List<Double>> toGeoJsonCoordinates(List<Coordinates> hexVertices) {
+        List<List<Double>> coordinatesArray = new ArrayList<List<Double>>();
 
         hexVertices.forEach((vertex) -> coordinatesArray.add(vertex.toArray()));
         return coordinatesArray;

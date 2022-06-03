@@ -3,6 +3,7 @@ package com.masterisehomes.geometryapi.hexagon;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class Coordinates {
 
   // Conversion methods
   public List<Double> toArray() {
-    List<Double> coordinatesArray = Arrays.asList(this.latitude, this.longitude);
-    return coordinatesArray;
+    List<Double> coordinates = Arrays.asList(this.latitude, this.longitude);
+    return coordinates;
   }
 }
