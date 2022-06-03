@@ -24,9 +24,18 @@ public class HexagonDto {
     }
 
     private List<List<Double>> toGeoJsonCoordinates(List<Coordinates> hexVertices) {
-        List<List<Double>> coordinatesArray = new ArrayList<List<Double>>();
+        List<List<Double>> geoJsonCoordinates = new ArrayList<List<Double>>();
 
-        hexVertices.forEach((vertex) -> coordinatesArray.add(vertex.toArray()));
-        return coordinatesArray;
+        hexVertices.forEach((vertex) -> geoJsonCoordinates.add(vertex.toArray()));
+        return geoJsonCoordinates;
+    }
+
+    public static void main(String[] args) {
+        Coordinates centroid = new Coordinates(100, 200);
+        Hexagon hex = new Hexagon(centroid, 50);
+        HexagonDto dto = new HexagonDto(hex);
+
+        System.out.println(dto.getCoordinates());
+
     }
 }
