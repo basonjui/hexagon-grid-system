@@ -12,7 +12,11 @@ public abstract class GeoJsonDataType {
 
     public void checkType(String type) throws IllegalArgumentException {
         List<String> validGeoJsonTypes = Arrays.asList(
-                "FeatureCollection", "Feature", "Point", "LineString", "Polygon", "MultiPoint", "MultiLineString", "MultiPolygon");
+            "Feature", "FeatureCollection",
+            "Point", "MultiPoint", 
+            "LineString", "MultiLineString", 
+            "Polygon", "MultiPolygon"
+        );
 
         if (validGeoJsonTypes.contains(type)) {
             this.type = type;

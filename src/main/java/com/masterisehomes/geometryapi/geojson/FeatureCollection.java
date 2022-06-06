@@ -1,9 +1,10 @@
 package com.masterisehomes.geometryapi.geojson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureCollection extends GeoJsonDataType{
-    List<Feature> features;
+    List<Feature> features = new ArrayList<Feature>();
 
     public FeatureCollection() {
         super();

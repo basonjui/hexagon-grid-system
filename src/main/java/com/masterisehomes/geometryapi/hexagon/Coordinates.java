@@ -74,7 +74,7 @@ public class Coordinates {
   }
 
   // Conversion methods
-  public List<Double> toArray() {
+  public List<Double> toGeoJsonFormat() {
     List<Double> coordinates = Arrays.asList(this.latitude, this.longitude);
     return coordinates;
   }

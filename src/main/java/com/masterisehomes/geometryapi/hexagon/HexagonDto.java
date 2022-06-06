@@ -26,7 +26,7 @@ public class HexagonDto {
     private List<List<Double>> toGeoJsonCoordinates(List<Coordinates> hexVertices) {
         List<List<Double>> geoJsonCoordinates = new ArrayList<List<Double>>();
 
-        hexVertices.forEach((vertex) -> geoJsonCoordinates.add(vertex.toArray()));
+        hexVertices.forEach((vertex) -> geoJsonCoordinates.add(vertex.toGeoJsonFormat()));
         return geoJsonCoordinates;
     }
 
