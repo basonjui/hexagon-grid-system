@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.Gson;
 
-public class Properties {
-    HashMap<String, Object> properties = new HashMap<String, Object>();
+public class Properties<T> {
+    HashMap<String, T> properties = new HashMap<String, T>();
 
     public Properties() {}
 
     // Setters
-    public void addProperty(String key, Object value) {
+    public void addProperty(String key, T value) {
         properties.put(key, value);
     }
 
@@ -23,7 +23,7 @@ public class Properties {
 
     public static void main(String[] args) {
         Gson gson = new Gson();
-        Properties obj = new Properties();
+        Properties<String> obj = new Properties<String>();
         obj.addProperty("someKey", "someValue");
 
         String jsonString = gson.toJson(obj);
