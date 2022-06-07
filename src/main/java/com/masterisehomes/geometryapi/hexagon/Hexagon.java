@@ -14,12 +14,14 @@ public class Hexagon {
   private double circumradius;
   private double inradius;
   private List<Coordinates> vertices = new ArrayList<Coordinates>();
+  private List<Coordinates> geoJsonCoordinates = new ArrayList<Coordinates>();
 
   public Hexagon(Coordinates centroid, float circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * Math.sqrt(3) / 2;
     this.vertices = generateVertices(centroid);
+    this.geoJsonCoordinates = generateGeoJsonCoordinates(centroid);
   }
 
   // Methods
