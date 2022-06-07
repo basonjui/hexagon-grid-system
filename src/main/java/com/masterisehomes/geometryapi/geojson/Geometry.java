@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class Geometry extends GeoJsonDataType{
-    private List<?> coordinates = new ArrayList<>(); // store List<List<Double>>
+    private List<?> coordinates;
 
     public Geometry(String type) {
         super();
@@ -14,13 +14,15 @@ public class Geometry extends GeoJsonDataType{
 
         switch(this.type) {
             case "Point":
-            ;
+            coordinates = new ArrayList<Double>();
+            break;
 
             case "LineString":
-            ;
+            coordinates = new ArrayList<List<Double>>();
+            break;
 
             case "Polygon":
-            ;
+            coordinates = new ArrayList<List<List<Double>>>();
         }
     }
 }
