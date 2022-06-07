@@ -44,5 +44,26 @@ public class Hexagon {
     return vertices;
   }
 
+  private List<Coordinates> generateGeoJsonCoordinates(Coordinates centroid) {
+    final double SQRT_3 = Math.sqrt(3);
+    double centroidX = centroid.getLatitude();
+    double centroidY = centroid.getLongitude();
+
+    /* 
+      GeoJSON specification
+      - The first and last positions are equivalent, and they MUST contain
+      identical values; their representation SHOULD also be identical.
+     */
+    vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    vertices.add(new Coordinates(centroidX + circumradius, centroidY));
+    vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
+    vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
+    vertices.add(new Coordinates(centroidX - circumradius, centroidY));
+    vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+
+    return vertices;
+  }
+
   
 }
