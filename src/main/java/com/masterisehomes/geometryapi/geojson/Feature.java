@@ -5,15 +5,12 @@ import lombok.ToString;
 
 @ToString
 @Getter
-class Feature extends GeoJsonType{
+class Feature {
+    private String type = "Feature";
     private Geometry geometry;
     private Properties<?> properties;
 
-    public Feature() {
-        super();
-        this.type = "Feature";
-        checkType(this.type);
-    }
+    public Feature() {}
 
     public void addProperties(Properties<?> properties) {
         this.properties = properties;

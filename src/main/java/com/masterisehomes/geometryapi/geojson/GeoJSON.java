@@ -22,7 +22,7 @@ public class GeoJSON {
 
         public Builder geometry(Geometry geometry) {
             this.geometry = geometry;
-            this.properties = new Properties<>();
+            this.properties = new Properties<String>();
             return this;
         }
 

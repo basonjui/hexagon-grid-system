@@ -6,14 +6,11 @@ import java.util.List;
 import lombok.ToString;
 
 @ToString
-class FeatureCollection extends GeoJsonType {
+class FeatureCollection  {
+    private String type = "FeatureCollection";
     List<Feature> features = new ArrayList<Feature>();
 
-    FeatureCollection() {
-        super();
-        this.type = "FeatureCollection";
-        checkType(this.type);
-    }
+    FeatureCollection() {}
 
     // Methods
     public void add(Feature feature) {
