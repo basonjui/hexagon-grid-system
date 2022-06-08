@@ -17,19 +17,22 @@ public class Geometry extends GeoJsonDataType{
         switch(this.type) {
             case "Point":
             {
-                this.coordinates = new ArrayList<Double>();
+                List<Double> tempCoordinates = new ArrayList<Double>();
+                this.coordinates = tempCoordinates;
                 break;
             }
 
             case "LineString":
             {
-                this.coordinates = new ArrayList<List<Double>>();
+                List<List<Double>> tempCoordinates =  new ArrayList<List<Double>>();
+                this.coordinates = tempCoordinates;
                 break;
             }
 
             case "Polygon":
             {
-                this.coordinates = new ArrayList<List<List<Double>>>();
+                List<List<List<Double>>> tempCoordinates = new ArrayList<List<List<Double>>>();
+                this.coordinates = tempCoordinates;
                 break;
             }
         }
@@ -42,7 +45,10 @@ public class Geometry extends GeoJsonDataType{
 
         GeoJsonHelper helper = new GeoJsonHelper();
         List<List<Double>> hexagonGeoJsonCoordinates = helper.getGeoJsonCoordinates(hexagon);
-        this.coordinates.add((hexagonGeoJsonCoordinates));
+
+        List<List<List<Double>>> tempCoordinates = new ArrayList<List<List<Double>>>();
+        tempCoordinates.add(hexagonGeoJsonCoordinates);
+        this.coordinates = tempCoordinates;
     }
 
     // Setters
