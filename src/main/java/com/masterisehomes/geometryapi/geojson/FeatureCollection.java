@@ -3,13 +3,16 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.ArrayList;
 import java.util.List;
 
-class FeatureCollection extends GeoJsonType{
+import lombok.ToString;
+
+@ToString
+class FeatureCollection extends GeoJsonType {
     List<Feature> features = new ArrayList<Feature>();
 
     FeatureCollection() {
         super();
-        checkType(this.type);
         this.type = "FeatureCollection";
+        checkType(this.type);
     }
 
     // Methods

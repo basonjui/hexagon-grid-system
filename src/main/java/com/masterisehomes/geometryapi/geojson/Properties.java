@@ -1,9 +1,13 @@
 package com.masterisehomes.geometryapi.geojson;
 
 import java.util.List;
+
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@ToString
 class Properties<T> {
     HashMap<String, T> properties = new HashMap<String, T>();
 
