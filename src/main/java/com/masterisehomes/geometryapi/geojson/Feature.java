@@ -1,14 +1,19 @@
 package com.masterisehomes.geometryapi.geojson;
 
-import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class Feature extends GeoJsonDataType{
-    Geometry geometry;
-    List<Properties> properties;
+    private Geometry geometry;
+    private Properties<?> properties;
 
     public Feature() {
         super();
         this.type = "Feature";
         checkType(this.type);
+    }
+
+    public void addProperties(Properties<?> properties) {
+        this.properties = properties;
     }
 }

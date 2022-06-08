@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.*;
+import lombok.ToString;
 
-
+@ToString
 public class Geometry extends GeoJsonDataType{
     private List<?> coordinates;
 
@@ -54,11 +55,5 @@ public class Geometry extends GeoJsonDataType{
     // Setters
     public void setCoordinates() {
 
-    }
-
-    public static void main(String[] args) {
-        Coordinates coord = new Coordinates(100, 100);
-
-        Geometry test = new Geometry("Point");
     }
 }
