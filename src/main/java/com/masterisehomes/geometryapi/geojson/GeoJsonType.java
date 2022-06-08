@@ -3,12 +3,10 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.List;
 import java.util.Arrays;
 
-public abstract class GeoJsonDataType {
+abstract class GeoJsonType {
     protected String type;
 
-    public GeoJsonDataType() {
-
-    }
+    GeoJsonType() {}
 
     public void checkType(String type) throws IllegalArgumentException {
         List<String> validGeoJsonTypes = Arrays.asList(

@@ -3,7 +3,7 @@ package com.masterisehomes.geometryapi.geojson;
 import lombok.Getter;
 
 @Getter
-public class Feature extends GeoJsonDataType{
+class Feature extends GeoJsonType{
     private Geometry geometry;
     private Properties<?> properties;
 

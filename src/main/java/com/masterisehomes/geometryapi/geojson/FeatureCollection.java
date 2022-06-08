@@ -3,10 +3,10 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureCollection extends GeoJsonDataType{
+class FeatureCollection extends GeoJsonType{
     List<Feature> features = new ArrayList<Feature>();
 
-    public FeatureCollection() {
+    FeatureCollection() {
         super();
         checkType(this.type);
         this.type = "FeatureCollection";

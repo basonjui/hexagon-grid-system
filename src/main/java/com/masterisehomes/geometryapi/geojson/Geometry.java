@@ -7,10 +7,10 @@ import com.masterisehomes.geometryapi.hexagon.*;
 import lombok.ToString;
 
 @ToString
-public class Geometry extends GeoJsonDataType{
+class Geometry extends GeoJsonType{
     private List<?> coordinates;
 
-    public Geometry(String type) {
+    Geometry(String type) {
         super();
         checkType(type);
         this.type = type;
