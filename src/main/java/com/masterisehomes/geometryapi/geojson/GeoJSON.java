@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 @ToString
-@Getter
 public class GeoJSON {
-    public final FeatureCollection featureCollection;
+    @Getter public final FeatureCollection featureCollection;
 
     private GeoJSON(Builder builder) {
         this.featureCollection = builder.featureCollection;
@@ -15,19 +14,15 @@ public class GeoJSON {
     public static class Builder {
         private FeatureCollection featureCollection = new FeatureCollection();
         private Feature feature = new Feature();
-        private Geometry geometry;
-        private Property<?> properties;
 
         public Builder() {}
 
         public Builder geometry(Geometry geometry) {
-            this.geometry = geometry;
-            this.feature.setGeometry(this.geometry);
+            this.feature.setGeometry(geometry);
             return this;
         }
 
-        public Builder properties(Property<?> properties) {
-            this.properties = properties;
+        public Builder properties() {
             return this;
         }
 

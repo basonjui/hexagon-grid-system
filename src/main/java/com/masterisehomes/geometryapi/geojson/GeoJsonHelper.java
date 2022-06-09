@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 import com.masterisehomes.geometryapi.hexagon.*;
 
-class GeoJsonHelper {
-    GeoJsonHelper() {}
+public class GeoJsonHelper {
+    public GeoJsonHelper() {}
 
     // Hexagon helpers
-    List<List<Double>> getGeoJsonCoordinates(Hexagon hexagon) {
+    public static List<List<Double>> getGeoJsonCoordinates(Hexagon hexagon) {
         List<Coordinates> vertices = hexagon.getGeoJsonVertices();
         
         List<List<Double>> geoJsonCoordinates = new ArrayList<List<Double>>();

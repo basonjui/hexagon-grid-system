@@ -1,11 +1,6 @@
 package com.masterisehomes.geometryapi.hexagon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import com.masterisehomes.geometryapi.geojson.*;
-
 import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,12 +12,11 @@ import com.google.gson.GsonBuilder;
 @Getter
 @ToString
 public class HexagonDto {
-    
+    Hexagon hexagon;
 
-    public HexagonDto() {
+    public HexagonDto(Hexagon hexagon) {
+        this.hexagon = hexagon;
     }
-
-
 
     public static void main(String[] args) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

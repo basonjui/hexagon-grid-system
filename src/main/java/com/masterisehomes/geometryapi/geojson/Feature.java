@@ -13,9 +13,8 @@ class Feature {
 
     public Feature() {}
 
-    public Feature(Geometry geometry, HashMap<Object, Object> properties) {
+    public Feature(Geometry geometry) {
         this.geometry = geometry;
-        this.properties = properties;
     }
 
     public void setGeometry(Geometry geometry) {
