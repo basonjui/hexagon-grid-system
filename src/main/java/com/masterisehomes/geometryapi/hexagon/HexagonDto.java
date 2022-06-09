@@ -6,16 +6,20 @@ import lombok.Getter;
 import lombok.ToString;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.masterisehomes.geometryapi.geojson.Geometry;
 
 // This class acts as 
 
 @Getter
 @ToString
 public class HexagonDto {
-    Hexagon hexagon;
+    public Hexagon hexagon;
+    public Geometry geometry;
+    public GeoJSON geoJson;
 
     public HexagonDto(Hexagon hexagon) {
         this.hexagon = hexagon;
+        this.geometry = new Geometry(hexagon);
     }
 
     public static void main(String[] args) {
