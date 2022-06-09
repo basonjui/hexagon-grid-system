@@ -38,7 +38,7 @@ public class GeometryApi {
                 Geometry hexGeometry = new Geometry(clientHexagon);
                 GeoJSON hexGeoJson = new GeoJSON.Builder().geometry(hexGeometry).build();
 
-                return gson.toJson(hexGeoJson);
+                return gson.toJson(hexGeoJson.getFeatureCollection());
 
             } catch (Exception e) {
                 return "Invalid JSON data provided: " + e;

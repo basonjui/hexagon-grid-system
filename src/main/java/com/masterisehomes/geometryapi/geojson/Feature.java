@@ -1,22 +1,24 @@
 package com.masterisehomes.geometryapi.geojson;
 
+import java.util.HashMap;
 import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 @Getter
 class Feature {
-    private String type = "Feature";
+    private final String type = "Feature";
     private Geometry geometry;
-    private Properties<?> properties;
+    private HashMap<String, ?> properties;
 
     public Feature() {}
 
-    public void addProperties(Properties<?> properties) {
+    public Feature(Geometry geometry, HashMap<String, ?> properties) {
+        this.geometry = geometry;
         this.properties = properties;
     }
 
-    public void addGeometry(Geometry geometry) {
+    public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
 }

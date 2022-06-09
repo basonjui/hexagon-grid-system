@@ -6,7 +6,7 @@ import lombok.ToString;
 @ToString
 @Getter
 public class GeoJSON {
-    private final FeatureCollection featureCollection;
+    public final FeatureCollection featureCollection;
 
     private GeoJSON(Builder builder) {
         this.featureCollection = builder.featureCollection;
@@ -14,27 +14,24 @@ public class GeoJSON {
 
     public static class Builder {
         private FeatureCollection featureCollection = new FeatureCollection();
-        private Feature feature;
+        private Feature feature = new Feature();
         private Geometry geometry;
-        private Properties<?> properties;
+        private Property<?> properties;
 
         public Builder() {}
 
         public Builder geometry(Geometry geometry) {
             this.geometry = geometry;
-            this.properties = new Properties<String>();
+            this.feature.setGeometry(this.geometry);
             return this;
         }
 
-        public Builder properties(Properties<?> properties) {
+        public Builder properties(Property<?> properties) {
             this.properties = properties;
             return this;
         }
 
         public GeoJSON build() {
-            this.feature = new Feature();
-            this.feature.addGeometry(this.geometry);
-            this.feature.addProperties(this.properties);
             this.featureCollection.add(this.feature);
             return new GeoJSON(this);
         }

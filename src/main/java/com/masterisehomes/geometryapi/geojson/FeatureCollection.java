@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @ToString
 class FeatureCollection  {
-    private String type = "FeatureCollection";
+    private final String type = "FeatureCollection";
     List<Feature> features = new ArrayList<Feature>();
 
     FeatureCollection() {}

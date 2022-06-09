@@ -2,6 +2,7 @@ package com.masterisehomes.geometryapi.hexagon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.masterisehomes.geometryapi.geojson.*;
 
@@ -29,7 +30,7 @@ public class HexagonDto {
         Hexagon hex = new Hexagon(centroid, 50);
 
         // System.out.println(dto.getCoordinates());
-
+        
         Geometry geom = new Geometry(hex);
         GeoJSON geojson = new GeoJSON.Builder()
                             .geometry(geom)
