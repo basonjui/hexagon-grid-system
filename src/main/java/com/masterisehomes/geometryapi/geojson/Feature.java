@@ -9,16 +9,20 @@ import lombok.ToString;
 class Feature {
     private final String type = "Feature";
     private Geometry geometry;
-    private HashMap<String, ?> properties;
+    private HashMap<Object, Object> properties = new HashMap<>();
 
     public Feature() {}
 
-    public Feature(Geometry geometry, HashMap<String, ?> properties) {
+    public Feature(Geometry geometry, HashMap<Object, Object> properties) {
         this.geometry = geometry;
         this.properties = properties;
     }
 
     public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
+    }
+
+    public void addProperty(Object key, Object value) {
+        this.properties.put(key, value);
     }
 }
