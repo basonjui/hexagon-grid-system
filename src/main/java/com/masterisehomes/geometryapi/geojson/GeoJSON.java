@@ -26,6 +26,10 @@ public class GeoJSON {
             return this;
         }
 
+        public Builder addFeature() {
+            return this;
+        }
+
         public GeoJSON build() {
             this.featureCollection.add(this.feature);
             return new GeoJSON(this);
