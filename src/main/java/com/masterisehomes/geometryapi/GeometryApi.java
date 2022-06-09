@@ -36,7 +36,7 @@ public class GeometryApi {
 
                 // Get data from DTO
                 Geometry hexGeometry = new Geometry(clientHexagon);
-                GeoJSON hexGeoJson = new GeoJSON.Builder().geometry(hexGeometry).build();
+                GeoJSON hexGeoJson = new GeoJSON.Builder().addFeature(hexGeometry).build();
 
                 return gson.toJson(hexGeoJson.getFeatureCollection());
 

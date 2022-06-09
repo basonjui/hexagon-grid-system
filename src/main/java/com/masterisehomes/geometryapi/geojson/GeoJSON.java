@@ -13,12 +13,12 @@ public class GeoJSON {
 
     public static class Builder {
         private FeatureCollection featureCollection = new FeatureCollection();
-        private Feature feature;
 
         public Builder() {}
 
-        public Builder geometry(Geometry geometry) {
-            this.feature = new Feature(geometry);
+        public Builder addFeature(Geometry geometry) {
+            Feature feature = new Feature(geometry);
+            this.featureCollection.add(feature);
             return this;
         }
 
@@ -26,12 +26,7 @@ public class GeoJSON {
             return this;
         }
 
-        public Builder addFeature() {
-            return this;
-        }
-
         public GeoJSON build() {
-            this.featureCollection.add(this.feature);
             return new GeoJSON(this);
         }
     }

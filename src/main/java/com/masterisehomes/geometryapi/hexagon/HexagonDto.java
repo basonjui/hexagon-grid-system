@@ -31,7 +31,7 @@ public class HexagonDto {
         
         Geometry geom = new Geometry(hex);
         GeoJSON geojson = new GeoJSON.Builder()
-                            .geometry(geom)
+                            .addFeature(geom)
                             .build();
         
         System.out.println(gson.toJson(geojson));
