@@ -1,7 +1,6 @@
 package com.masterisehomes.geometryapi.hexagon;
 
 import com.masterisehomes.geometryapi.geojson.*;
-import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
 import com.google.gson.Gson;
