@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @ToString
 @Getter
-class Feature {
+public class Feature {
     private final String type = "Feature";
     private Geometry geometry;
     private HashMap<Object, Object> properties = new HashMap<>();

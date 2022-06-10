@@ -3,37 +3,41 @@ package com.masterisehomes.geometryapi.hexagon;
 import com.masterisehomes.geometryapi.geojson.*;
 import lombok.Getter;
 import lombok.ToString;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geojson.Geometry;
 
-// This class acts as 
-
 @Getter
 @ToString
-public class HexagonDto {
-    public Hexagon hexagon;
-    public Geometry geometry;
-    public GeoJSON geoJson;
+public class HexagonDto extends GeoJSON {
+    private final Hexagon hexagon;
+    private final Geometry geometry;
+    private final Properties properties = new Properties();
+    private final Feature feature;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public HexagonDto(Hexagon hexagon) {
         this.hexagon = hexagon;
         this.geometry = new Geometry(hexagon);
+        this.feature = new Feature(geometry);
     }
 
-    public static void main(String[] args) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Coordinates centroid = new Coordinates(100, 200);
-        Hexagon hex = new Hexagon(centroid, 50);
+    // Methods
+    public void addProperty(Object key, Object value) {
+        this.feature.addProperty(key, value);
+    }
 
-        // System.out.println(dto.getCoordinates());
+    public HexagonDto build() {
+        // Need to add logic to make sure that feature will only add once,
+        // even if .build() is called multiple times
         
-        Geometry geom = new Geometry(hex);
-        GeoJSON geojson = new GeoJSON.Builder()
-                            .addFeature(geom)
-                            .build();
-        
-        System.out.println(gson.toJson(geojson));
+        this.addFeature(this.feature);
+        return this;
+    }
 
+    // Getter
+    public String toGeoJSON() {
+        return gson.toJson(this.getFeatureCollection());
     }
 }

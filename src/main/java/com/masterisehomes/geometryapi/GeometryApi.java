@@ -4,7 +4,6 @@ import static spark.Spark.*;
 
 import com.google.gson.*;
 import com.masterisehomes.geometryapi.hexagon.*;
-import com.masterisehomes.geometryapi.geojson.*;
 
 /**
  * Hello world!
@@ -35,10 +34,9 @@ public class GeometryApi {
                 Hexagon clientHexagon = new Hexagon(clientCentroid, circumradius);
 
                 // Get data from DTO
-                Geometry hexGeometry = new Geometry(clientHexagon);
-                GeoJSON hexGeoJson = new GeoJSON.Builder().addFeature(hexGeometry).build();
+                HexagonDto clientDto = new HexagonDto(clientHexagon);
 
-                return gson.toJson(hexGeoJson.getFeatureCollection());
+                return clientDto.build().toGeoJSON();
 
             } catch (Exception e) {
                 return "Invalid JSON data provided: " + e;

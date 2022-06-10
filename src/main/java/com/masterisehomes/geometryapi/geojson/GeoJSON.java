@@ -5,32 +5,24 @@ import lombok.ToString;
 
 @ToString
 public class GeoJSON {
-    @Getter private final FeatureCollection featureCollection;
+    @Getter private final FeatureCollection featureCollection = new FeatureCollection();
 
-    private GeoJSON(Builder builder) {
-        this.featureCollection = builder.featureCollection;
+    public GeoJSON() {}
+
+    public void addFeature(Feature feature) {
+        this.featureCollection.add(feature);
     }
 
-    public static class Builder {
-        private FeatureCollection featureCollection = new FeatureCollection();
+    public void addFeature(Geometry geometry) {
+        Feature feature = new Feature(geometry);
+        this.featureCollection.add(feature);
+    }
 
-        public Builder() {}
-
-        public Builder addFeature(Geometry geometry) {
-            Feature feature = new Feature(geometry);
-            this.featureCollection.add(feature);
-            return this;
-        }
-
-        public Builder addFeature(Geometry geometry, String properties) {
-            Feature feature = new Feature(geometry);
-            this.featureCollection.add(feature);
-            return this;
-        }
-            
-
-        public GeoJSON build() {
-            return new GeoJSON(this);
-        }
+    public void addFeature(Geometry geometry, Properties properties) {
+        // Todo: add logic to add a Feature using Geometry and Properties
+        Feature feature = new Feature(geometry);
+        feature.addProperties(properties);
+        this.featureCollection.add(feature);
     }
 }
+
