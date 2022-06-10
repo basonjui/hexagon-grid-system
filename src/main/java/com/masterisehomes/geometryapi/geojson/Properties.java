@@ -2,8 +2,14 @@ package com.masterisehomes.geometryapi.geojson;
 
 import java.util.HashMap;
 import java.util.Set;
+
+import lombok.ToString;
+
 import java.util.Collection;
 
+// A temporary data storage and interface to add properties into Feature
+// The object itself will not go into the GeoJSON
+@ToString
 public class Properties {
     private HashMap<Object, Object> properties = new HashMap<>();
 
@@ -17,6 +23,10 @@ public class Properties {
     // Getters
     public Object get(Object key) {
         return this.properties.get(key);
+    }
+
+    public HashMap<Object, Object> getMap() {
+        return this.properties;
     }
 
     public Set<?> getItems() {

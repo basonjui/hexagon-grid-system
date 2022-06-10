@@ -22,9 +22,12 @@ public class GeoJSON {
             return this;
         }
 
-        public Builder addProperty() {
+        public Builder addFeature(Geometry geometry, String properties) {
+            Feature feature = new Feature(geometry);
+            this.featureCollection.add(feature);
             return this;
         }
+            
 
         public GeoJSON build() {
             return new GeoJSON(this);

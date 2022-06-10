@@ -20,4 +20,9 @@ class Feature {
     public void addProperty(Object key, Object value) {
         this.properties.put(key, value);
     }
+
+    public void addProperties(Properties properties) {
+        HashMap<Object, Object> map = properties.getMap();
+        this.properties.putAll(map);
+    }
 }
