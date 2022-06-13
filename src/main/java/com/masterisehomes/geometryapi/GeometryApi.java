@@ -30,13 +30,13 @@ public class GeometryApi {
                 Integer circumradius = jsonObj.get("radius").getAsInt();
 
                 // Initialize a hexagon with client's data
-                Coordinates clientCentroid = new Coordinates(latitude, longitude);
-                Hexagon clientHexagon = new Hexagon(clientCentroid, circumradius);
+                Coordinates centroid = new Coordinates(latitude, longitude);
+                Hexagon hexagon = new Hexagon(centroid, circumradius);
 
                 // Get data from DTO
-                HexagonDto clientDto = new HexagonDto(clientHexagon);
+                HexagonDto dto = new HexagonDto(hexagon);
 
-                return clientDto.build().toGeoJSON();
+                return dto.build().toGeoJSON();
 
             } catch (Exception e) {
                 return "Invalid JSON data provided: " + e;

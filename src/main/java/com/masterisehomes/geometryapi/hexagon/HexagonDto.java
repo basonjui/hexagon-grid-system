@@ -15,6 +15,7 @@ public class HexagonDto extends GeoJSON {
     private final Geometry geometry;
     private final Properties properties = new Properties();
     private final Feature feature;
+    private int hashCode;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public HexagonDto(Hexagon hexagon) {
@@ -31,8 +32,13 @@ public class HexagonDto extends GeoJSON {
     public HexagonDto build() {
         // Need to add logic to make sure that feature will only add once,
         // even if .build() is called multiple times
-        
-        this.addFeature(this.feature);
+        int currentHashCode = this.getFeatureCollection().hashCode();
+
+        if (this.hashCode != currentHashCode) {
+            this.addFeature(this.feature);
+            this.hashCode = currentHashCode;
+        }
+
         return this;
     }
 
