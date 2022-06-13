@@ -8,14 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geojson.Geometry;
 
-@Getter
 @ToString
 public class HexagonDto extends GeoJSON {
-    private final Hexagon hexagon;
-    private final Geometry geometry;
-    private final Properties properties = new Properties();
-    private final Feature feature;
-    private int hashCode;
+    @Getter private final Hexagon hexagon;
+    @Getter private final Geometry geometry;
+    @Getter private final Properties properties = new Properties();
+    @Getter private final Feature feature;
+    @Getter private int hashCode;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public HexagonDto(Hexagon hexagon) {
@@ -30,8 +29,6 @@ public class HexagonDto extends GeoJSON {
     }
 
     public HexagonDto build() {
-        // Need to add logic to make sure that feature will only add once,
-        // even if .build() is called multiple times
         int currentHashCode = this.getFeatureCollection().hashCode();
 
         if (this.hashCode != currentHashCode) {

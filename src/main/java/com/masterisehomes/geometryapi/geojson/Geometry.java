@@ -4,7 +4,7 @@ import com.masterisehomes.geometryapi.hexagon.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.ToString;
-import static com.masterisehomes.geometryapi.geojson.GeoJsonHelper.getGeoJsonCoordinates;
+import static com.masterisehomes.geometryapi.geojson.GeoJsonHelper.getGeoJsonPolygonCoordinates;
 
 @ToString
 public class Geometry {
@@ -15,10 +15,7 @@ public class Geometry {
         this.type = "Polygon";
         this.coordinates = new ArrayList<>();
 
-        List<List<Double>> hexagonGeoJsonCoordinates = getGeoJsonCoordinates(hexagon);
-
-        List<List<List<Double>>> tempCoordinates = new ArrayList<List<List<Double>>>();
-        tempCoordinates.add(hexagonGeoJsonCoordinates);
-        this.coordinates = tempCoordinates;
+        List<List<List<Double>>> hexagonGeoJsonCoordinates = getGeoJsonPolygonCoordinates(hexagon);
+        this.coordinates = hexagonGeoJsonCoordinates;
     }
 }
