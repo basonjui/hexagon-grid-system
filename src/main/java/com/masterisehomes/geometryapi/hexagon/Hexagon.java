@@ -14,7 +14,8 @@ public class Hexagon {
   private double circumradius;
   private double inradius;
   private List<Coordinates> vertices = new ArrayList<Coordinates>();
-  private List<Coordinates> geoJsonVertices = new ArrayList<Coordinates>();
+  // geoJsonPositions = vertices in GeoJSON format
+  private List<Coordinates> geoJsonPositions = new ArrayList<Coordinates>();
 
   public Hexagon(Coordinates centroid, float circumradius) {
     this.centroid = centroid;
@@ -54,13 +55,13 @@ public class Hexagon {
       - The first and last positions are equivalent, and they MUST contain
       identical values; their representation SHOULD also be identical.
      */
-    this.geoJsonVertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
-    this.geoJsonVertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
-    this.geoJsonVertices.add(new Coordinates(centroidX + circumradius, centroidY));
-    this.geoJsonVertices.add(new Coordinates(centroidX + circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
-    this.geoJsonVertices.add(new Coordinates(centroidX - circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
-    this.geoJsonVertices.add(new Coordinates(centroidX - circumradius, centroidY));
-    this.geoJsonVertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius, centroidY));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius, centroidY));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
   }
 
   

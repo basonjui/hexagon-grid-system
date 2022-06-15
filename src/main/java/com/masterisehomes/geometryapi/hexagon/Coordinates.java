@@ -73,8 +73,19 @@ public class Coordinates {
     }
   }
 
-  // Conversion methods
-  public List<Double> toArray() {
+  // GeoJSON stuff
+
+  /*
+   * Position
+   * 
+   * A position is an array of coordinates in order:
+   *    this is the smallest unit that we can really consider ‘a place’ since it can
+   *    represent a point on earth.
+   * 
+   * GeoJSON describes an order for coordinates: they should go, in order:
+   *    [longitude, latitude, elevation]
+   */
+  public List<Double> toGeoJsonPosition() {
     List<Double> coordinates = Arrays.asList(this.latitude, this.longitude);
     return coordinates;
   }
