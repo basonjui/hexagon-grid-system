@@ -79,14 +79,23 @@ public class Coordinates {
    * Position
    * 
    * A position is an array of coordinates in order:
-   *    this is the smallest unit that we can really consider ‘a place’ since it can
-   *    represent a point on earth.
+   * this is the smallest unit that we can really consider ‘a place’ since it can
+   * represent a point on earth.
    * 
    * GeoJSON describes an order for coordinates: they should go, in order:
-   *    [longitude, latitude, elevation]
+   * [longitude, latitude, elevation]
    */
   public List<Double> toGeoJsonPosition() {
-    List<Double> coordinates = Arrays.asList(this.latitude, this.longitude);
+    /*
+     * Positions (geojson.org)
+     * 
+     * The order of elements must follow x, y, z order
+     *    (easting, northing, altitude for coordinates in a projected coordinate
+     * reference system,
+     *    or longitude, latitude, altitude for coordinates in a geographic coordinate
+     * reference system).
+     */
+    List<Double> coordinates = Arrays.asList(this.longitude, this.latitude);
     return coordinates;
   }
 }
