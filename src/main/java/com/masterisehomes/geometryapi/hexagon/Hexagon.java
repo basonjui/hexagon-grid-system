@@ -17,7 +17,7 @@ public class Hexagon {
   // geoJsonPositions = vertices in GeoJSON format
   private List<Coordinates> geoJsonPositions = new ArrayList<Coordinates>();
 
-  public Hexagon(Coordinates centroid, float circumradius) {
+  public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * Math.sqrt(3) / 2;
@@ -33,9 +33,9 @@ public class Hexagon {
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
-     *   0 1
-     * 5  .  2
-     *   4 3
+     *    0   1
+     *  5   .   2
+     *    4   3
      */
     this.vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
     this.vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));

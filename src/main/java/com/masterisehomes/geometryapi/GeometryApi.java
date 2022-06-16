@@ -27,7 +27,7 @@ public class GeometryApi {
                 // Get GIS data from payload with keys
                 Double latitude = jsonObj.get("latitude").getAsDouble();
                 Double longitude = jsonObj.get("longitude").getAsDouble();
-                Integer circumradius = jsonObj.get("radius").getAsInt();
+                Double circumradius = jsonObj.get("radius").getAsDouble();
 
                 // Initialize a hexagon with client's data
                 Coordinates centroid = new Coordinates(latitude, longitude);
