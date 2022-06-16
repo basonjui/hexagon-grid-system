@@ -10,11 +10,16 @@ import com.masterisehomes.geometryapi.geojson.Geometry;
 
 @ToString
 public class HexagonDto extends GeoJSON {
-    @Getter private final Hexagon hexagon;
-    @Getter private final Geometry geometry;
-    @Getter private final Properties properties = new Properties();
-    @Getter private final Feature feature;
-    @Getter private int hashCode;
+    @Getter
+    private final Hexagon hexagon;
+    @Getter
+    private final Geometry geometry;
+    @Getter
+    private final Properties properties = new Properties();
+    @Getter
+    private final Feature feature;
+    @Getter
+    private int hashCode;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public HexagonDto(Hexagon hexagon) {

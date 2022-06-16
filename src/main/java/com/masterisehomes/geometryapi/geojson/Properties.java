@@ -13,7 +13,8 @@ import java.util.Collection;
 public class Properties {
     private HashMap<Object, Object> properties = new HashMap<>();
 
-    public Properties() {}
+    public Properties() {
+    }
 
     // Setters
     public void addProperty(Object key, Object value) {

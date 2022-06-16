@@ -73,7 +73,7 @@ public class Coordinates {
     }
   }
 
-  // GeoJSON stuff
+  /* GeoJSON stuff */
 
   /*
    * Position
@@ -90,9 +90,9 @@ public class Coordinates {
      * Positions (geojson.org)
      * 
      * The order of elements must follow x, y, z order
-     *    (easting, northing, altitude for coordinates in a projected coordinate
+     * (easting, northing, altitude for coordinates in a projected coordinate
      * reference system,
-     *    or longitude, latitude, altitude for coordinates in a geographic coordinate
+     * or longitude, latitude, altitude for coordinates in a geographic coordinate
      * reference system).
      */
     List<Double> coordinates = Arrays.asList(this.longitude, this.latitude);

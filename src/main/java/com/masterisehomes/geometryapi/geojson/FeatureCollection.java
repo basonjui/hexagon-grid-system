@@ -6,11 +6,12 @@ import java.util.List;
 import lombok.ToString;
 
 @ToString
-public class FeatureCollection  {
+public class FeatureCollection {
     private final String type = "FeatureCollection";
     List<Feature> features = new ArrayList<Feature>();
 
-    FeatureCollection() {}
+    FeatureCollection() {
+    }
 
     // Methods
     public void add(Feature feature) {

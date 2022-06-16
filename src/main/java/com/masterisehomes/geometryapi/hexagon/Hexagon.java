@@ -33,9 +33,9 @@ public class Hexagon {
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
-     *    0   1
-     *  5   .   2
-     *    4   3
+     *   0 1
+     * 5  .  2
+     *   4 3
      */
     this.vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
     this.vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
@@ -50,10 +50,10 @@ public class Hexagon {
     double centroidX = this.centroid.getLatitude();
     double centroidY = this.centroid.getLongitude();
 
-    /* 
-      GeoJSON specification
-      - The first and last positions are equivalent, and they MUST contain
-      identical values; their representation SHOULD also be identical.
+    /*
+     * GeoJSON specification
+     * - The first and last positions are equivalent, and they MUST contain
+     * identical values; their representation SHOULD also be identical.
      */
     this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
     this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
@@ -64,5 +64,4 @@ public class Hexagon {
     this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
   }
 
-  
 }

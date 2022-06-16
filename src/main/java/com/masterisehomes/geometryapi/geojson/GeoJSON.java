@@ -5,9 +5,11 @@ import lombok.ToString;
 
 @ToString
 public class GeoJSON {
-    @Getter private final FeatureCollection featureCollection = new FeatureCollection();
+    @Getter
+    private final FeatureCollection featureCollection = new FeatureCollection();
 
-    public GeoJSON() {}
+    public GeoJSON() {
+    }
 
     public void addFeature(Feature feature) {
         this.featureCollection.add(feature);
@@ -25,4 +27,3 @@ public class GeoJSON {
         this.featureCollection.add(feature);
     }
 }
-
