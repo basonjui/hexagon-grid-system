@@ -20,14 +20,13 @@ public class Hexagon {
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
-    this.inradius = circumradius * Math.sqrt(3) / 2;
+    this.inradius = circumradius * (Math.sqrt(3)/2);
     this.generateVertices();
     this.generateGeoJsonVertices();
   }
 
   // Methods
   private void generateVertices() {
-    final double SQRT_3 = Math.sqrt(3);
     double centroidX = this.centroid.getLatitude();
     double centroidY = this.centroid.getLongitude();
 
@@ -37,16 +36,15 @@ public class Hexagon {
      *  5   .   2
      *    4   3
      */
-    this.vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
-    this.vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY - inradius));
+    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY - inradius));
     this.vertices.add(new Coordinates(centroidX + circumradius, centroidY));
-    this.vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
-    this.vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
+    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY + inradius));
+    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY + inradius));
     this.vertices.add(new Coordinates(centroidX - circumradius, centroidY));
   }
 
   private void generateGeoJsonVertices() {
-    final double SQRT_3 = Math.sqrt(3);
     double centroidX = this.centroid.getLatitude();
     double centroidY = this.centroid.getLongitude();
 
@@ -55,13 +53,13 @@ public class Hexagon {
      * - The first and last positions are equivalent, and they MUST contain
      * identical values; their representation SHOULD also be identical.
      */
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius, centroidY));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY + circumradius * SQRT_3 / 2));
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius, centroidY));
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 2, centroidY - circumradius * SQRT_3 / 2));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY - inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY - inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 3, centroidY));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY + inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY + inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 3, centroidY));
+    // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
+    this.geoJsonPositions.add(geoJsonPositions.get(0));
   }
-
 }
