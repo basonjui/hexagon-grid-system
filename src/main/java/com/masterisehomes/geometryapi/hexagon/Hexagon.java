@@ -27,8 +27,8 @@ public class Hexagon {
 
   // Methods
   private void generateVertices() {
-    double centroidX = this.centroid.getLatitude();
-    double centroidY = this.centroid.getLongitude();
+    double centroidX = this.centroid.getX();
+    double centroidY = this.centroid.getY();
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
@@ -84,11 +84,11 @@ public class Hexagon {
      *    
      * 
     */ 
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY - inradius));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY - inradius));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 3, centroidY));
-    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY + inradius));
-    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY + inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 * 1/3, centroidY - inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 * 1/3, centroidY - inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/3, centroidY));
+    this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 * 1/3, centroidY + inradius));
+    this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 * 1/3, centroidY + inradius));
     this.geoJsonPositions.add(new Coordinates(centroidX - circumradius / 3, centroidY));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     this.geoJsonPositions.add(geoJsonPositions.get(0));

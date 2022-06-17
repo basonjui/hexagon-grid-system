@@ -19,11 +19,15 @@ So here we are.
 @Getter
 @ToString
 public class Coordinates {
-  private double latitude;
-  private double longitude;
+  private final double y;
+  private final double x;
+  private final double latitude;
+  private final double longitude;
 
   // Constructors
   public Coordinates(double latitude, double longitude) {
+    this.x = longitude;
+    this.y = latitude;
     this.latitude = latitude;
     this.longitude = longitude;
   }
