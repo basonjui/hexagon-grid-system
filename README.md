@@ -1,14 +1,28 @@
 # Geometry API
 
-About the API...
-- Purpose
-- Goal
+Geometry API is a Microservice API that takes in WGS84 coordinates (projected) and a radius parameters, which then will be used as the input centroid and radius for the to-be-generated hexagons inside the program. 
+
+The program may use the provided input to generate a Hexagon, a Hexagon with 6 Neighbors, or a full Tessellation of Hexagons for a specific chosen boundary (not yet implemented).
+
+Finally, this microservice will return data in GeoJSON format - which is implemented following the The GeoJSON Specification (RFC 7946).
+https://datatracker.ietf.org/doc/html/rfc7946
+
 - Architecture
 - Dependencies
 
 ## About Geometry API v0.6 releases
 
 This is a major release, it is an initial version of a ready-to-scale local API that computes Hexagon's coordinates and return data in GeoJSON format.
+
+## Installation (example)
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+
+```bash
+pip install foobar
+```
+
+## Usage
 
 ### API input
 The `/api/hexagon` route takes in the following parameters (sample geographic coordinates, `radius` is randomed though): 

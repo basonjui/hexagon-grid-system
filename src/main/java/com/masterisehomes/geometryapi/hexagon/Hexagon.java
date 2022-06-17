@@ -50,8 +50,8 @@ public class Hexagon {
 
     /*
      * GeoJSON specification
-     * - The first and last positions are equivalent, and they MUST contain
-     * identical values; their representation SHOULD also be identical.
+     *  The first and last positions are equivalent, and they MUST contain
+     *  identical values; their representation SHOULD also be identical.
      */
     this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY - inradius));
     this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY - inradius));
