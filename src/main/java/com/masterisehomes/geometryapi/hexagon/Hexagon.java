@@ -53,6 +53,37 @@ public class Hexagon {
      *  The first and last positions are equivalent, and they MUST contain
      *  identical values; their representation SHOULD also be identical.
      */
+
+    /* 
+     * Keep in mind that for generateGeoJsonVertices, both the X and Y displacements 
+     * are in geographic degrees.
+     * 
+     * And because the Earth is not a Sphere, but an Ellipse, so WGS84 models the Earth
+     * as an Ellipsoid.
+     * 
+     * Also Latitude and Longitude are not straight cartesian axes, they are curved. 
+     * So in order to calculate the distance for each degree of Latitude & Longitude,
+     * we need to use Spherical Trigonometry to calculate the Arcs distances.
+     * 
+     * Radius x Radian = Length of Arc
+     * Given the MAJOR & MINOR axes of the Earth, perhaps we can calculate something?
+     * 
+     * Problem statement:
+     *    Input unit (from OSM) = Projected degrees (long, lat)
+     *    Calculation unit (Java) = pixels (1:1)
+     *    Output unit (to OSM) = Projected degrees (long, lat)
+     *    ---
+     * 
+     * Long, Lat have special distance ratios per degree:
+     *    Lat can be estimated with average
+     *    But Long can varies greatly depends on the Lat degree. 
+     * 
+     * ---
+     * 
+     * HOW CAN WE FIND THE CORRECT DEGREES TO BE TRANSLATED FOR VERTICES?
+     *    
+     * 
+    */ 
     this.geoJsonPositions.add(new Coordinates(centroidX - circumradius * 1/2 / 3, centroidY - inradius));
     this.geoJsonPositions.add(new Coordinates(centroidX + circumradius * 1/2 / 3, centroidY - inradius));
     this.geoJsonPositions.add(new Coordinates(centroidX + circumradius / 3, centroidY));
