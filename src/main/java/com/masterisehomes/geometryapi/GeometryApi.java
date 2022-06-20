@@ -30,7 +30,7 @@ public class GeometryApi {
                 Double circumradius = jsonObj.get("radius").getAsDouble();
 
                 // Initialize a hexagon with client's data
-                Coordinates centroid = new Coordinates(latitude, longitude);
+                Coordinates centroid = new Coordinates(longitude, latitude);
                 Hexagon hexagon = new Hexagon(centroid, circumradius);
 
                 // Get data from DTO
