@@ -2,7 +2,7 @@ package com.masterisehomes.geometryapi.geodetic;
 
 import java.lang.Math;
 
-public class SphericalMercator {
+public class SphericalMercatorProjection {
     public static final double RADIUS = 6378137.0; /* in meters on the equator */
 
     /*
