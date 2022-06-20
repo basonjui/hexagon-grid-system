@@ -10,15 +10,15 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Hexagon {
-  private Coordinates center;
+  private Coordinates centroid;
   private double circumradius;
   private double inradius;
   private List<Coordinates> vertices = new ArrayList<Coordinates>();
   // geoJsonPositions = vertices in GeoJSON format
   private List<Coordinates> geoJsonPositions = new ArrayList<Coordinates>();
 
-  public Hexagon(Coordinates center, double circumradius) {
-    this.center = center;
+  public Hexagon(Coordinates centroid, double circumradius) {
+    this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * (Math.sqrt(3)/2);
     this.generateVertices();
@@ -27,8 +27,8 @@ public class Hexagon {
 
   // Methods
   private void generateVertices() {
-    double centerX = this.center.getX();
-    double centerY = this.center.getY();
+    double centroidX = this.centroid.getX();
+    double centroidY = this.centroid.getY();
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
@@ -36,17 +36,17 @@ public class Hexagon {
      *  5   .   2
      *    4   3
      */
-    this.vertices.add(new Coordinates(centerX - circumradius * 1/2, centerY - inradius));
-    this.vertices.add(new Coordinates(centerX + circumradius * 1/2, centerY - inradius));
-    this.vertices.add(new Coordinates(centerX + circumradius, centerY));
-    this.vertices.add(new Coordinates(centerX + circumradius * 1/2, centerY + inradius));
-    this.vertices.add(new Coordinates(centerX - circumradius * 1/2, centerY + inradius));
-    this.vertices.add(new Coordinates(centerX - circumradius, centerY));
+    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY - inradius));
+    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY - inradius));
+    this.vertices.add(new Coordinates(centroidX + circumradius, centroidY));
+    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY + inradius));
+    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY + inradius));
+    this.vertices.add(new Coordinates(centroidX - circumradius, centroidY));
   }
 
   private void generateGeoJsonVertices() {
-    double longitude = this.center.getLongitude();
-    double latitude = this.center.getLatitude();
+    double longitude = this.centroid.getLongitude();
+    double latitude = this.centroid.getLatitude();
 
     /*
      * GeoJSON specification

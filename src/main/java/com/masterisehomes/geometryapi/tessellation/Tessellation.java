@@ -11,122 +11,122 @@ public class Tessellation {
     private final Hexagon originHexagon;
     private List<Hexagon> hexagons = new ArrayList<Hexagon>();
     private int totalHexagons = hexagons.size();
-    private Coordinates originCenter;
+    private Coordinates originCentroid;
     private Boundary boundary;
-    private ConcurrentHashMap<Integer, Coordinates> centersD1, centersD2, centersD3, centersD4, centersD5,
-            centersD6;
+    private ConcurrentHashMap<Integer, Coordinates> centroidsD1, centroidsD2, centroidsD3, centroidsD4, centroidsD5,
+            centroidsD6;
 
     // Constructors
-    public Tessellation(Coordinates originCenter, int circumradius, Boundary boundary) {
-        this.originHexagon = new Hexagon(originCenter, circumradius);
-        this.originCenter = originHexagon.getCenter();
+    public Tessellation(Coordinates originCentroid, int circumradius, Boundary boundary) {
+        this.originHexagon = new Hexagon(originCentroid, circumradius);
+        this.originCentroid = originHexagon.getCentroid();
         this.boundary = boundary;
     }
 
     // Methods
-    public String _generateDirectionalCenters(int neighborDirection) {
+    public String _generateDirectionalCentroids(int neighborDirection) {
         /*
          * neighborDirections - there are 6 of them.
          * 
          * Neighbors are ordered in a clock-wise rotation, this aims to achieve some
-         * simple sense of direction for each root (original center) Hexagon to expand
+         * simple sense of direction for each root (originCentroid) Hexagon to expand
          * upon required.
-         * 1
+         *    1
          * 6/‾‾‾\2
          * 5\___/3
-         * 4
+         *    4
          * 
          * This function uses inradius and coordinates of the originHexagon, to find all
-         * centers of hexagons that can be extended directly from originCenter center.
+         * centroids of hexagons that can be extended directly from originCentroid.
          */
-        final double originX = originCenter.getLatitude();
-        final double originY = originCenter.getLongitude();
+        final double originX = originCentroid.getLatitude();
+        final double originY = originCentroid.getLongitude();
         final double inradius = originHexagon.getInradius();
         final double SQRT_3 = Math.sqrt(3);
-        Coordinates previousCenter = originCenter;
-        Coordinates nextCenter;
+        Coordinates previousCentroid = originCentroid;
+        Coordinates nextCentroid;
 
-        int centersCount = 0;
+        int centroidsCount = 0;
         int multiplier = 1;
         switch (neighborDirection) {
             case 1:
-                centersD1 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(originX, originY + (2 * inradius * multiplier));
-                    centersD1.put(centersCount, nextCenter);
+                centroidsD1 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(originX, originY + (2 * inradius * multiplier));
+                    centroidsD1.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
             case 2:
-                centersD2 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(
+                centroidsD2 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(
                             originX + (SQRT_3 * inradius * multiplier), originY - (inradius * multiplier));
-                    centersD2.put(centersCount, nextCenter);
+                    centroidsD2.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
             case 3:
-                centersD3 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(
+                centroidsD3 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(
                             originX + (SQRT_3 * inradius * multiplier), originY + (inradius * multiplier));
-                    centersD3.put(centersCount, nextCenter);
+                    centroidsD3.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
             case 4:
-                centersD4 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(originX, originY + (2 * inradius * multiplier));
-                    centersD4.put(centersCount, nextCenter);
+                centroidsD4 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(originX, originY + (2 * inradius * multiplier));
+                    centroidsD4.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
             case 5:
-                centersD5 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(
+                centroidsD5 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(
                             originX - (SQRT_3 * inradius * multiplier), originY + (inradius * multiplier));
-                    centersD5.put(centersCount, nextCenter);
+                    centroidsD5.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
             case 6:
-                centersD6 = new ConcurrentHashMap<>();
-                while (previousCenter.isIn(boundary)) {
-                    centersCount++;
-                    nextCenter = new Coordinates(
+                centroidsD6 = new ConcurrentHashMap<>();
+                while (previousCentroid.isIn(boundary)) {
+                    centroidsCount++;
+                    nextCentroid = new Coordinates(
                             originX - (SQRT_3 * inradius * multiplier), originY - (inradius * multiplier));
-                    centersD6.put(centersCount, nextCenter);
+                    centroidsD6.put(centroidsCount, nextCentroid);
                     // Updater
-                    previousCenter = nextCenter;
+                    previousCentroid = nextCentroid;
                     multiplier++;
                 }
                 break;
 
         }
-        return String.format("Total centers generated: %s", centersCount);
+        return String.format("Total centroids generated: %s", centroidsCount);
     }
 
     // Getters
@@ -135,7 +135,7 @@ public class Tessellation {
     }
 
     public Coordinates getOrigin() {
-        return this.originCenter;
+        return this.originCentroid;
     }
 
     public Boundary getBoundary() {
@@ -146,7 +146,7 @@ public class Tessellation {
     public String toString() {
         return String.format(
                 "Tessellation[%s, %s\n, %s, totalHexagons: %s]",
-                this.originHexagon, this.originCenter,
+                this.originHexagon, this.originCentroid,
                 this.boundary, this.totalHexagons);
     }
 }

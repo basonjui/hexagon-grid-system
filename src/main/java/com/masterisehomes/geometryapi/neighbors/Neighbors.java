@@ -1,22 +1,26 @@
 package com.masterisehomes.geometryapi.neighbors;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
+
+import lombok.ToString;
+
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import java.util.Hashtable;
 
+@ToString
 public class Neighbors {
-    private Hashtable<Integer, Coordinates> centers;
+    private Hashtable<Integer, Coordinates> centroids;
     private Hexagon hexagon;
     
     public Neighbors(Hexagon hexagon) {
       this.hexagon = hexagon;
-      this.centers = generatecenters();
+      this.centroids = generateCentroids();
     }
     
-    public Hashtable<Integer, Coordinates> generatecenters() {
+    public Hashtable<Integer, Coordinates> generateCentroids() {
       final double SQRT_3 = Math.sqrt(3);
-      double centerX = hexagon.getCenter().getLatitude();
-      double centerY = hexagon.getCenter().getLongitude();
+      double centerX = hexagon.getCentroid().getX();
+      double centerY = hexagon.getCentroid().getY();
       double inradius = hexagon.getInradius();
       
       /* Neighbors are ordered in a clock-wise rotation, this aims to achieve some 
@@ -35,37 +39,33 @@ public class Neighbors {
       We mostly used Trigonometry. */
       
       
-      // Calculate and put neighbor centers into Hashtable
-      centers = new Hashtable<Integer, Coordinates>();
+      // Calculate and put neighbor centroids into Hashtable
+      centroids = new Hashtable<Integer, Coordinates>();
       
-      centers.put(
+      centroids.put(
         1, new Coordinates(centerX, centerY - 2 * inradius)
       );
-      centers.put(
+      centroids.put(
         2, new Coordinates(centerX + SQRT_3 * inradius, centerY - inradius)
       );    
-      centers.put(
+      centroids.put(
         3, new Coordinates(centerX + SQRT_3 * inradius, centerY + inradius)
       );   
-      centers.put(
+      centroids.put(
         4, new Coordinates(centerX, centerY + 2 * inradius)
       );
-      centers.put(
+      centroids.put(
         5, new Coordinates(centerX - SQRT_3 * inradius, centerY + inradius)
       );
-      centers.put(
+      centroids.put(
         6, new Coordinates(centerX - SQRT_3 * inradius, centerY - inradius)
       );
       
-      return centers;
+      return centroids;
     }
     
     // Getters
-    public Hashtable<Integer, Coordinates> getcenters() {
-      return this.centers;
+    public Hashtable<Integer, Coordinates> getCentroids() {
+      return this.centroids;
     }
-    
-    public String toString() {
-      return String.format("Neighbor[hexagoncenters: %s, neighbourcenters: %s]", this.hexagon.getCenter(), this.centers);
-    } 
   }
