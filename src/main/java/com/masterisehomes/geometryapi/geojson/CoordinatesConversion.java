@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import com.masterisehomes.geometryapi.hexagon.*;
 
-public class GeoJsonConversions {
-    public GeoJsonConversions() {
+public class CoordinatesConversion {
+    public CoordinatesConversion() {
     }
 
     // Geometry - Positions Arrays conversion

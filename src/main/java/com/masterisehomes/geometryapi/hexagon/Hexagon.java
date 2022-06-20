@@ -84,12 +84,12 @@ public class Hexagon {
      *    
      * 
     */ 
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2 * 1/3, latitude - inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2 * 1/3, latitude - inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/3, latitude));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2 * 1/3, latitude + inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2 * 1/3, latitude + inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius / 3, latitude));
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2, latitude - inradius));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2, latitude - inradius));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradius, latitude));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2, latitude + inradius));
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2, latitude + inradius));
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradius, latitude));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     this.geoJsonPositions.add(geoJsonPositions.get(0));
   }

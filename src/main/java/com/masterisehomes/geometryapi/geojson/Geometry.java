@@ -4,7 +4,7 @@ import com.masterisehomes.geometryapi.hexagon.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.ToString;
-import static com.masterisehomes.geometryapi.geojson.GeoJsonConversions._getGeoJsonArrayArrayPositions;
+import static com.masterisehomes.geometryapi.geojson.CoordinatesConversion._getGeoJsonArrayArrayPositions;
 
 @ToString
 public class Geometry {
