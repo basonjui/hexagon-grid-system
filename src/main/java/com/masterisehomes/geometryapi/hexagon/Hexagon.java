@@ -3,12 +3,13 @@ package com.masterisehomes.geometryapi.hexagon;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
-
 import lombok.Getter;
 import lombok.ToString;
 
 import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.xToLongitude;
 import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.yToLatitude;
+import static com.masterisehomes.geometryapi.geodesy.SphericalMetricConversion.meterToLatitude;
+import static com.masterisehomes.geometryapi.geodesy.SphericalMetricConversion.meterToLongitude;
 
 
 @Getter
@@ -93,12 +94,18 @@ public class Hexagon {
      *  (which long is dependent on lat).    *    
      * 
     */ 
-    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius*1/2), latitude - yToLatitude(inradius)));
-    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius*1/2), latitude - yToLatitude(inradius)));
-    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius), latitude));
-    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius*1/2), latitude + yToLatitude(inradius)));
-    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius*1/2), latitude + yToLatitude(inradius)));
-    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius), latitude));
+    Double circumradiusInLongitude = xToLongitude(this.circumradius);
+    Double inradiusInLatitude = yToLatitude(this.inradius);
+
+    // Double circumradiusInLongitude = meterToLongitude(this.circumradius, latitude);
+    // Double inradiusInLatitude = meterToLatitude(this.inradius);
+
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradiusInLongitude * 1/2, latitude - inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradiusInLongitude * 1/2, latitude - inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradiusInLongitude, latitude));
+    this.geoJsonPositions.add(new Coordinates(longitude + circumradiusInLongitude * 1/2, latitude + inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradiusInLongitude * 1/2, latitude + inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(longitude - circumradiusInLongitude, latitude));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     this.geoJsonPositions.add(geoJsonPositions.get(0));
   }
