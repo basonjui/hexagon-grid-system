@@ -1,4 +1,4 @@
-package com.masterisehomes.geometryapi.geodetic;
+package com.masterisehomes.geometryapi.geodesy;
 
 import java.lang.Math;
 

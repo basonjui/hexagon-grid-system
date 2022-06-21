@@ -7,6 +7,10 @@ import java.lang.Math;
 import lombok.Getter;
 import lombok.ToString;
 
+import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.xToLongitude;
+import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.yToLatitude;
+
+
 @Getter
 @ToString
 public class Hexagon {
@@ -20,7 +24,7 @@ public class Hexagon {
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
-    this.inradius = circumradius * (Math.sqrt(3)/2);
+    this.inradius = circumradius * Math.sqrt(3)/2;
     this.generateVertices();
     this.generateGeoJsonVertices();
   }
@@ -36,11 +40,11 @@ public class Hexagon {
      *  5   .   2
      *    4   3
      */
-    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY - inradius));
-    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY - inradius));
+    this.vertices.add(new Coordinates(centroidX - circumradius*1/2, centroidY - inradius));
+    this.vertices.add(new Coordinates(centroidX + circumradius*1/2, centroidY - inradius));
     this.vertices.add(new Coordinates(centroidX + circumradius, centroidY));
-    this.vertices.add(new Coordinates(centroidX + circumradius * 1/2, centroidY + inradius));
-    this.vertices.add(new Coordinates(centroidX - circumradius * 1/2, centroidY + inradius));
+    this.vertices.add(new Coordinates(centroidX + circumradius*1/2, centroidY + inradius));
+    this.vertices.add(new Coordinates(centroidX - circumradius*1/2, centroidY + inradius));
     this.vertices.add(new Coordinates(centroidX - circumradius, centroidY));
   }
 
@@ -81,15 +85,20 @@ public class Hexagon {
      * ---
      * 
      * HOW CAN WE FIND THE CORRECT DEGREES TO BE TRANSLATED FOR VERTICES?
-     *    
+     * 
+     *  circumradius is either in meters or in pixels, but longitude and 
+     *  latitude are in degrees
+     * 
+     *  so we need to convert the displacement into degrees of lat & long
+     *  (which long is dependent on lat).    *    
      * 
     */ 
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2, latitude - inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2, latitude - inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius, latitude));
-    this.geoJsonPositions.add(new Coordinates(longitude + circumradius * 1/2, latitude + inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius * 1/2, latitude + inradius));
-    this.geoJsonPositions.add(new Coordinates(longitude - circumradius, latitude));
+    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius*1/2), latitude - yToLatitude(inradius)));
+    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius*1/2), latitude - yToLatitude(inradius)));
+    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius), latitude));
+    this.geoJsonPositions.add(new Coordinates(longitude + xToLongitude(circumradius*1/2), latitude + yToLatitude(inradius)));
+    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius*1/2), latitude + yToLatitude(inradius)));
+    this.geoJsonPositions.add(new Coordinates(longitude - xToLongitude(circumradius), latitude));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     this.geoJsonPositions.add(geoJsonPositions.get(0));
   }
