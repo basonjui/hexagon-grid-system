@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import com.masterisehomes.geometryapi.hexagon.*;
 
-public class CoordinatesConversion {
-    public CoordinatesConversion() {
+class GeoJsonCoordinates {
+    List<List<?>> coordinates = new ArrayList<>();
+
+    GeoJsonCoordinates() {
     }
 
-    public static List<List<List<Double>>> getGeoJsonArrayArrayPositions(Hexagon hexagon) {
-        List<List<Double>> hexagonCoordinatesArray = getGeoJsonArrayPositions(hexagon);
+    static List<List<List<Double>>> generatePolygonCoordinates(Hexagon hexagon) {
+        // Generate an Array of Array of Positions
+        List<List<Double>> hexagonCoordinatesArray = _generateArrayPositions(hexagon);
         /*
          * Wrap hexagon's vertices coordinates inside another array - this is the
          * GeoJSON coordinates structure for Polygon
@@ -19,11 +22,16 @@ public class CoordinatesConversion {
         return Arrays.asList(hexagonCoordinatesArray);
     }
 
-    public static List<List<Double>> getGeoJsonArrayPositions(Hexagon hexagon) {
+    private static List<List<Double>> _generateArrayPositions(Hexagon hexagon) {
         List<Coordinates> verticesCoordinates = hexagon.getGeoJsonPositions();
 
         List<List<Double>> coordinatesArray = new ArrayList<List<Double>>();
-        verticesCoordinates.forEach((vertexCoordinates) -> coordinatesArray.add(vertexCoordinates.toGeoJsonPosition()));
+        verticesCoordinates.forEach(
+            (vertexCoordinates) -> {
+                coordinatesArray.add(vertexCoordinates.toGeoJsonPosition());
+            }
+        );
+
         return coordinatesArray;
     }
 }

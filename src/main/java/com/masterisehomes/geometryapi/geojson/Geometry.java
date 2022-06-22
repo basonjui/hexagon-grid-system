@@ -1,21 +1,24 @@
 package com.masterisehomes.geometryapi.geojson;
 
-import com.masterisehomes.geometryapi.hexagon.*;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
-import static com.masterisehomes.geometryapi.geojson.CoordinatesConversion.getGeoJsonArrayArrayPositions;
 
+@Getter
 @ToString
-public class Geometry {
-    private final String type;
-    private List<?> coordinates;
+public abstract class Geometry {
+    @Setter protected String type;
+    protected List<?> coordinates;
 
-    public Geometry(Hexagon hexagon) {
-        this.type = "Polygon";
-        this.coordinates = new ArrayList<>();
-
-        List<List<List<Double>>> hexagonGeoJsonCoordinates = getGeoJsonArrayArrayPositions(hexagon);
-        this.coordinates = hexagonGeoJsonCoordinates;
+    public Geometry(String type) {
+        if(type.equals("Polygon")) {
+            this.type = "Polygon";
+        } else if (type.equals("MultiPolygon")) {
+            // Pseudo code: to be implemented
+            this.type = "MultiPolygon";
+        } else {
+            throw new IllegalArgumentException("Invalid Geometry type.");
+        }
     }
 }

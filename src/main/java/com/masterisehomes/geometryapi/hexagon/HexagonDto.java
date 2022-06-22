@@ -6,14 +6,14 @@ import lombok.ToString;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.masterisehomes.geometryapi.geojson.Geometry;
+import com.masterisehomes.geometryapi.geojson.HexagonGeometry;
 
 @ToString
 public class HexagonDto extends GeoJSON {
     @Getter
     private final Hexagon hexagon;
     @Getter
-    private final Geometry geometry;
+    private final HexagonGeometry geometry;
     @Getter
     private final Properties properties = new Properties();
     @Getter
@@ -24,7 +24,7 @@ public class HexagonDto extends GeoJSON {
 
     public HexagonDto(Hexagon hexagon) {
         this.hexagon = hexagon;
-        this.geometry = new Geometry(hexagon);
+        this.geometry = new HexagonGeometry(hexagon);
         this.feature = new Feature(geometry);
     }
 

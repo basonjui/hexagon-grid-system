@@ -20,7 +20,7 @@ public class GeoJSON {
         this.featureCollection.add(feature);
     }
 
-    public void addFeature(Geometry geometry, Properties properties) {
+    public void addFeature(HexagonGeometry geometry, Properties properties) {
         Feature feature = new Feature(geometry);
         feature.addProperties(properties);
         this.featureCollection.add(feature);

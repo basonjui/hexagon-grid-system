@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.lang.Math;
 import lombok.Getter;
 import lombok.ToString;
-import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.xToLongitude;
-import static com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection.yToLatitude;
+import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
 @Getter
 @ToString
@@ -58,25 +57,24 @@ public class Hexagon {
      *  (which long is dependent on lat).
     */
 
-    // SphericalMercatorProjection algorithm (by OSM)
-    double circumradiusInLong = xToLongitude(this.circumradius);
-    double inradiusInLat = yToLatitude(this.inradius);
+    double circumradiusInLongitude = SphericalMercatorProjection.xToLongitude(this.circumradius);
+    double inradiusInLatitude = SphericalMercatorProjection.yToLatitude(this.inradius);
 
     // Use SphericalMetricConversion algorithm
-    // double circumradiusInLongitude = meterToLongitude(this.circumradius, latitude);
-    // double inradiusInLatitude = meterToLatitude(this.inradius);
+    // double circumradiusInLongitude = SphericalMetricConversion.meterToLongitude(this.circumradius, latitude);
+    // double inradiusInLatitude = SphericalMetricConversion.meterToLatitude(this.inradius);
 
     /*
      * GeoJSON specification
      *  The first and last positions are equivalent, and they MUST contain
      *  identical values; their representation SHOULD also be identical.
      */
-    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLong * 1/2, centroidLat - inradiusInLat));
-    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLong * 1/2, centroidLat - inradiusInLat));
-    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLong, centroidLat));
-    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLong * 1/2, centroidLat + inradiusInLat));
-    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLong * 1/2, centroidLat + inradiusInLat));
-    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLong, centroidLat));
+    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLongitude * 1/2, centroidLat - inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLongitude * 1/2, centroidLat - inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLongitude, centroidLat));
+    this.geoJsonPositions.add(new Coordinates(centroidLong + circumradiusInLongitude * 1/2, centroidLat + inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLongitude * 1/2, centroidLat + inradiusInLatitude));
+    this.geoJsonPositions.add(new Coordinates(centroidLong - circumradiusInLongitude, centroidLat));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     this.geoJsonPositions.add(geoJsonPositions.get(0));
   }
