@@ -1,14 +1,17 @@
 package com.masterisehomes.geometryapi.geodesy;
 
+/* Algorithm by OpenStreetMap (OSM) - Elliptical Mercator:
+ * - https://wiki.openstreetmap.org/wiki/Mercator
+ */
 public class EllipticalMercatorProjection {
     final private static double R_MAJOR = 6378137.0;
     final private static double R_MINOR = 6356752.3142;
 
     public static double[] merc(double x, double y) {
-        return new double[] {mercX(x), mercY(y)};
+        return new double[] { mercX(x), mercY(y) };
     }
 
-    public static double  mercX(double lon) {
+    public static double mercX(double lon) {
         return R_MAJOR * Math.toRadians(lon);
     }
 
@@ -26,8 +29,8 @@ public class EllipticalMercatorProjection {
         double sinphi = Math.sin(phi);
         double con = eccent * sinphi;
         double com = 0.5 * eccent;
-        con = Math.pow(((1.0-con)/(1.0+con)), com);
-        double ts = Math.tan(0.5 * ((Math.PI*0.5) - phi))/con;
+        con = Math.pow(((1.0 - con) / (1.0 + con)), com);
+        double ts = Math.tan(0.5 * ((Math.PI * 0.5) - phi)) / con;
         double y = 0 - R_MAJOR * Math.log(ts);
         return y;
     }

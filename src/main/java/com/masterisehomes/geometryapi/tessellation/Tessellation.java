@@ -130,7 +130,7 @@ public class Tessellation {
     }
 
     // Getters
-    public int getTotalHexagons() {
+    public int countHexagons() {
         return this.totalHexagons;
     }
 
@@ -145,8 +145,9 @@ public class Tessellation {
     // String representation
     public String toString() {
         return String.format(
-                "Tessellation[%s, %s\n, %s, totalHexagons: %s]",
-                this.originHexagon, this.originCentroid,
-                this.boundary, this.totalHexagons);
+            "Tessellation[%s, %s\n, %s, totalHexagons: %s]",
+            this.originHexagon, this.originCentroid,
+            this.boundary, this.totalHexagons
+        );
     }
 }

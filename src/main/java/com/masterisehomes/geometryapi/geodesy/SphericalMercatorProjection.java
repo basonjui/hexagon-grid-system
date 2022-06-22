@@ -2,6 +2,9 @@ package com.masterisehomes.geometryapi.geodesy;
 
 import java.lang.Math;
 
+/* Algorithm by OpenStreetMap (OSM) - Mercator:
+ * - https://wiki.openstreetmap.org/wiki/Mercator
+ */
 public class SphericalMercatorProjection {
     public static final double RADIUS = 6378137.0; /* in meters on the equator */
 

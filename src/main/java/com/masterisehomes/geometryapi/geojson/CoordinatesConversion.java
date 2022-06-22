@@ -9,16 +9,16 @@ public class CoordinatesConversion {
     public CoordinatesConversion() {
     }
 
-    // Geometry - Positions Arrays conversion
     public static List<List<List<Double>>> getGeoJsonArrayArrayPositions(Hexagon hexagon) {
         List<List<Double>> hexagonCoordinatesArray = getGeoJsonArrayPositions(hexagon);
-        // Wrap hexagon's vertices coordinates inside another array - this is the
-        // GeoJSON coordinates structure for Polygon
-        // Why? because in GeoJSON, Polygons can have polygons (as holes) within them.
+        /*
+         * Wrap hexagon's vertices coordinates inside another array - this is the
+         * GeoJSON coordinates structure for Polygon
+         * Why? because in GeoJSON, Polygons can have polygons (as holes) within them.
+         */
         return Arrays.asList(hexagonCoordinatesArray);
     }
 
-    // Internal methods
     public static List<List<Double>> getGeoJsonArrayPositions(Hexagon hexagon) {
         List<Coordinates> verticesCoordinates = hexagon.getGeoJsonPositions();
 
@@ -26,7 +26,4 @@ public class CoordinatesConversion {
         verticesCoordinates.forEach((vertexCoordinates) -> coordinatesArray.add(vertexCoordinates.toGeoJsonPosition()));
         return coordinatesArray;
     }
-
-    // Geometry - Pixel to Longitude, Latitude conversions
-
 }

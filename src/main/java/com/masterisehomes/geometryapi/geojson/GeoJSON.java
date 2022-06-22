@@ -21,7 +21,6 @@ public class GeoJSON {
     }
 
     public void addFeature(Geometry geometry, Properties properties) {
-        // Todo: add logic to add a Feature using Geometry and Properties
         Feature feature = new Feature(geometry);
         feature.addProperties(properties);
         this.featureCollection.add(feature);

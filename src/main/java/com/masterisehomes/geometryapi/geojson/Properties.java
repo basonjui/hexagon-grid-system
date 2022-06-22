@@ -7,8 +7,8 @@ import lombok.ToString;
 
 import java.util.Collection;
 
-// A temporary data storage and interface to add properties into Feature
-// The object itself will not go into the GeoJSON
+/* A temporary data storage and interface to add properties into Feature
+The object itself will not go into the GeoJSON */
 @ToString
 public class Properties {
     private HashMap<Object, Object> properties = new HashMap<>();

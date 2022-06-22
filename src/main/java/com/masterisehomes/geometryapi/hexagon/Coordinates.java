@@ -5,16 +5,16 @@ import lombok.ToString;
 import java.util.Arrays;
 import java.util.List;
 
-/*
-So why the Vertex class instead of using the predefined Point class?
-Point is a really old class in Java, it can only work with Integer and Double.
-
-This is a problem because the vertex() function in processing can
-only work with Float data type.
-
-Do we want to cast Double to Float for every point to draw on Processing?
-So here we are.
-*/
+/* So why the Vertex class instead of using the predefined Point class?
+ *
+ * Point is a really old class in Java, it can only work with Integer and Double.
+ *
+ * This is a problem because the vertex() function in processing can
+ * only work with Float data type.
+ *
+ * Do we want to cast Double to Float for every point to draw on Processing?
+ * So here we are. 
+ */
 
 @Getter
 @ToString
@@ -79,8 +79,7 @@ public class Coordinates {
 
   /* GeoJSON stuff */
 
-  /*
-   * Position
+  /* Position
    * 
    * A position is an array of coordinates in order:
    * this is the smallest unit that we can really consider ‘a place’ since it can
@@ -90,10 +89,8 @@ public class Coordinates {
    * [longitude, latitude, elevation]
    */
   public List<Double> toGeoJsonPosition() {
-    /*
-     * Positions (geojson.org)
+    /* The order of elements must follow x, y, z order
      * 
-     * The order of elements must follow x, y, z order
      * (easting, northing, altitude for coordinates in a projected coordinate
      * reference system,
      * or longitude, latitude, altitude for coordinates in a geographic coordinate
