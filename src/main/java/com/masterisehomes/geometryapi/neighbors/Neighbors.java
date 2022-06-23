@@ -2,6 +2,7 @@ package com.masterisehomes.geometryapi.neighbors;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 
+import lombok.Getter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
@@ -9,8 +10,10 @@ import java.util.Hashtable;
 
 @ToString
 public class Neighbors {
-  private Hashtable<Integer, Coordinates> centroids;
-  private Hexagon hexagon;
+  @Getter private Hexagon hexagon;
+  // Refactor centroids to use HashMap
+  @Getter private Hashtable<Integer, Coordinates> centroids;
+  // from "centroids", generate a list of Hexagon, store it in List<hexagons>
 
   public Neighbors(Hexagon hexagon) {
     this.hexagon = hexagon;
@@ -57,10 +60,5 @@ public class Neighbors {
         6, new Coordinates(centerX - SQRT_3 * inradius, centerY - inradius));
 
     return centroids;
-  }
-
-  // Getters
-  public Hashtable<Integer, Coordinates> getCentroids() {
-    return this.centroids;
   }
 }

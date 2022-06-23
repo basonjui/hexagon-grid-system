@@ -4,12 +4,22 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
 class GeoJsonCoordinates {
-    List<List<?>> coordinates = new ArrayList<>();
-
     GeoJsonCoordinates() {
+    }
+
+    static List<List<List<List<Double>>>> generateMultiPolygonCoordinates(Neighbors neighbors) {
+
+        // For each hexagon in neighbor -> generatePolygonCoordinates
+        List<List<List<Double>>> hexagonCoordinates = generatePolygonCoordinates(neighbors.getHexagon());
+
+        // For each generate PolygonCoordinates, store it in multiPolygonCoordinates
+        List<List<List<List<Double>>>> multiPolygonCoordinates = new ArrayList<>();
+
+        return multiPolygonCoordinates;
     }
 
     static List<List<List<Double>>> generatePolygonCoordinates(Hexagon hexagon) {
@@ -23,10 +33,7 @@ class GeoJsonCoordinates {
         return Arrays.asList(hexagonArrayPositions);
     }
 
-    /*
-     * Internal methods: to generate an Array of Positions for a Geometry
-     * to be overloaded for different geometry type
-     */
+    // Internal methods: handle data processing in this class (private)
     private static List<List<Double>> _generateArrayPositions(Hexagon hexagon) {
         List<Coordinates> verticesCoordinates = hexagon.getGeographicVertices();
 
