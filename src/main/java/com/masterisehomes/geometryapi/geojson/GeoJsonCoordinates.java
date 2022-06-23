@@ -23,7 +23,7 @@ class GeoJsonCoordinates {
     }
 
     private static List<List<Double>> _generateArrayPositions(Hexagon hexagon) {
-        List<Coordinates> verticesCoordinates = hexagon.getGeoJsonPositions();
+        List<Coordinates> verticesCoordinates = hexagon.getGeographicVertices();
 
         List<List<Double>> coordinatesArray = new ArrayList<List<Double>>();
         verticesCoordinates.forEach(
