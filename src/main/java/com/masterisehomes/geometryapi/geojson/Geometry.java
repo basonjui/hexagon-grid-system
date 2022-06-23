@@ -15,7 +15,6 @@ public abstract class Geometry {
         if(type.equals("Polygon")) {
             this.type = "Polygon";
         } else if (type.equals("MultiPolygon")) {
-            // Pseudo code: to be implemented
             this.type = "MultiPolygon";
         } else {
             throw new IllegalArgumentException("Invalid Geometry type.");
