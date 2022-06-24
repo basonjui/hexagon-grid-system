@@ -80,13 +80,15 @@ public class Neighbors {
     return hmap;
   }
 
+  
   private HashMap<Integer, Coordinates> generateGisCentroids(Hexagon hexagon) {
     final double SQRT_3 = Math.sqrt(3);
     final double centroidLong = hexagon.getCentroid().getLongitude();
     final double centroidLat = hexagon.getCentroid().getLatitude();
     final double inradius = hexagon.getInradius();
-    final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius); // x
-    final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
+    // Convert inradius (which is currently in Meter unit) to Degrees unit
+    final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius);  // x
+    final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);    // y
 
     HashMap<Integer, Coordinates> hmap = new HashMap<Integer, Coordinates>();
 
@@ -122,5 +124,4 @@ public class Neighbors {
 
     return hmap;
   }
-
 }

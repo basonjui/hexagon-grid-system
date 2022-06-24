@@ -13,22 +13,21 @@ public class Hexagon {
   private Coordinates centroid;
   private double circumradius;
   private double inradius;
-  private List<Coordinates> vertices = new ArrayList<Coordinates>();
-  // geoJsonPositions = vertices in GeoJSON format
-  private List<Coordinates> geographicVertices = new ArrayList<Coordinates>();
+  private List<Coordinates> vertices;
+  private List<Coordinates> gisVertices;
 
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * Math.sqrt(3)/2;
-    this.generateVertices();
-    this.generateGeographicVertices();
+    this.vertices = generateVertices(centroid);
+    this.gisVertices = generateGeographicVertices(centroid);
   }
 
   // Methods
-  private void generateVertices() {
-    double centroidX = this.centroid.getX();
-    double centroidY = this.centroid.getY();
+  private List<Coordinates> generateVertices(Coordinates centroid) {
+    double centroidX = centroid.getX();
+    double centroidY = centroid.getY();
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
@@ -36,45 +35,51 @@ public class Hexagon {
      *  5   .   2
      *    4   3
      */
-    this.vertices.add(new Coordinates(centroidX - circumradius*1/2, centroidY - inradius));
-    this.vertices.add(new Coordinates(centroidX + circumradius*1/2, centroidY - inradius));
-    this.vertices.add(new Coordinates(centroidX + circumradius, centroidY));
-    this.vertices.add(new Coordinates(centroidX + circumradius*1/2, centroidY + inradius));
-    this.vertices.add(new Coordinates(centroidX - circumradius*1/2, centroidY + inradius));
-    this.vertices.add(new Coordinates(centroidX - circumradius, centroidY));
+    List<Coordinates> coordinatesList = new ArrayList<Coordinates>();
+
+    coordinatesList.add(new Coordinates(centroidX - circumradius*1/2, centroidY - inradius));
+    coordinatesList.add(new Coordinates(centroidX + circumradius*1/2, centroidY - inradius));
+    coordinatesList.add(new Coordinates(centroidX + circumradius, centroidY));
+    coordinatesList.add(new Coordinates(centroidX + circumradius*1/2, centroidY + inradius));
+    coordinatesList.add(new Coordinates(centroidX - circumradius*1/2, centroidY + inradius));
+    coordinatesList.add(new Coordinates(centroidX - circumradius, centroidY));
+
+    return coordinatesList;
   }
 
-  private void generateGeographicVertices() {
+  private List<Coordinates> generateGeographicVertices(Coordinates centroid) {
     double centroidLong = this.centroid.getLongitude();
     double centroidLat = this.centroid.getLatitude();
 
-    /* HOW CAN WE FIND THE CORRECT DEGREES TO BE TRANSLATED FOR VERTICES?
-     * 
+    /* 
      *  circumradius is either in meters or in pixels, but longitude and 
      *  latitude are in degrees
      * 
      *  so we need to convert the displacement into degrees of lat & long
      *  (which long is dependent on lat).
     */
-
-    double circumradiusInLong = SphericalMercatorProjection.xToLongitude(this.circumradius);
-    double inradiusInLat = SphericalMercatorProjection.yToLatitude(this.inradius);
+    double circumradiusLong = SphericalMercatorProjection.xToLongitude(this.circumradius);
+    double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
 
     /* Use SphericalMetricConversion algorithm
     double circumradiusInLongitude = SphericalMetricConversion.meterToLongitude(this.circumradius, latitude);
     double inradiusInLatitude = SphericalMetricConversion.meterToLatitude(this.inradius); */
-
+    
+    List<Coordinates> gisCoordinatesList = new ArrayList<Coordinates>();
     /* GeoJSON specification:
      * - The first and last positions are equivalent, and they MUST contain
      * identical values; their representation SHOULD also be identical.
      */
-    this.geographicVertices.add(new Coordinates(centroidLong - circumradiusInLong * 1/2, centroidLat - inradiusInLat));
-    this.geographicVertices.add(new Coordinates(centroidLong + circumradiusInLong * 1/2, centroidLat - inradiusInLat));
-    this.geographicVertices.add(new Coordinates(centroidLong + circumradiusInLong, centroidLat));
-    this.geographicVertices.add(new Coordinates(centroidLong + circumradiusInLong * 1/2, centroidLat + inradiusInLat));
-    this.geographicVertices.add(new Coordinates(centroidLong - circumradiusInLong * 1/2, centroidLat + inradiusInLat));
-    this.geographicVertices.add(new Coordinates(centroidLong - circumradiusInLong, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong, centroidLat));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
-    this.geographicVertices.add(geographicVertices.get(0));
+    gisCoordinatesList.add(gisCoordinatesList.get(0));
+
+    return gisCoordinatesList;
   }
+
 }
