@@ -36,14 +36,13 @@ class GeoJsonCoordinates {
     // Internal methods: handle data processing in this class (private)
     private static List<List<Double>> _generateArrayPositions(Hexagon hexagon) {
         List<Coordinates> vertices = hexagon.getGisVertices();
-
         List<List<Double>> positions = new ArrayList<List<Double>>();
-        vertices.forEach(
-                (vertex) -> {
-                    positions.add(
-                        // Convert each vertex's Coordinates -> Position
-                        vertex.toGeoJsonPosition());
-                });
+
+        vertices.forEach((vertex) -> {
+            positions.add(
+                vertex.toGeoJsonPosition() // Convert vertex's Coordinates -> Position
+            );
+        });
 
         return positions;
     }
