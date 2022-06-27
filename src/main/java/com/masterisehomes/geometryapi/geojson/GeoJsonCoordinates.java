@@ -13,12 +13,12 @@ class GeoJsonCoordinates {
     }
 
     static List<List<List<List<Double>>>> generateMultiPolygonCoordinates(Neighbors neighbors) {
-        // TODO: For each hexagon in hexagons (neighbor) -> generatePolygonCoordinates
-        HashMap<Integer, Hexagon> hexagons = neighbors.getHexagons();
-        // List<List<List<Double>>> hexagonCoordinates = generatePolygonCoordinates(neighbors.getRootHexagon());
-
-        // TODO: Then, Add PolygonCoordinates to multiPolygonCoordinates 
+        HashMap<Integer, Hexagon> hexagons = neighbors.getGisHexagons();
         List<List<List<List<Double>>>> multiPolygonCoordinates = new ArrayList<>();
+
+        hexagons.forEach((neighborPos, hexagon) -> {
+            multiPolygonCoordinates.add(generatePolygonCoordinates(hexagon));
+        });
 
         return multiPolygonCoordinates;
     }
@@ -31,7 +31,9 @@ class GeoJsonCoordinates {
          * GeoJSON coordinates structure for Polygon
          * Why? because in GeoJSON, Polygons can have polygons (as holes) within them.
          */
-        return Arrays.asList(hexagonArrayPositions);
+        List<List<List<Double>>> polygonCoordinates = Arrays.asList(hexagonArrayPositions);
+
+        return polygonCoordinates;
     }
 
     // Internal methods: handle data processing in this class (private)
@@ -46,5 +48,13 @@ class GeoJsonCoordinates {
         });
 
         return positions;
+    }
+
+    public static void main(String[] args) {
+        Coordinates centroid = new Coordinates(-253.3008, 10.7740); // long, lat
+        Hexagon hex = new Hexagon(centroid, 1000);
+        Neighbors neighbors = new Neighbors(hex);
+
+        System.out.println(generateMultiPolygonCoordinates(neighbors));
     }
 }

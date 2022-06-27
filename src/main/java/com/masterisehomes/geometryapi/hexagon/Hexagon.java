@@ -21,7 +21,7 @@ public class Hexagon {
     this.circumradius = circumradius;
     this.inradius = circumradius * Math.sqrt(3)/2;
     this.vertices = generateVertices(centroid);
-    this.gisVertices = generateGeographicVertices(centroid);
+    this.gisVertices = generateGisVertices(centroid);
   }
 
   // Methods
@@ -47,7 +47,7 @@ public class Hexagon {
     return coordinatesList;
   }
 
-  private List<Coordinates> generateGeographicVertices(Coordinates centroid) {
+  private List<Coordinates> generateGisVertices(Coordinates centroid) {
     double centroidLong = this.centroid.getLongitude();
     double centroidLat = this.centroid.getLatitude();
 
