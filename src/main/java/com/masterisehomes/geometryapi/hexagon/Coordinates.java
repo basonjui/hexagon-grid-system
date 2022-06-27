@@ -25,11 +25,11 @@ public class Coordinates {
   private final double longitude;
 
   // Constructors
-  public Coordinates(double x, double y) {
-    this.x = x;
-    this.y = y;
-    this.latitude = y;
-    this.longitude = x;
+  public Coordinates(double longitude, double latitude) {
+    this.x = longitude;
+    this.y = latitude;
+    this.latitude = latitude;
+    this.longitude = longitude;
   }
 
   // Comparison methods
