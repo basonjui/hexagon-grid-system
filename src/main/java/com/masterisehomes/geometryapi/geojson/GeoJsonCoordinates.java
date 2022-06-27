@@ -52,7 +52,7 @@ class GeoJsonCoordinates {
 
     public static void main(String[] args) {
         Coordinates centroid = new Coordinates(-253.3008, 10.7740); // long, lat
-        Hexagon hex = new Hexagon(centroid, 1000);
+        Hexagon hex = new Hexagon(centroid, 3500000);
         Neighbors neighbors = new Neighbors(hex);
 
         System.out.println(generateMultiPolygonCoordinates(neighbors));

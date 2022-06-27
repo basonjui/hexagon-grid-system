@@ -9,11 +9,16 @@ import java.util.HashMap;
 
 @ToString
 public class Neighbors {
-  @Getter private Hexagon rootHexagon;
-  @Getter private HashMap<Integer, Coordinates> centroids;
-  @Getter private HashMap<Integer, Coordinates> gisCentroids;
-  @Getter private HashMap<Integer, Hexagon> hexagons;
-  @Getter private HashMap<Integer, Hexagon> gisHexagons;
+  @Getter
+  private Hexagon rootHexagon;
+  @Getter
+  private HashMap<Integer, Coordinates> centroids;
+  @Getter
+  private HashMap<Integer, Coordinates> gisCentroids;
+  @Getter
+  private HashMap<Integer, Hexagon> hexagons;
+  @Getter
+  private HashMap<Integer, Hexagon> gisHexagons;
 
   public Neighbors(Hexagon rootHexagon) {
     this.rootHexagon = rootHexagon;

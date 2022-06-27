@@ -7,11 +7,11 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public abstract class Geometry {
+abstract class Geometry {
     @Setter protected String type;
     protected List<?> coordinates;
 
-    public Geometry(String type) {
+    Geometry(String type) {
         if(type.equals("Polygon")) {
             this.type = "Polygon";
         } else if (type.equals("MultiPolygon")) {

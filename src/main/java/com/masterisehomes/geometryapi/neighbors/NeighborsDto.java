@@ -1,19 +1,19 @@
-package com.masterisehomes.geometryapi.hexagon;
+package com.masterisehomes.geometryapi.neighbors; 
 
 import com.masterisehomes.geometryapi.geojson.*;
+import com.masterisehomes.geometryapi.hexagon.*;
 import lombok.Getter;
 import lombok.ToString;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.masterisehomes.geometryapi.geojson.HexagonGeometry;
+
 
 @ToString
-public class HexagonDto extends GeoJSON {
+public class NeighborsDto extends GeoJSON {
     @Getter
-    private final Hexagon hexagon;
+    private final Hexagon rootHexagon;
     @Getter
-    private final HexagonGeometry geometry;
+    private final NeighborsGeometry geometry;
     @Getter
     private final Properties properties = new Properties();
     @Getter
@@ -22,18 +22,14 @@ public class HexagonDto extends GeoJSON {
     private int hashCode;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public HexagonDto(Hexagon hexagon) {
-        this.hexagon = hexagon;
-        this.geometry = new HexagonGeometry(hexagon);
+    public NeighborsDto(Neighbors neighbors) {
+        this.rootHexagon = neighbors.getRootHexagon();
+        this.geometry = new NeighborsGeometry(neighbors);
         this.feature = new Feature(this.geometry);
     }
 
     // Methods
-    public void addProperty(Object key, Object value) {
-        this.feature.addProperty(key, value);
-    }
-
-    public HexagonDto build() {
+    public NeighborsDto build() {
         int currentHashCode = this.getFeatureCollection().hashCode();
 
         if (this.hashCode != currentHashCode) {
