@@ -41,9 +41,13 @@ public class Neighbors {
      * 
      * Neighbor 1 starts at the Flat-top of the root Hexagon:
      *    1
-     * 6/‾‾‾\2
+     * 6/‾‾‾\2  0
      * 5\___/3
      *    4
+     * 
+     * *Update:
+     *  - Neighbors will now include the centroids of rootHexagon
+     *    which is at key 0 in centroids hashmap.
      * 
      * We calculate neighbor coordinates using their relationship to Hexagon centroid.
      * There are 2 approaches: geometric vs trigonometric.
@@ -53,6 +57,8 @@ public class Neighbors {
 
     // Calculate neighbor centroids and put them into HashMap
     HashMap<Integer, Coordinates> centroids = new HashMap<Integer, Coordinates>();
+
+    centroids.put(0, rootHexagon.getCentroid());
 
     centroids.put(1, new Coordinates(
       centroidX, 
@@ -99,6 +105,8 @@ public class Neighbors {
 
     HashMap<Integer, Coordinates> gisCentroids = new HashMap<Integer, Coordinates>();
 
+    gisCentroids.put(0, rootHexagon.getCentroid());
+    
     gisCentroids.put(1, new Coordinates(
       centroidLong, 
       centroidLat - 2 * inradiusLat

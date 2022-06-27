@@ -4,7 +4,7 @@ import static spark.Spark.*;
 
 import com.google.gson.*;
 import com.masterisehomes.geometryapi.hexagon.*;
-import com.masterisehomes.geometryapi.neighbors.Neighbors;
+import com.masterisehomes.geometryapi.neighbors.*;
 
 public class GeometryApi {
     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -49,7 +49,7 @@ public class GeometryApi {
                 Neighbors neighbors = new Neighbors(hexagon);
 
                 // Get data from DTO
-                HexagonDto dto = new HexagonDto(hexagon);
+                NeighborsDto dto = new NeighborsDto(neighbors);
 
                 return dto.build().toGeoJSON();
 
