@@ -14,23 +14,16 @@ public class GeometryApi {
         post("/api/hexagon", "application/json", (req, res) -> {
             try {
                 // Parse request payload to a JSONObject with Gson
-                JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
-                
-                // Get GIS data from payload with keys
-                double latitude = jsonObj.get("latitude").getAsDouble();
-                double longitude = jsonObj.get("longitude").getAsDouble();
-                double circumradius = jsonObj.get("radius").getAsDouble();
+                JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
 
-                // Initialize a hexagon with request's data
-                Coordinates centroid = new Coordinates(longitude, latitude);
-                Hexagon hexagon = new Hexagon(centroid, circumradius);
+                // Initialize a HexagonDto with payload to store all required data
+                HexagonDto dto = new HexagonDto(payload);
 
-                // Get data from DTO
-                HexagonDto dto = new HexagonDto(hexagon);
-
-                return dto.build().toGeoJSON();
-
-            } catch (Exception e) {
+                // Return 
+                return dto.getGeoJson();
+            } 
+            
+            catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }
         });
@@ -38,24 +31,18 @@ public class GeometryApi {
         post("/api/neighbors", "application/json", (req, res) -> {
             try {
                 // Parse request payload to a JSONObject with Gson
-                JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
-                
-                // Get GIS data from payload with keys
-                double latitude = jsonObj.get("latitude").getAsDouble();
-                double longitude = jsonObj.get("longitude").getAsDouble();
-                double circumradius = jsonObj.get("radius").getAsDouble();
+                JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
 
-                // Initialize a hexagon with request's data
-                Coordinates centroid = new Coordinates(longitude, latitude);
-                Hexagon hexagon = new Hexagon(centroid, circumradius);
-                Neighbors neighbors = new Neighbors(hexagon);
+                // Initialize a HexagonDto with payload to store all required data
+                NeighborsDto dto = new NeighborsDto(payload);
 
-                // Get data from DTO
-                NeighborsDto dto = new NeighborsDto(neighbors);
+                // Return 
+                System.out.print(dto.getGeoJson());
 
-                return dto.build().toGeoJSON();
-
-            } catch (Exception e) {
+                return dto.getGeoJson();
+            } 
+            
+            catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }
         });

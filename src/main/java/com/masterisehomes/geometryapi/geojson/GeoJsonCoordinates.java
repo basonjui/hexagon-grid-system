@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.masterisehomes.geometryapi.neighbors.NeighborsDto;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
 class GeoJsonCoordinates {
@@ -49,14 +48,5 @@ class GeoJsonCoordinates {
         });
 
         return positions;
-    }
-
-    public static void main(String[] args) {
-        Coordinates centroid = new Coordinates(-253.3008, 10.7740); // long, lat
-        Hexagon hex = new Hexagon(centroid, 5000);
-        Neighbors neighbors = new Neighbors(hex);
-        NeighborsDto dto = new NeighborsDto(neighbors);
-
-        System.out.println(dto.build().toGeoJSON());
     }
 }
