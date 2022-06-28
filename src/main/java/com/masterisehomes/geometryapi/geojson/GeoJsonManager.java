@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.ToString;
 
 @ToString
-public class GeoJSON {
+public class GeoJsonManager {
     @Getter
     private final FeatureCollection featureCollection = new FeatureCollection();
 
-    public GeoJSON() {
+    public GeoJsonManager() {
     }
 
+    // GeoJSON methods
     public void addFeature(Feature feature) {
         this.featureCollection.add(feature);
     }
@@ -20,9 +21,8 @@ public class GeoJSON {
         this.featureCollection.add(feature);
     }
 
-    public void addFeature(HexagonGeometry geometry, Properties properties) {
-        Feature feature = new Feature(geometry);
-        feature.addProperties(properties);
-        this.featureCollection.add(feature);
+    // Utility methods
+    public int getHashCode() {
+        return this.featureCollection.hashCode();
     }
 }

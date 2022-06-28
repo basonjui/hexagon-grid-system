@@ -142,10 +142,9 @@ public class Neighbors {
 
   private HashMap<Integer, Hexagon> generateHexagons(HashMap<Integer, Coordinates> centroids) {
     HashMap<Integer, Hexagon> hexagons = new HashMap<Integer, Hexagon>();
-    double circumradius = this.rootHexagon.getCircumradius();
 
     centroids.forEach((key, centroid) -> {
-      hexagons.put(key, new Hexagon(centroid, circumradius));
+      hexagons.put(key, new Hexagon(centroid, rootHexagon.getCircumradius()));
     });
 
     return hexagons;
@@ -153,10 +152,9 @@ public class Neighbors {
 
   private HashMap<Integer, Hexagon> generateGisHexagons(HashMap<Integer, Coordinates> gisCentroids) {
     HashMap<Integer, Hexagon> gisHexagons = new HashMap<Integer, Hexagon>();
-    double circumradius = this.rootHexagon.getCircumradius();
 
     gisCentroids.forEach((key, gisCentroid) -> {
-      gisHexagons.put(key, new Hexagon(gisCentroid, circumradius));
+      gisHexagons.put(key, new Hexagon(gisCentroid, rootHexagon.getCircumradius()));
     });
 
     return gisHexagons;

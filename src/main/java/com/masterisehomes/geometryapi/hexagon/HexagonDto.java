@@ -9,17 +9,15 @@ import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geojson.HexagonGeometry;
 
 @ToString
-public class HexagonDto extends GeoJSON {
+public class HexagonDto extends GeoJsonManager {
     @Getter
     private final Hexagon hexagon;
     @Getter
     private final HexagonGeometry geometry;
     @Getter
-    private final Properties properties = new Properties();
-    @Getter
     private final Feature feature;
     @Getter
-    private int hashCode;
+    private int previousHashCode;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public HexagonDto(Hexagon hexagon) {
@@ -34,11 +32,11 @@ public class HexagonDto extends GeoJSON {
     }
 
     public HexagonDto build() {
-        int currentHashCode = this.getFeatureCollection().hashCode();
+        int currentHashCode = this.getHashCode();
 
-        if (this.hashCode != currentHashCode) {
+        if (this.previousHashCode != currentHashCode) {
             this.addFeature(this.feature);
-            this.hashCode = currentHashCode;
+            this.previousHashCode = currentHashCode;
         }
 
         return this;

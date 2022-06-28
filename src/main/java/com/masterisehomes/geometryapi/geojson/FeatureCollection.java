@@ -6,18 +6,24 @@ import java.util.List;
 import lombok.ToString;
 
 @ToString
-public class FeatureCollection {
+class FeatureCollection {
     private final String type = "FeatureCollection";
-    List<Feature> features = new ArrayList<Feature>();
+    private final List<Feature> features = new ArrayList<Feature>();
 
     FeatureCollection() {
     }
 
-    // Methods
+    // Setter
     public void add(Feature feature) {
         this.features.add(feature);
     }
 
+    // Getter
+    public Feature get(int index) {
+        return this.features.get(index);
+    }
+
+    // Utility
     public boolean isEmpty() {
         return this.features.isEmpty();
     }

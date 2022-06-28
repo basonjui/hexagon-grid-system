@@ -15,6 +15,7 @@ public class GeometryApi {
             try {
                 // Parse request payload to a JSONObject with Gson
                 JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
+                
                 // Get GIS data from payload with keys
                 double latitude = jsonObj.get("latitude").getAsDouble();
                 double longitude = jsonObj.get("longitude").getAsDouble();
@@ -38,6 +39,7 @@ public class GeometryApi {
             try {
                 // Parse request payload to a JSONObject with Gson
                 JsonObject jsonObj = gson.fromJson(req.body(), JsonObject.class);
+                
                 // Get GIS data from payload with keys
                 double latitude = jsonObj.get("latitude").getAsDouble();
                 double longitude = jsonObj.get("longitude").getAsDouble();

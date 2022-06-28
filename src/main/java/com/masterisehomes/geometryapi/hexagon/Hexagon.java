@@ -37,19 +37,19 @@ public class Hexagon {
      */
     List<Coordinates> coordinatesList = new ArrayList<Coordinates>();
 
-    coordinatesList.add(new Coordinates(centroidX - circumradius*1/2, centroidY - inradius));
-    coordinatesList.add(new Coordinates(centroidX + circumradius*1/2, centroidY - inradius));
+    coordinatesList.add(new Coordinates(centroidX - circumradius * 1/2, centroidY - inradius));
+    coordinatesList.add(new Coordinates(centroidX + circumradius * 1/2, centroidY - inradius));
     coordinatesList.add(new Coordinates(centroidX + circumradius, centroidY));
-    coordinatesList.add(new Coordinates(centroidX + circumradius*1/2, centroidY + inradius));
-    coordinatesList.add(new Coordinates(centroidX - circumradius*1/2, centroidY + inradius));
+    coordinatesList.add(new Coordinates(centroidX + circumradius * 1/2, centroidY + inradius));
+    coordinatesList.add(new Coordinates(centroidX - circumradius * 1/2, centroidY + inradius));
     coordinatesList.add(new Coordinates(centroidX - circumradius, centroidY));
 
     return coordinatesList;
   }
 
   private List<Coordinates> generateGisVertices(Coordinates centroid) {
-    double centroidLong = this.centroid.getLongitude();
-    double centroidLat = this.centroid.getLatitude();
+    double centroidLong = centroid.getLongitude();
+    double centroidLat = centroid.getLatitude();
 
     /* 
      *  circumradius is either in meters or in pixels, but longitude and 
