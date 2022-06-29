@@ -8,49 +8,43 @@ import java.util.Collection;
 
 @ToString
 @Getter
-public class Feature {
+class Feature {
     private final String type = "Feature";
     private Geometry geometry;
     private HashMap<Object, Object> properties = new HashMap<>();
 
-    public Feature() {
+    Feature(Geometry geometry) {
+        this.geometry = geometry;
     }
 
-    public Feature(Geometry geometry) {
+    // Setter
+    void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
 
     // properties methods
-    public void addProperty(Object key, Object value) {
+    void addProperty(Object key, Object value) {
         this.properties.put(key, value);
     }
 
-    public void addProperties(HashMap<Object, Object> properties) {
+    void addProperties(HashMap<Object, Object> properties) {
         this.properties.putAll(properties);
     }
 
-    // Getters
-    public Object get(Object key) {
+    // key:value getters
+    Object getPropertyByKey(Object key) {
         return this.properties.get(key);
     }
 
-    public HashMap<Object, Object> getMap() {
-        return this.properties;
-    }
-
-    public Set<?> getItems() {
+    Set<?> getPropertiesItems() {
         return this.properties.entrySet();
     }
 
-    public Set<Object> getKeys() {
+    Set<Object> getPropertiesKeys() {
         return this.properties.keySet();
     }
 
-    public Collection<?> getValues() {
+    Collection<?> getPropertiesValues() {
         return this.properties.values();
-    }
-
-    public int getSize() {
-        return this.properties.size();
     }
 }
