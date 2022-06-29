@@ -2,8 +2,6 @@ package com.masterisehomes.geometryapi.geojson;
 
 import lombok.Getter;
 import lombok.ToString;
-
-import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 
@@ -29,15 +27,5 @@ public class GeoJsonManager {
     // Utility methods
     public int getHashCode() {
         return this.featureCollection.hashCode();
-    }
-
-    public static void main(String[] args) {
-        Coordinates centroid = new Coordinates(100, 100);
-        Hexagon hex = new Hexagon(centroid, 50);    
-        
-        GeoJsonManager manager = new GeoJsonManager(hex);
-        System.out.println(
-            manager.getFeatureCollection().getFeature(0).getGeometry() instanceof HexagonGeometry
-        );
     }
 }
