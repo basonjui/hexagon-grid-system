@@ -1,9 +1,6 @@
 package com.masterisehomes.geometryapi;
 
 import static spark.Spark.*;
-
-import javax.xml.catalog.CatalogFeatures.Feature;
-
 import com.google.gson.*;
 import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;

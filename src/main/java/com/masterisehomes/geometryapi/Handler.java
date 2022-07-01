@@ -9,6 +9,10 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 // Sample from AWS
 // Handler value: example.Handler
+
+// Need to add Maven Shade Plugin to pom.xml
+// mvn package by default does not package dependencies
+
 public class Handler implements RequestHandler<Map<String, String>, String> {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
