@@ -6,6 +6,7 @@ import com.google.gson.*;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.*;
 import com.masterisehomes.geometryapi.neighbors.*;
+import com.masterisehomes.geometryapi.util.JsonTransformer;
 
 public class GeometryApi {
     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -26,17 +27,14 @@ public class GeometryApi {
                 // GeoJsonManager handles all GeoJSON operations
                 GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
 
-                // Convert FeatureCollection object to JSON
-                String geojson = gson.toJson(manager.getFeatureCollection());
-
                 // Return GeoJSON response
-                return geojson;
+                return manager.getFeatureCollection();
             } 
             
             catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }
-        });
+        }, new JsonTransformer());
 
         post("/api/neighbors", "application/json", (request, response) -> {
             try {
@@ -47,14 +45,13 @@ public class GeometryApi {
                 NeighborsDto dto = new NeighborsDto(payload);
 
                 GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
-                String geojson = gson.toJson(manager.getFeatureCollection());
 
-                return geojson;
+                return manager.getFeatureCollection();
             } 
             
             catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }
-        });
+        }, new JsonTransformer());
     }
 }
