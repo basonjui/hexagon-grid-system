@@ -1,4 +1,5 @@
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/FeatureCollection.java
+/home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/util/Handler.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/HexagonGeometry.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/hexagon/Hexagon.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/NeighborsGeometry.java
@@ -16,3 +17,4 @@
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/Geometry.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/hexagon/Coordinates.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/tessellation/Tessellation.java
+/home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/util/JsonTransformer.java
