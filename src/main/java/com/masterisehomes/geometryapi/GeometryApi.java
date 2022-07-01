@@ -2,7 +2,10 @@ package com.masterisehomes.geometryapi;
 
 import static spark.Spark.*;
 
+import javax.xml.catalog.CatalogFeatures.Feature;
+
 import com.google.gson.*;
+import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.*;
 import com.masterisehomes.geometryapi.neighbors.*;
@@ -23,14 +26,15 @@ public class GeometryApi {
                 // Initialize a HexagonDto with payload to get all required data
                 HexagonDto dto = new HexagonDto(payload);
                 // From dto, you can get lat, long, centroid, radius, hexagon
-                
+
                 // GeoJsonManager handles all GeoJSON operations
                 GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
+                FeatureCollection collection = manager.getFeatureCollection();
 
                 // Return GeoJSON response
-                return manager.getFeatureCollection();
-            } 
-            
+                return collection;
+            }
+
             catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }
@@ -45,10 +49,11 @@ public class GeometryApi {
                 NeighborsDto dto = new NeighborsDto(payload);
 
                 GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
+                FeatureCollection collection = manager.getFeatureCollection();
 
-                return manager.getFeatureCollection();
-            } 
-            
+                return collection;
+            }
+
             catch (Exception e) {
                 return "Invalid JSON data provided: " + e;
             }

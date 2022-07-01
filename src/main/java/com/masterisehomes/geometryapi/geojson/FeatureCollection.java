@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @ToString
-class FeatureCollection {
+public class FeatureCollection {
     private final String type = "FeatureCollection";
 
     @Getter
