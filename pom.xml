@@ -5,7 +5,7 @@
 
   <groupId>com.masterisehomes.geometryapi</groupId>
   <artifactId>geometryapi</artifactId>
-  <version>0.5</version>
+  <version>0.6.2</version>
 
   <name>geometryapi</name>
   <!-- FIXME change it to the project's website -->
@@ -49,6 +49,12 @@
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-core</artifactId>
+      <version>1.2.1</version>
     </dependency>
   </dependencies>
 

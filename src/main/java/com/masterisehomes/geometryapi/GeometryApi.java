@@ -12,10 +12,12 @@ public class GeometryApi {
     // public final static Gson gson = new Gson();
 
     public static void main(String[] args) {
-        post("/api/hexagon", "application/json", (req, res) -> {
+        before((request, response) -> response.type("application/json"));
+
+        post("/api/hexagon", "application/json", (request, response) -> {
             try {
                 // Parse request payload to a JSONObject with Gson
-                JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
+                JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
                 // Initialize a HexagonDto with payload to get all required data
                 HexagonDto dto = new HexagonDto(payload);
@@ -25,10 +27,10 @@ public class GeometryApi {
                 GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
 
                 // Convert FeatureCollection object to JSON
-                String response = gson.toJson(manager.getFeatureCollection());
+                String geojson = gson.toJson(manager.getFeatureCollection());
 
-                // Return JSON in GeoJSON format
-                return response;
+                // Return GeoJSON response
+                return geojson;
             } 
             
             catch (Exception e) {
@@ -36,18 +38,18 @@ public class GeometryApi {
             }
         });
 
-        post("/api/neighbors", "application/json", (req, res) -> {
+        post("/api/neighbors", "application/json", (request, response) -> {
             try {
                 // Parse request payload to a JSONObject with Gson
-                JsonObject payload = gson.fromJson(req.body(), JsonObject.class);
+                JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
                 // Initialize a HexagonDto with payload to store all required data
                 NeighborsDto dto = new NeighborsDto(payload);
 
                 GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
-                String response = gson.toJson(manager.getFeatureCollection());
+                String geojson = gson.toJson(manager.getFeatureCollection());
 
-                return response;
+                return geojson;
             } 
             
             catch (Exception e) {
