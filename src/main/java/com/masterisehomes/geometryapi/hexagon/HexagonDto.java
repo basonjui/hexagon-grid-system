@@ -3,6 +3,7 @@ package com.masterisehomes.geometryapi.hexagon;
 import lombok.Getter;
 import lombok.ToString;
 import java.util.Map;
+import java.lang.Double;
 
 @ToString
 public class HexagonDto {
@@ -13,11 +14,11 @@ public class HexagonDto {
     @Getter
     private Hexagon hexagon;
 
-    public HexagonDto(Map<String, Double> lambdaEvent) {
+    public HexagonDto(Map<String, String> lambdaEvent) {
         // Parse lambdaEvent map to latitude, longitude, circumradius
-        this.latitude = lambdaEvent.get("latitude");
-        this.longitude = lambdaEvent.get("longitude");
-        this.circumradius = lambdaEvent.get("radius");
+        this.latitude = Double.parseDouble(lambdaEvent.get("latitude"));
+        this.longitude = Double.parseDouble(lambdaEvent.get("longitude"));
+        this.circumradius = Double.parseDouble(lambdaEvent.get("radius"));
         
         // Construct Coordinates and Hexagon objects
         this.centroid = new Coordinates(this.longitude, this.latitude);

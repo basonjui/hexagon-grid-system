@@ -10,11 +10,11 @@ import com.masterisehomes.geometryapi.hexagon.HexagonDto;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 
-public class HexagonHandler implements RequestHandler<Map<String, Double>, String> {
+public class HexagonHandler implements RequestHandler<Map<String, String>, String> {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
-    public String handleRequest(Map<String, Double> event, Context context) {
+    public String handleRequest(Map<String, String> event, Context context) {
         // Logger
         LambdaLogger logger = context.getLogger();
         // log execution details
@@ -30,8 +30,11 @@ public class HexagonHandler implements RequestHandler<Map<String, Double>, Strin
         GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
         // Use GeoJsonManager to generate FeatureCollection object
         FeatureCollection collection = manager.getFeatureCollection();
+
+        logger.log("COLLECTION: " + gson.toJson(collection));
         String response = gson.toJson(collection);
 
         return response;
+
     }
 }
