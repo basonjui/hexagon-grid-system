@@ -2,7 +2,7 @@ package com.masterisehomes.geometryapi.hexagon;
 
 import lombok.Getter;
 import lombok.ToString;
-import com.google.gson.JsonObject;
+import java.util.Map;
 
 @ToString
 public class HexagonDto {
@@ -13,11 +13,13 @@ public class HexagonDto {
     @Getter
     private Hexagon hexagon;
 
-    public HexagonDto(JsonObject payload) {
-        this.latitude = payload.get("latitude").getAsDouble();
-        this.longitude = payload.get("longitude").getAsDouble();
-        this.circumradius = payload.get("radius").getAsDouble();
-
+    public HexagonDto(Map<String, Double> lambdaEvent) {
+        // Parse lambdaEvent map to latitude, longitude, circumradius
+        this.latitude = lambdaEvent.get("latitude");
+        this.longitude = lambdaEvent.get("longitude");
+        this.circumradius = lambdaEvent.get("radius");
+        
+        // Construct Coordinates and Hexagon objects
         this.centroid = new Coordinates(this.longitude, this.latitude);
         this.hexagon = new Hexagon(this.centroid, this.circumradius);
     }

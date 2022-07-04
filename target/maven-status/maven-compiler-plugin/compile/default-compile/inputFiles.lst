@@ -12,7 +12,7 @@
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/hexagon/Boundary.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/Feature.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/neighbors/NeighborsDto.java
-/home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/Handler.java
+/home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/HexagonHandler.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/hexagon/HexagonDto.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/Geometry.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/hexagon/Coordinates.java

@@ -1,4 +1,4 @@
-package com.masterisehomes.geometryapi;
+/* package com.masterisehomes.geometryapi;
 
 import static spark.Spark.*;
 import com.google.gson.*;
@@ -57,3 +57,4 @@ public class GeometryApi {
         }, new JsonTransformer());
     }
 }
+ */
