@@ -5,6 +5,7 @@
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geodesy/SphericalMetricConversion.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geodesy/EllipticalMercatorProjection.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/GeometryApi.java
+/home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/HandlerStream.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geodesy/SphericalMercatorProjection.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/GeoJsonManager.java
 /home/quan/Development/projects/geometryapi/src/main/java/com/masterisehomes/geometryapi/geojson/GeoJsonCoordinates.java
