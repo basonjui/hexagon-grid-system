@@ -16,6 +16,7 @@ public class HexagonDto {
     private Coordinates centroid;
     @Getter
     private Hexagon hexagon;
+    
     final static private Gson gson = new Gson();
 
     public HexagonDto(Map<String, Object> lambdaEvent) {

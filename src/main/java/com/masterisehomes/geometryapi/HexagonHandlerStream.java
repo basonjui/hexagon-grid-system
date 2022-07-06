@@ -37,7 +37,7 @@ public class HexagonHandlerStream implements RequestStreamHandler {
         new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("US-ASCII"))));
 
     try {
-      // BufferedReader -> Gson (JsonObject)
+      // BufferedReader -> Gson (JsonObject) -> Map<String, String>
       Type stringObjectMap = new TypeToken<Map<String, Object>>() {
       }.getType();
       Map<String, Object> event = gson.fromJson(reader, stringObjectMap);

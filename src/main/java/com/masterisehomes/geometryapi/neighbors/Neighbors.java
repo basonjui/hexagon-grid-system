@@ -41,7 +41,7 @@ public class Neighbors {
      * 
      * Neighbor 1 starts at the Flat-top of the root Hexagon:
      *    1
-     * 6/‾‾‾\2  0
+     * 6/‾‾‾\2
      * 5\___/3
      *    4
      * 
