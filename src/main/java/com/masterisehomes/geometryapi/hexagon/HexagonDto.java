@@ -1,14 +1,18 @@
 package com.masterisehomes.geometryapi.hexagon;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.lang.reflect.Type;
+
 import lombok.Getter;
 import lombok.ToString;
-import java.util.Map;
-import java.util.HashMap;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
+
+
 
 @ToString
 public class HexagonDto {
@@ -20,8 +24,8 @@ public class HexagonDto {
     private Hexagon hexagon;
     final static private Gson gson = new Gson();
 
-    public HexagonDto(HashMap lambdaEvent) {
-        String lambdaBody = lambdaEvent.get("body").toString();
+    public HexagonDto(HashMap<String, Object> lambdaEvent) {
+        String lambdaBody = lambdaEvent.get("body").toString(); // lambdaEvent.get("body") returns an Object
     }
 
     public HexagonDto(Hexagon hexagon) {
@@ -38,6 +42,11 @@ public class HexagonDto {
         String escapedString = jsonObj.get("body").getAsString(); 
         JsonObject escapedStringObj = gson.fromJson(escapedString, JsonObject.class);
         
-        System.out.println(escapedStringObj.get("latitude"));
+        System.out.println(escapedStringObj.get("latitude").getAsDouble());
+
+        Type stringObjectmap = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> map = gson.fromJson(json, stringObjectmap);
+
+        System.out.println(jsonObj);
     }
 }
