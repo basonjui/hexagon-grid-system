@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import com.google.gson.JsonObject;
 import com.masterisehomes.geometryapi.hexagon.*;
+
 @ToString
 public class NeighborsDto {
     @Getter

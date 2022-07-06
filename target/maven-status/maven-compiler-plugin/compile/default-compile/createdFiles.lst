@@ -1,6 +1,5 @@
 com/masterisehomes/geometryapi/geojson/GeoJsonCoordinates.class
 com/masterisehomes/geometryapi/geojson/Geometry.class
-com/masterisehomes/geometryapi/HandlerStream.class
 com/masterisehomes/geometryapi/hexagon/HexagonDto.class
 com/masterisehomes/geometryapi/geodesy/SphericalMercatorProjection.class
 com/masterisehomes/geometryapi/hexagon/Boundary.class
@@ -14,6 +13,8 @@ com/masterisehomes/geometryapi/util/JsonTransformer.class
 com/masterisehomes/geometryapi/neighbors/NeighborsDto.class
 com/masterisehomes/geometryapi/geojson/NeighborsGeometry.class
 com/masterisehomes/geometryapi/hexagon/Coordinates.class
+com/masterisehomes/geometryapi/HexagonHandlerStream.class
 com/masterisehomes/geometryapi/geojson/GeoJsonManager.class
 com/masterisehomes/geometryapi/hexagon/Hexagon.class
+com/masterisehomes/geometryapi/HexagonHandlerStream$1.class
 com/masterisehomes/geometryapi/geojson/Feature.class
