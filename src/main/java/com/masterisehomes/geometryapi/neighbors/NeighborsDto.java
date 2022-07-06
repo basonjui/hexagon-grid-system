@@ -57,6 +57,7 @@ public class NeighborsDto {
     }
 
     public NeighborsDto(Hexagon rootHexagon) {
+        // TODO: need to initilize latitude, longitude, neighbors
         this.rootHexagon = rootHexagon;
         this.rootCentroid = this.rootHexagon.getCentroid();
         this.circumradius = this.rootHexagon.getCircumradius();
