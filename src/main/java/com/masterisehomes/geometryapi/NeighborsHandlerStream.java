@@ -22,9 +22,9 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.JsonSyntaxException;
 import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
-import com.masterisehomes.geometryapi.hexagon.HexagonDto;
+import com.masterisehomes.geometryapi.neighbors.NeighborsDto;
 
-public class HexagonHandlerStream implements RequestStreamHandler {
+public class NeighborsHandlerStream implements RequestStreamHandler {
   Gson gson = new Gson();
 
   @Override
@@ -44,8 +44,8 @@ public class HexagonHandlerStream implements RequestStreamHandler {
       logger.log("EVENT TYPE: " + event.getClass().toString());
 
       // Generate DTO from event HashMap
-      HexagonDto dto = new HexagonDto(event);
-      GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
+      NeighborsDto dto = new NeighborsDto(event);
+      GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
       FeatureCollection collection = manager.getFeatureCollection();
 
       // Write JSON result to output stream
