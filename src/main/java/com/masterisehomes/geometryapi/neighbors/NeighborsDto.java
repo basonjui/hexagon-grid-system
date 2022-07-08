@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 @ToString
 public class NeighborsDto {
     @Getter
-    private double latitude, longitude, circumradius;
+    private double rootLatitude, rootLongitude, circumradius;
     @Getter
     private Coordinates rootCentroid;
     @Getter
@@ -44,12 +44,12 @@ public class NeighborsDto {
         JsonObject eventBody = gson.fromJson(eventBodyJson, JsonObject.class);
 
         // Get latitude, longitude, and radius data (JsonPrimitive) from eventBody
-        this.latitude = eventBody.get("latitude").getAsDouble();
-        this.longitude = eventBody.get("longitude").getAsDouble();
+        this.rootLatitude = eventBody.get("latitude").getAsDouble();
+        this.rootLongitude = eventBody.get("longitude").getAsDouble();
         this.circumradius = eventBody.get("radius").getAsDouble();
 
         // Construct Hexagon
-        this.rootCentroid = new Coordinates(this.longitude, this.latitude);
+        this.rootCentroid = new Coordinates(this.rootLongitude, this.rootLatitude);
         this.rootHexagon = new Hexagon(this.rootCentroid, this.circumradius);
 
         // Construct Neighbors
@@ -57,9 +57,11 @@ public class NeighborsDto {
     }
 
     public NeighborsDto(Hexagon rootHexagon) {
-        // TODO: need to initilize latitude, longitude, neighbors
         this.rootHexagon = rootHexagon;
-        this.rootCentroid = this.rootHexagon.getCentroid();
+        this.rootCentroid = rootHexagon.getCentroid();
+        this.rootLatitude = this.rootCentroid.getLatitude();
+        this.rootLongitude = this.rootCentroid.getLongitude();
         this.circumradius = this.rootHexagon.getCircumradius();
+        this.neighbors = new Neighbors(rootHexagon);
     }
 }

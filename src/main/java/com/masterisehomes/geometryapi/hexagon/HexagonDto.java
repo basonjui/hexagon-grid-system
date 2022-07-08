@@ -51,9 +51,10 @@ public class HexagonDto {
     }
 
     public HexagonDto(Hexagon hexagon) {
-        // TODO: need to initialize latitude, longitude
         this.hexagon = hexagon;
-        this.centroid = this.hexagon.getCentroid();
-        this.circumradius = this.hexagon.getCircumradius();
+        this.centroid = hexagon.getCentroid();
+        this.circumradius = hexagon.getCircumradius();
+        this.latitude = this.centroid.getLatitude();
+        this.longitude = this.centroid.getLongitude();
     }
 }
