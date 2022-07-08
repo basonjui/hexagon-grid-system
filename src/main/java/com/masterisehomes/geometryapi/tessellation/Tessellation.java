@@ -1,9 +1,10 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import com.masterisehomes.geometryapi.hexagon.*;
-import java.util.concurrent.*;
+import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 
 public class Tessellation {
@@ -13,7 +14,7 @@ public class Tessellation {
     private int totalHexagons = hexagons.size();
     private Coordinates originCentroid;
     private Boundary boundary;
-    private ConcurrentHashMap<Integer, Coordinates> centroidsD1, centroidsD2, centroidsD3, centroidsD4, centroidsD5,
+    private Map<Integer, Coordinates> centroidsD1, centroidsD2, centroidsD3, centroidsD4, centroidsD5,
             centroidsD6;
 
     // Constructors
@@ -50,7 +51,7 @@ public class Tessellation {
         int multiplier = 1;
         switch (neighborDirection) {
             case 1:
-                centroidsD1 = new ConcurrentHashMap<>();
+                centroidsD1 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(originX, originY + (2 * inradius * multiplier));
@@ -62,7 +63,7 @@ public class Tessellation {
                 break;
 
             case 2:
-                centroidsD2 = new ConcurrentHashMap<>();
+                centroidsD2 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(
@@ -75,7 +76,7 @@ public class Tessellation {
                 break;
 
             case 3:
-                centroidsD3 = new ConcurrentHashMap<>();
+                centroidsD3 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(
@@ -88,7 +89,7 @@ public class Tessellation {
                 break;
 
             case 4:
-                centroidsD4 = new ConcurrentHashMap<>();
+                centroidsD4 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(originX, originY + (2 * inradius * multiplier));
@@ -100,7 +101,7 @@ public class Tessellation {
                 break;
 
             case 5:
-                centroidsD5 = new ConcurrentHashMap<>();
+                centroidsD5 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(
@@ -113,7 +114,7 @@ public class Tessellation {
                 break;
 
             case 6:
-                centroidsD6 = new ConcurrentHashMap<>();
+                centroidsD6 = new LinkedHashMap<>();
                 while (previousCentroid.isIn(boundary)) {
                     centroidsCount++;
                     nextCentroid = new Coordinates(

@@ -55,8 +55,8 @@ public class Hexagon {
      *  circumradius is either in meters or in pixels, but longitude and 
      *  latitude are in degrees
      * 
-     *  so we need to convert the displacement into degrees of lat & long
-     *  (which long is dependent on lat).
+     *  so we need to convert the displacement into degrees of latitude & longitude
+     *  (where meters/longitude is dependent on current latitude).
     */
     double circumradiusLong = SphericalMercatorProjection.xToLongitude(this.circumradius);
     double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
