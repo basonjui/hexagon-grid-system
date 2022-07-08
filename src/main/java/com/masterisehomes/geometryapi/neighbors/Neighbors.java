@@ -5,20 +5,21 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import lombok.Getter;
 import lombok.ToString;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ToString
 public class Neighbors {
   @Getter
   private Hexagon rootHexagon;
   @Getter
-  private HashMap<Integer, Coordinates> centroids;
+  private Map<Integer, Coordinates> centroids;
   @Getter
-  private HashMap<Integer, Coordinates> gisCentroids;
+  private Map<Integer, Coordinates> gisCentroids;
   @Getter
-  private HashMap<Integer, Hexagon> hexagons;
+  private Map<Integer, Hexagon> hexagons;
   @Getter
-  private HashMap<Integer, Hexagon> gisHexagons;
+  private Map<Integer, Hexagon> gisHexagons;
 
   public Neighbors(Hexagon rootHexagon) {
     this.rootHexagon = rootHexagon;
@@ -28,7 +29,7 @@ public class Neighbors {
     this.gisHexagons = generateGisHexagons(this.gisCentroids);
   }
 
-  private HashMap<Integer, Coordinates> generateCentroids(Hexagon rootHexagon) {
+  private Map<Integer, Coordinates> generateCentroids(Hexagon rootHexagon) {
     final double SQRT_3 = Math.sqrt(3);
     final double centroidX = rootHexagon.getCentroid().getX();
     final double centroidY = rootHexagon.getCentroid().getY();
@@ -56,7 +57,7 @@ public class Neighbors {
      */
 
     // Calculate neighbor centroids and put them into HashMap
-    HashMap<Integer, Coordinates> centroids = new HashMap<Integer, Coordinates>();
+    Map<Integer, Coordinates> centroids = new LinkedHashMap<Integer, Coordinates>();
 
     centroids.put(0, rootHexagon.getCentroid());
 
@@ -94,7 +95,7 @@ public class Neighbors {
   }
 
   
-  private HashMap<Integer, Coordinates> generateGisCentroids(Hexagon rootHexagon) {
+  private Map<Integer, Coordinates> generateGisCentroids(Hexagon rootHexagon) {
     final double SQRT_3 = Math.sqrt(3);
     final double centroidLong = rootHexagon.getCentroid().getLongitude();
     final double centroidLat = rootHexagon.getCentroid().getLatitude();
@@ -103,7 +104,7 @@ public class Neighbors {
     final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius);  // x
     final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);    // y
 
-    HashMap<Integer, Coordinates> gisCentroids = new HashMap<Integer, Coordinates>();
+    Map<Integer, Coordinates> gisCentroids = new LinkedHashMap<Integer, Coordinates>();
 
     gisCentroids.put(0, rootHexagon.getCentroid());
     
@@ -140,8 +141,8 @@ public class Neighbors {
     return gisCentroids;
   }
 
-  private HashMap<Integer, Hexagon> generateHexagons(HashMap<Integer, Coordinates> centroids) {
-    HashMap<Integer, Hexagon> hexagons = new HashMap<Integer, Hexagon>();
+  private Map<Integer, Hexagon> generateHexagons(Map<Integer, Coordinates> centroids) {
+    Map<Integer, Hexagon> hexagons = new LinkedHashMap<Integer, Hexagon>();
 
     centroids.forEach((key, centroid) -> {
       hexagons.put(key, new Hexagon(centroid, rootHexagon.getCircumradius()));
@@ -150,8 +151,8 @@ public class Neighbors {
     return hexagons;
   }
 
-  private HashMap<Integer, Hexagon> generateGisHexagons(HashMap<Integer, Coordinates> gisCentroids) {
-    HashMap<Integer, Hexagon> gisHexagons = new HashMap<Integer, Hexagon>();
+  private Map<Integer, Hexagon> generateGisHexagons(Map<Integer, Coordinates> gisCentroids) {
+    Map<Integer, Hexagon> gisHexagons = new LinkedHashMap<Integer, Hexagon>();
 
     gisCentroids.forEach((key, gisCentroid) -> {
       gisHexagons.put(key, new Hexagon(gisCentroid, rootHexagon.getCircumradius()));
