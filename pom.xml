@@ -5,10 +5,9 @@
 
   <groupId>com.masterisehomes.geometryapi</groupId>
   <artifactId>geometryapi</artifactId>
-  <version>0.6.2</version>
+  <version>0.6.3</version>
 
   <name>geometryapi</name>
-  <!-- FIXME change it to the project's website -->
   <url>https://github.com/basonjui/geometryapi</url>
 
   <properties>
