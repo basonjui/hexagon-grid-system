@@ -15,6 +15,9 @@ public class GeoJsonManager {
     public GeoJsonManager(Hexagon hexagon) {
         this.geometry = new PolygonGeometry(hexagon);
         this.feature = new Feature(this.geometry);
+        this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
+        this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+        this.feature.addProperty("circumradius", hexagon.getCircumradius());
         this.featureCollection.addFeature(this.feature);
     }
 
