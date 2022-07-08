@@ -17,11 +17,6 @@ class Feature {
         this.geometry = geometry;
     }
 
-    // Setter
-    void setGeometry(Geometry geometry) {
-        this.geometry = geometry;
-    }
-
     // properties methods
     void addProperty(Object key, Object value) {
         this.properties.put(key, value);
