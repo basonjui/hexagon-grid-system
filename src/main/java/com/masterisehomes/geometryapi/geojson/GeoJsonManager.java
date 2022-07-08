@@ -13,13 +13,13 @@ public class GeoJsonManager {
     private final Geometry geometry;
 
     public GeoJsonManager(Hexagon hexagon) {
-        this.geometry = new HexagonGeometry(hexagon);
+        this.geometry = new PolygonGeometry(hexagon);
         this.feature = new Feature(this.geometry);
         this.featureCollection.addFeature(this.feature);
     }
 
     public GeoJsonManager(Neighbors neighbors) {
-        this.geometry = new NeighborsGeometry(neighbors);
+        this.geometry = new MultiPolygonGeometry(neighbors);
         this.feature = new Feature(this.geometry);
         this.featureCollection.addFeature(this.feature);
     }

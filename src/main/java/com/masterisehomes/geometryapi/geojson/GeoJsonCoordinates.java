@@ -12,6 +12,7 @@ class GeoJsonCoordinates {
     GeoJsonCoordinates() {
     }
 
+    // For Neighbors type
     static List<List<List<List<Double>>>> generateMultiPolygonCoordinates(Neighbors neighbors) {
         HashMap<Integer, Hexagon> hexagons = neighbors.getGisHexagons();
         List<List<List<List<Double>>>> multiPolygonCoordinates = new ArrayList<>();
@@ -23,6 +24,7 @@ class GeoJsonCoordinates {
         return multiPolygonCoordinates;
     }
 
+    // For Hexagon type
     static List<List<List<Double>>> generatePolygonCoordinates(Hexagon hexagon) {
         // Generate an Array of Array of Positions
         List<List<Double>> hexagonArrayPositions = _generateArrayPositions(hexagon);
