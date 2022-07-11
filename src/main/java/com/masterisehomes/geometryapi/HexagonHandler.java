@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 import com.masterisehomes.geometryapi.hexagon.HexagonDto;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
