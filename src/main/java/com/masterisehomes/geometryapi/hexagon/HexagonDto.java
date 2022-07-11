@@ -57,4 +57,13 @@ public class HexagonDto {
         this.latitude = this.centroid.getLatitude();
         this.longitude = this.centroid.getLongitude();
     }
+
+    public HexagonDto(JsonObject payload) {
+        this.latitude = payload.get("latitude").getAsDouble();
+        this.longitude = payload.get("longitude").getAsDouble();
+        this.circumradius = payload.get("radius").getAsDouble();
+
+        this.centroid = new Coordinates(this.longitude, this.latitude);
+        this.hexagon = new Hexagon(this.centroid, this.circumradius);
+    }
 }

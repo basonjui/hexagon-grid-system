@@ -64,4 +64,14 @@ public class NeighborsDto {
         this.circumradius = this.rootHexagon.getCircumradius();
         this.neighbors = new Neighbors(rootHexagon);
     }
+
+    public NeighborsDto(JsonObject payload) {
+        this.rootLatitude = payload.get("latitude").getAsDouble();
+        this.rootLongitude = payload.get("longitude").getAsDouble();
+        this.circumradius = payload.get("radius").getAsDouble();
+
+        this.rootCentroid = new Coordinates(this.rootLongitude, this.rootLatitude);
+        this.rootHexagon = new Hexagon(this.rootCentroid, this.circumradius);
+        this.neighbors = new Neighbors(this.rootHexagon);
+    }
 }
