@@ -2,6 +2,7 @@ package com.masterisehomes.geometryapi.geojson;
 
 import lombok.Getter;
 import lombok.ToString;
+
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 

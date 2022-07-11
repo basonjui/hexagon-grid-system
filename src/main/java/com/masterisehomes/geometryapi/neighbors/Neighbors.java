@@ -1,12 +1,14 @@
 package com.masterisehomes.geometryapi.neighbors;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
+
 import lombok.Getter;
 import lombok.ToString;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @ToString
 public class Neighbors {

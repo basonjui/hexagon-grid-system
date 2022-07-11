@@ -3,8 +3,10 @@ package com.masterisehomes.geometryapi.hexagon;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
+
 import lombok.Getter;
 import lombok.ToString;
+
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
 @Getter

@@ -1,11 +1,11 @@
 package com.masterisehomes.geometryapi.tessellation;
 
-import com.masterisehomes.geometryapi.hexagon.*;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.masterisehomes.geometryapi.hexagon.*;
 
 public class Tessellation {
     // Properties

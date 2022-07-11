@@ -20,12 +20,10 @@ public class HexagonHandler implements RequestHandler<Map<String, Object>, Strin
 
     @Override
     public String handleRequest(Map<String, Object> event, Context context) {
-        // Logger
-        // LambdaLogger logger = context.getLogger();
-
         // log execution details
         logger.info("ENVIRONMENT VARIABLES: " + gson.toJson(System.getenv()));
         logger.info("CONTEXT: " + gson.toJson(context));
+
         // process event
         logger.info("EVENT TYPE: " + event.getClass().toString());
         logger.info("EVENT KEYS: " + event.keySet());

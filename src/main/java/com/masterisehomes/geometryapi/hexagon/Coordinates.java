@@ -1,9 +1,10 @@
 package com.masterisehomes.geometryapi.hexagon;
 
-import lombok.Getter;
-import lombok.ToString;
 import java.util.Arrays;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.ToString;
 
 /* So why the Vertex class instead of using the predefined Point class?
  *

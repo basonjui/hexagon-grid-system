@@ -1,11 +1,13 @@
 package com.masterisehomes.geometryapi.geojson;
 
 import java.util.Map;
-import lombok.Getter;
-import lombok.ToString;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+
+import lombok.Getter;
+import lombok.ToString;
+
 
 @ToString
 @Getter
