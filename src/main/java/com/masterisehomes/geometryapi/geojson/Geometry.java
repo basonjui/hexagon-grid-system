@@ -18,7 +18,7 @@ abstract class Geometry {
         } else if (type.equals("MultiPolygon")) {
             this.type = "MultiPolygon";
         } else {
-            throw new IllegalArgumentException("Invalid Geometry type.");
+            throw new IllegalArgumentException("Unsupported Geometry type.");
         }
     }
 }

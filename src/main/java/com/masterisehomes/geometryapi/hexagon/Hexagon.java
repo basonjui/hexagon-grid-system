@@ -9,8 +9,8 @@ import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
-@Getter
 @ToString
+@Getter
 public class Hexagon {
   private Coordinates centroid;
   private double circumradius;
@@ -21,9 +21,10 @@ public class Hexagon {
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
-    this.inradius = circumradius * Math.sqrt(3)/2;
-    this.vertices = generateVertices(centroid);
-    this.gisVertices = generateGisVertices(centroid);
+
+    this.inradius = this.circumradius * Math.sqrt(3)/2;
+    this.vertices = generateVertices(this.centroid);
+    this.gisVertices = generateGisVertices(this.centroid);
   }
 
   // Methods

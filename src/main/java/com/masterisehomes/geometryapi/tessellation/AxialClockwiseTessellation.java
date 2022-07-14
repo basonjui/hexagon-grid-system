@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 
+@ToString
 public class AxialClockwiseTessellation {
     // Inputs
     @Getter

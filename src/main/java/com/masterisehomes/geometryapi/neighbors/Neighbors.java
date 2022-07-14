@@ -102,12 +102,13 @@ public class Neighbors {
     final double centroidLong = rootHexagon.getCentroid().getLongitude();
     final double centroidLat = rootHexagon.getCentroid().getLatitude();
     final double inradius = rootHexagon.getInradius();
+
     // Convert inradius (which is currently in Meter unit) to Degrees unit
     final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius);  // x
     final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);    // y
 
     Map<Integer, Coordinates> gisCentroids = new LinkedHashMap<Integer, Coordinates>();
-
+    
     gisCentroids.put(0, rootHexagon.getCentroid());
     
     gisCentroids.put(1, new Coordinates(

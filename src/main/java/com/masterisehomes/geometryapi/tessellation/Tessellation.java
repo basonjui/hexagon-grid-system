@@ -14,8 +14,7 @@ public class Tessellation {
     private int totalHexagons = hexagons.size();
     private Coordinates originCentroid;
     private Boundary boundary;
-    private Map<Integer, Coordinates> centroidsD1, centroidsD2, centroidsD3, centroidsD4, centroidsD5,
-            centroidsD6;
+    private Map<Integer, Coordinates> centroidsD1, centroidsD2, centroidsD3, centroidsD4, centroidsD5, centroidsD6;
 
     // Constructors
     public Tessellation(Coordinates originCentroid, int circumradius, Boundary boundary) {
@@ -32,10 +31,10 @@ public class Tessellation {
          * Neighbors are ordered in a clock-wise rotation, this aims to achieve some
          * simple sense of direction for each root (originCentroid) Hexagon to expand
          * upon required.
-         *    1
+         * 1
          * 6/‾‾‾\2
          * 5\___/3
-         *    4
+         * 4
          * 
          * This function uses inradius and coordinates of the originHexagon, to find all
          * centroids of hexagons that can be extended directly from originCentroid.
@@ -146,9 +145,8 @@ public class Tessellation {
     // String representation
     public String toString() {
         return String.format(
-            "Tessellation[%s, %s\n, %s, totalHexagons: %s]",
-            this.originHexagon, this.originCentroid,
-            this.boundary, this.totalHexagons
-        );
+                "Tessellation[%s, %s\n, %s, totalHexagons: %s]",
+                this.originHexagon, this.originCentroid,
+                this.boundary, this.totalHexagons);
     }
 }
