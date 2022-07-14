@@ -67,17 +67,6 @@ public class Coordinates {
     }
   }
 
-  public boolean isIn(Boundary b) {
-    Coordinates bStart = b.getStart();
-    Coordinates bEnd = b.getEnd();
-
-    if (this.isLarger(bStart) && this.isSmaller(bEnd)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   /* GeoJSON stuff */
 
   /* Position

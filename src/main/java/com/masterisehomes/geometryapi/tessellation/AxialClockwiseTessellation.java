@@ -19,14 +19,14 @@ public class AxialClockwiseTessellation {
     @Getter
     private final double circumradius;
     @Getter
-    private final List<Coordinates> boundaries;
+    private final List<Coordinates> boundaries; // (startLongitude, endLongitude, startLatitude, endLatitude)
 
     // Computations
     @Getter
     private final Hexagon rootHexagon;
     @Getter
     private final Neighbors neighbors;
-    // TODO: provide a sense of direction for Tessellation
+    // The axial aspect of our Tessellation algorithm, generate Hexagons axis-by-axis
     private final Map<Integer, Coordinates> neighborsCentroids;
     private final Map<Integer, Coordinates> neighborsGisCentroids;
 
@@ -56,7 +56,7 @@ public class AxialClockwiseTessellation {
         this.circumradius = circumradius;
 
         this.rootHexagon = new Hexagon(this.origin, this.circumradius);
-        this.neighbors = new Neighbors(rootHexagon);
+        this.neighbors = new Neighbors(this.rootHexagon);
         this.neighborsCentroids = this.neighbors.getCentroids();
         this.neighborsGisCentroids = this.neighbors.getGisCentroids();
     }
@@ -70,5 +70,9 @@ public class AxialClockwiseTessellation {
         this.neighbors = new Neighbors(this.rootHexagon);
         this.neighborsCentroids = this.neighbors.getCentroids();
         this.neighborsGisCentroids = this.neighbors.getGisCentroids();
+    }
+
+    public void tessellate() {
+
     }
 }
