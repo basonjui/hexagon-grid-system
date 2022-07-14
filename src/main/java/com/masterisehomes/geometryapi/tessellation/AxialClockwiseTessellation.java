@@ -19,39 +19,38 @@ public class AxialClockwiseTessellation {
     @Getter
     private final double circumradius;
     @Getter
-    private final List<Coordinates> boundaries; // (startLongitude, endLongitude, startLatitude, endLatitude)
+    private Boundary boundary;
 
     // Computations
     @Getter
     private final Hexagon rootHexagon;
     @Getter
     private final Neighbors neighbors;
-    // The axial aspect of our Tessellation algorithm, generate Hexagons axis-by-axis
+    // The axial origin of our Tessellation algorithm, Neighbors is nthRing: 0
     private final Map<Integer, Coordinates> neighborsCentroids;
     private final Map<Integer, Coordinates> neighborsGisCentroids;
 
     // Storage
     /*
      * Notes: ArrayList needs to be assigned initialCapacity for better performance,
-     * it cuts the cyle to expand the Array when it is full (default capacity = 10)
+     * it cuts the cyle to expand the Array when it is full (default initialCapacity = 10)
      */
     @Getter
-    private List<Coordinates> centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> tessellationCentroids = new ArrayList<Coordinates>(100);
     @Getter
-    private List<Coordinates> gisCentroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> tessellationGisCentroids = new ArrayList<Coordinates>(100);
     @Getter
-    private List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
+    private List<Hexagon> tessellationHexagons = new ArrayList<Hexagon>(100);
     @Getter
-    private List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+    private List<Hexagon> tessellationGisHexagons = new ArrayList<Hexagon>(100);
 
     // Updater
     @Getter
-    private int rings = 0;
+    private int rings = tessellationCentroids.size();
     @Getter
     private int nthRing = 0;
 
-    public AxialClockwiseTessellation(Coordinates origin, double circumradius, List<Coordinates> boundaries) {
-        this.boundaries = boundaries;
+    public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
         this.circumradius = circumradius;
 
@@ -61,9 +60,8 @@ public class AxialClockwiseTessellation {
         this.neighborsGisCentroids = this.neighbors.getGisCentroids();
     }
 
-    public AxialClockwiseTessellation(Hexagon rootHexagon, List<Coordinates> boundaries) {
+    public AxialClockwiseTessellation(Hexagon rootHexagon) {
         this.rootHexagon = rootHexagon;
-        this.boundaries = boundaries;
 
         this.origin = this.rootHexagon.getCentroid();
         this.circumradius = this.rootHexagon.getCircumradius();
@@ -72,7 +70,24 @@ public class AxialClockwiseTessellation {
         this.neighborsGisCentroids = this.neighbors.getGisCentroids();
     }
 
-    public void tessellate() {
+    public void tessellate(Boundary boundary) {
+        // Set boundary
+        this.boundary = boundary;
 
+        // Check nthRing
+        switch(this.nthRing) {
+            case 0:
+            // 
+            break;
+        }
+    }
+
+    public static void main(String[] args) {
+        Coordinates origin = new Coordinates(10, 10);
+        Hexagon hexagon = new Hexagon(origin, 5000);
+        AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+        
+        Neighbors neighbors = new Neighbors(hexagon);
+        System.out.println(neighbors.getGisCentroids());
     }
 }

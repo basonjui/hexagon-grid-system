@@ -37,6 +37,7 @@ public class Boundary {
 
   // WGS84 Coordinates Boundary
   public Boundary(List<Double> boundary) {
+    // ArrayList (startLongitude, endLongitude, startLatitude, endLatitude)
     this.startLongitude = boundary.get(0);
     this.endLongitude = boundary.get(1);
     this.startLatitude = boundary.get(2);
