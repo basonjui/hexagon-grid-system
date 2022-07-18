@@ -22,17 +22,37 @@ public class Hexagon {
   private List<Coordinates> gisVertices;
 
   // Cube Coordinates Indexing
-  private CubeCoordinatesIndex creatorCCI;
-  private CubeCoordinatesIndex CCI;
-  private HexagonDirection generatedDirection;
+  private final HexagonDirection direction;
+  private final CubeCoordinatesIndex creatorCCI;
+  private final CubeCoordinatesIndex CCI;
 
 
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
     this.inradius = circumradius * Math.sqrt(3)/2;
+
     this.vertices = generateVertices(centroid);
     this.gisVertices = generateGisVertices(centroid);
+
+    
+    this.direction = HexagonDirection.NONE;
+    this.creatorCCI = null;
+    this.CCI = new CubeCoordinatesIndex(creatorCCI, direction);
+  }
+
+  public Hexagon(Coordinates centroid, double circumradius, CubeCoordinatesIndex creatorCCI, HexagonDirection direction) {
+    this.centroid = centroid;
+    this.circumradius = circumradius;
+    this.inradius = circumradius * Math.sqrt(3)/2;
+
+    this.vertices = generateVertices(centroid);
+    this.gisVertices = generateGisVertices(centroid);
+
+    
+    this.direction = direction;
+    this.creatorCCI = creatorCCI;
+    this.CCI = new CubeCoordinatesIndex(creatorCCI, direction);
   }
 
   // Methods
@@ -93,11 +113,18 @@ public class Hexagon {
     return gisCoordinatesList;
   }
 
+  // Getters
+  public String getCCIString() {
+    return String.format("Hexagon%s=(direction=%s, creatorCCI=%s, CCI=%s)", this.getDirection(), this.direction, this.creatorCCI, this.CCI);
+  }
+
   public static void main(String[] args) {
     Coordinates centroid = new Coordinates(100, 100);
-    Hexagon hex = new Hexagon(centroid, 5000);
+    Hexagon hex0 = new Hexagon(centroid, 5000);
+    Hexagon hex1 = new Hexagon(centroid, hex0.getCircumradius(), hex0.getCCI(), HexagonDirection.ONE);
 
-    System.out.println(hex.getGeneratedDirection());
+    System.out.println(hex0.getCCIString());
+    System.out.println(hex1.getCCIString());
   }
 
 }

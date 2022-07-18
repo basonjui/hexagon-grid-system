@@ -25,8 +25,10 @@ public class Neighbors {
 
   public Neighbors(Hexagon rootHexagon) {
     this.rootHexagon = rootHexagon;
+
     this.centroids = generateCentroids(rootHexagon);
     this.hexagons = generateHexagons(this.centroids);
+    
     this.gisCentroids = generateGisCentroids(rootHexagon);
     this.gisHexagons = generateGisHexagons(this.gisCentroids);
   }
