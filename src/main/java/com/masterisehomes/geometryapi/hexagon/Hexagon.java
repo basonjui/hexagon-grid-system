@@ -122,6 +122,7 @@ public class Hexagon {
     Coordinates centroid = new Coordinates(100, 100);
     Hexagon hex0 = new Hexagon(centroid, 5000);
     Hexagon hex1 = new Hexagon(centroid, hex0.getCircumradius(), hex0.getCCI(), HexagonDirection.ONE);
+    // TODO: Maybe try to implement a Hexagon constructor as the following: new Hexagon(Hexagon previousHexagon, HexagonDirection direction)
 
     System.out.println(hex0.getCCIString());
     System.out.println(hex1.getCCIString());
