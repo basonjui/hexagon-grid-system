@@ -17,14 +17,15 @@ public class Hexagon {
   private double inradius;
   private List<Coordinates> vertices;
   private List<Coordinates> gisVertices;
+  // Cube Coordinates System Indexing
+  private int generatedDirection;
 
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;
     this.circumradius = circumradius;
-
-    this.inradius = this.circumradius * Math.sqrt(3)/2;
-    this.vertices = generateVertices(this.centroid);
-    this.gisVertices = generateGisVertices(this.centroid);
+    this.inradius = circumradius * Math.sqrt(3)/2;
+    this.vertices = generateVertices(centroid);
+    this.gisVertices = generateGisVertices(centroid);
   }
 
   // Methods
@@ -83,6 +84,13 @@ public class Hexagon {
     gisCoordinatesList.add(gisCoordinatesList.get(0));
 
     return gisCoordinatesList;
+  }
+
+  public static void main(String[] args) {
+    Coordinates centroid = new Coordinates(100, 100);
+    Hexagon hex = new Hexagon(centroid, 5000);
+
+    System.out.println(hex.getGeneratedDirection());
   }
 
 }

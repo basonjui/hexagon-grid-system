@@ -1,4 +1,4 @@
-package com.masterisehomes.geometryapi.util;
+package com.masterisehomes.geometryapi.utils;
 
 import com.google.gson.Gson;
 

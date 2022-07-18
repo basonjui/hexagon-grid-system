@@ -8,7 +8,7 @@ import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.*;
 import com.masterisehomes.geometryapi.neighbors.*;
-import com.masterisehomes.geometryapi.util.JsonTransformer;
+import com.masterisehomes.geometryapi.utils.JsonTransformer;
 
 public class GeometryApi {
     public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
