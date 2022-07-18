@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
+import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
+import com.masterisehomes.geometryapi.index.HexagonDirection;
 
 @ToString
 @Getter
@@ -15,10 +17,15 @@ public class Hexagon {
   private Coordinates centroid;
   private double circumradius;
   private double inradius;
+
   private List<Coordinates> vertices;
   private List<Coordinates> gisVertices;
-  // Cube Coordinates System Indexing
-  private int generatedDirection;
+
+  // Cube Coordinates Indexing
+  private CubeCoordinatesIndex creatorCCI;
+  private CubeCoordinatesIndex CCI;
+  private HexagonDirection generatedDirection;
+
 
   public Hexagon(Coordinates centroid, double circumradius) {
     this.centroid = centroid;

@@ -41,7 +41,6 @@ public class CubeCoordinatesIndex {
             case SIX:
                 // logic to calculate new index base on previousIndex & generatedDirection
                 break;
-
         }
     }
 }
