@@ -23,7 +23,7 @@ public class Hexagon {
 
   // Cube Coordinates Indexing
   private final HexagonDirection direction;
-  private final CubeCoordinatesIndex creatorCCI;
+  private final CubeCoordinatesIndex previousCCI;
   private final CubeCoordinatesIndex CCI;
 
 
@@ -37,21 +37,21 @@ public class Hexagon {
 
     
     this.direction = HexagonDirection.ZERO;
-    this.creatorCCI = null;
-    this.CCI = new CubeCoordinatesIndex(creatorCCI, direction);
+    this.previousCCI = null;
+    this.CCI = new CubeCoordinatesIndex(this.previousCCI, this.direction);
   }
 
   public Hexagon(Hexagon rootHexagon, HexagonDirection direction) {
     this.direction = direction;
-    this.creatorCCI = rootHexagon.getCCI();
-    this.CCI = new CubeCoordinatesIndex(this.creatorCCI, direction);
+    this.previousCCI = rootHexagon.getCCI();
+    this.CCI = new CubeCoordinatesIndex(this.previousCCI, direction);
 
     this.centroid = rootHexagon.getCentroid();
     this.circumradius = rootHexagon.getCircumradius();
     this.inradius = this.circumradius * Math.sqrt(3)/2;
 
-    this.vertices = generateVertices(centroid);
-    this.gisVertices = generateGisVertices(centroid);
+    this.vertices = generateVertices(this.centroid);
+    this.gisVertices = generateGisVertices(this.centroid);
   }
 
   // Methods
@@ -113,17 +113,19 @@ public class Hexagon {
   }
 
   // Getters
-  public String getCCIString() {
-    return String.format("Hexagon%s=(direction=%s, creatorCCI=%s, CCI=%s)", this.getDirection(), this.direction, this.creatorCCI, this.CCI);
+  public String getIndex() {
+    return String.format("Hexagon%s=(direction=%s, previousCCI=%s, CCI=%s)", this.getDirection(), this.direction, this.previousCCI, this.CCI);
   }
 
   public static void main(String[] args) {
     Coordinates centroid = new Coordinates(100, 100);
     Hexagon hex0 = new Hexagon(centroid, 5000);
     Hexagon hex1 = new Hexagon(hex0, HexagonDirection.ONE);
+    Hexagon hex2 = new Hexagon(hex1, HexagonDirection.ONE);
 
-    System.out.println(hex0.getCCIString());
-    System.out.println(hex1.getCCIString());
+    System.out.println(hex0.getIndex());
+    System.out.println(hex1.getIndex());
+    System.out.println(hex2.getIndex());
   }
 
 }
