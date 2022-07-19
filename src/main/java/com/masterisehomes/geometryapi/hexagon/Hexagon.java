@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
+import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.index.HexagonDirection;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
@@ -126,7 +127,7 @@ public class Hexagon {
   }
 
   public static void main(String[] args) {
-    Coordinates centroid = new Coordinates(100, 100);
+    Coordinates centroid = new Coordinates(10, 11);
     Hexagon hex0 = new Hexagon(centroid, 5000);
     Neighbors neighbors = new Neighbors(hex0);
 
@@ -149,11 +150,11 @@ public class Hexagon {
     );
 
     // Generate indexes from Neighbors
-    Map<Integer, Hexagon> gisHexagons = neighbors.getGisHexagons();
+    GeoJsonManager manager = new GeoJsonManager(neighbors);
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new Gson();
 
-    System.out.println(gson.toJson(gisHexagons.values()));
+    System.out.println(gson.toJson(manager.getFeatureCollection()));
   }
 
 }
