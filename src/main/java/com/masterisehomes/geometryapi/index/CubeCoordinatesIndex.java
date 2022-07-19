@@ -14,7 +14,7 @@ public class CubeCoordinatesIndex {
 
     public CubeCoordinatesIndex(CubeCoordinatesIndex creatorCCI, HexagonDirection direction) {
         switch (direction) {
-            case NONE: // default case - where creatorCCI == null & direction == 0 (FYI)
+            case ZERO: // default case - where creatorCCI == null & direction == 0 (FYI)
                 this.q = 0;
                 this.r = 0;
                 this.s = 0;

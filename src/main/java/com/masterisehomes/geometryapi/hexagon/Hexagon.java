@@ -36,29 +36,28 @@ public class Hexagon {
     this.gisVertices = generateGisVertices(centroid);
 
     
-    this.direction = HexagonDirection.NONE;
+    this.direction = HexagonDirection.ZERO;
     this.creatorCCI = null;
     this.CCI = new CubeCoordinatesIndex(creatorCCI, direction);
   }
 
-  public Hexagon(Coordinates centroid, double circumradius, CubeCoordinatesIndex creatorCCI, HexagonDirection direction) {
-    this.centroid = centroid;
-    this.circumradius = circumradius;
-    this.inradius = circumradius * Math.sqrt(3)/2;
+  public Hexagon(Hexagon rootHexagon, HexagonDirection direction) {
+    this.direction = direction;
+    this.creatorCCI = rootHexagon.getCCI();
+    this.CCI = new CubeCoordinatesIndex(this.creatorCCI, direction);
+
+    this.centroid = rootHexagon.getCentroid();
+    this.circumradius = rootHexagon.getCircumradius();
+    this.inradius = this.circumradius * Math.sqrt(3)/2;
 
     this.vertices = generateVertices(centroid);
     this.gisVertices = generateGisVertices(centroid);
-
-    
-    this.direction = direction;
-    this.creatorCCI = creatorCCI;
-    this.CCI = new CubeCoordinatesIndex(creatorCCI, direction);
   }
 
   // Methods
   private List<Coordinates> generateVertices(Coordinates centroid) {
-    double centroidX = centroid.getX();
-    double centroidY = centroid.getY();
+    final double centroidX = centroid.getX();
+    final double centroidY = centroid.getY();
 
     /*
      * Generate Hexagon vertices with Flat-top orientation in clock-wise rotation:
@@ -79,8 +78,8 @@ public class Hexagon {
   }
 
   private List<Coordinates> generateGisVertices(Coordinates centroid) {
-    double centroidLong = centroid.getLongitude();
-    double centroidLat = centroid.getLatitude();
+    final double centroidLng = centroid.getLongitude();
+    final double centroidLat = centroid.getLatitude();
 
     /* 
      *  circumradius is either in meters or in pixels, but longitude and 
@@ -101,12 +100,12 @@ public class Hexagon {
      * - The first and last positions are equivalent, and they MUST contain
      * identical values; their representation SHOULD also be identical.
      */
-    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong * 1/2, centroidLat - inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong * 1/2, centroidLat - inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong, centroidLat));
-    gisCoordinatesList.add(new Coordinates(centroidLong + circumradiusLong * 1/2, centroidLat + inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong * 1/2, centroidLat + inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLong - circumradiusLong, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong, centroidLat));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     gisCoordinatesList.add(gisCoordinatesList.get(0));
 
@@ -121,8 +120,7 @@ public class Hexagon {
   public static void main(String[] args) {
     Coordinates centroid = new Coordinates(100, 100);
     Hexagon hex0 = new Hexagon(centroid, 5000);
-    Hexagon hex1 = new Hexagon(centroid, hex0.getCircumradius(), hex0.getCCI(), HexagonDirection.ONE);
-    // TODO: Maybe try to implement a Hexagon constructor as the following: new Hexagon(Hexagon previousHexagon, HexagonDirection direction)
+    Hexagon hex1 = new Hexagon(hex0, HexagonDirection.ONE);
 
     System.out.println(hex0.getCCIString());
     System.out.println(hex1.getCCIString());
