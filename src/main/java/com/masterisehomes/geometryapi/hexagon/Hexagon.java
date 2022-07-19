@@ -1,11 +1,14 @@
 package com.masterisehomes.geometryapi.hexagon;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Math;
 
 import lombok.Getter;
 import lombok.ToString;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
@@ -121,11 +124,25 @@ public class Hexagon {
     Coordinates centroid = new Coordinates(100, 100);
     Hexagon hex0 = new Hexagon(centroid, 5000);
     Hexagon hex1 = new Hexagon(hex0, HexagonDirection.ONE);
-    Hexagon hex2 = new Hexagon(hex1, HexagonDirection.ONE);
+    Hexagon hex2 = new Hexagon(hex0, HexagonDirection.TWO);
+    Hexagon hex3 = new Hexagon(hex0, HexagonDirection.THREE);
+    Hexagon hex4 = new Hexagon(hex0, HexagonDirection.FOUR);
+    Hexagon hex5 = new Hexagon(hex0, HexagonDirection.FIVE);
+    Hexagon hex6 = new Hexagon(hex0, HexagonDirection.SIX);
 
-    System.out.println(hex0.getIndex());
-    System.out.println(hex1.getIndex());
-    System.out.println(hex2.getIndex());
+    List<Object> hexList = Arrays.asList(
+      hex0.getCCI(), 
+      hex1.getCCI(), 
+      hex2.getCCI(), 
+      hex3.getCCI(), 
+      hex4.getCCI(), 
+      hex5.getCCI(),
+      hex6.getCCI()
+    );
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    System.out.println(gson.toJson(hexList));
   }
 
 }

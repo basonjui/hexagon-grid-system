@@ -13,38 +13,56 @@ public class CubeCoordinatesIndex {
     private int s;
 
     public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, HexagonDirection direction) {
+        // Flat-top orientation of Hexagon
+        
+        // For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
         switch (direction) {
-            case ZERO: // default case - where previousCCI == null & direction == 0 (FYI)
+            case ZERO: // default case - where previousCCI == null & direction == 0
                 this.q = 0;
                 this.r = 0;
                 this.s = 0;
                 break;
 
             case ONE:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // s+, r-
                 this.q = previousCCI.getQ();
                 this.r = previousCCI.getR() - 1;
                 this.s = previousCCI.getS() + 1;
                 break;
                 
             case TWO:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // q+, r-
+                this.q = previousCCI.getQ() + 1;
+                this.r = previousCCI.getR() - 1;
+                this.s = previousCCI.getS();
                 break;
 
             case THREE:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // q+, s-
+                this.q = previousCCI.getQ() + 1;
+                this.r = previousCCI.getR();
+                this.s = previousCCI.getS() - 1;
                 break;
 
             case FOUR:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // r+, s-
+                this.q = previousCCI.getQ();
+                this.r = previousCCI.getR() + 1;
+                this.s = previousCCI.getS() - 1;
                 break;
 
             case FIVE:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // q-, r+
+                this.q = previousCCI.getQ() - 1;
+                this.r = previousCCI.getR() + 1;
+                this.s = previousCCI.getS();
                 break;
 
             case SIX:
-                // logic to calculate new index base on Hexagon's previousCCI & direction
+                // q-, s+
+                this.q = previousCCI.getQ() - 1;
+                this.r = previousCCI.getR();
+                this.s = previousCCI.getS() + 1;
                 break;
         }
     }
