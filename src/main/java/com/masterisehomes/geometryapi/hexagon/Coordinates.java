@@ -20,8 +20,8 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Coordinates {
-  private final double y;
   private final double x;
+  private final double y;
   private final double latitude;
   private final double longitude;
 

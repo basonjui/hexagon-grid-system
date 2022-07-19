@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.index.HexagonDirection;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
@@ -28,7 +29,7 @@ public class Neighbors {
 
     this.centroids = generateCentroids(rootHexagon);
     this.hexagons = generateHexagons(this.centroids);
-    
+
     this.gisCentroids = generateGisCentroids(rootHexagon);
     this.gisHexagons = generateGisHexagons(this.gisCentroids);
   }
@@ -51,10 +52,11 @@ public class Neighbors {
      *    4
      * 
      * *Update:
-     *  - Neighbors will now include the centroids of rootHexagon
-     *    which is at key 0 in centroids hashmap.
+     * - Neighbors will now include the centroids of rootHexagon
+     * which is at key 0 in centroids hashmap.
      * 
-     * We calculate neighbor coordinates using their relationship to Hexagon centroid.
+     * We calculate neighbor coordinates using their relationship to Hexagon
+     * centroid.
      * There are 2 approaches: geometric vs trigonometric.
      * 
      * We mostly used Trigonometry.
@@ -66,39 +68,32 @@ public class Neighbors {
     centroids.put(0, rootHexagon.getCentroid());
 
     centroids.put(1, new Coordinates(
-      centroidX, 
-      centroidY - 2 * inradius
-    ));
+        centroidX,
+        centroidY - 2 * inradius));
 
     centroids.put(2, new Coordinates(
-      centroidX + SQRT_3 * inradius, 
-      centroidY - inradius
-    ));
+        centroidX + SQRT_3 * inradius,
+        centroidY - inradius));
 
     centroids.put(3, new Coordinates(
-      centroidX + SQRT_3 * inradius, 
-      centroidY + inradius
-    ));
+        centroidX + SQRT_3 * inradius,
+        centroidY + inradius));
 
     centroids.put(4, new Coordinates(
-      centroidX, 
-      centroidY + 2 * inradius
-    ));
+        centroidX,
+        centroidY + 2 * inradius));
 
     centroids.put(5, new Coordinates(
-      centroidX - SQRT_3 * inradius, 
-      centroidY + inradius
-    ));
+        centroidX - SQRT_3 * inradius,
+        centroidY + inradius));
 
     centroids.put(6, new Coordinates(
-      centroidX - SQRT_3 * inradius, 
-      centroidY - inradius
-    ));
+        centroidX - SQRT_3 * inradius,
+        centroidY - inradius));
 
     return centroids;
   }
 
-  
   private Map<Integer, Coordinates> generateGisCentroids(Hexagon rootHexagon) {
     final double SQRT_3 = Math.sqrt(3);
     final double centroidLong = rootHexagon.getCentroid().getLongitude();
@@ -106,42 +101,36 @@ public class Neighbors {
     final double inradius = rootHexagon.getInradius();
 
     // Convert inradius (which is currently in Meter unit) to Degrees unit
-    final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius);  // x
-    final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);    // y
+    final double inradiusLong = SphericalMercatorProjection.xToLongitude(inradius); // x
+    final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
 
     Map<Integer, Coordinates> gisCentroids = new LinkedHashMap<Integer, Coordinates>();
-    
+
     gisCentroids.put(0, rootHexagon.getCentroid());
-    
+
     gisCentroids.put(1, new Coordinates(
-      centroidLong, 
-      centroidLat - 2 * inradiusLat
-    ));
+        centroidLong,
+        centroidLat - 2 * inradiusLat));
 
     gisCentroids.put(2, new Coordinates(
-      centroidLong + SQRT_3 * inradiusLong, 
-      centroidLat - inradiusLat
-    ));
+        centroidLong + SQRT_3 * inradiusLong,
+        centroidLat - inradiusLat));
 
     gisCentroids.put(3, new Coordinates(
-      centroidLong + SQRT_3 * inradiusLong, 
-      centroidLat + inradiusLat
-    ));
+        centroidLong + SQRT_3 * inradiusLong,
+        centroidLat + inradiusLat));
 
     gisCentroids.put(4, new Coordinates(
-      centroidLong, 
-      centroidLat + 2 * inradiusLat
-    ));
+        centroidLong,
+        centroidLat + 2 * inradiusLat));
 
     gisCentroids.put(5, new Coordinates(
-      centroidLong - SQRT_3 * inradiusLong, 
-      centroidLat + inradiusLat
-    ));
+        centroidLong - SQRT_3 * inradiusLong,
+        centroidLat + inradiusLat));
 
     gisCentroids.put(6, new Coordinates(
-      centroidLong - SQRT_3 * inradiusLong, 
-      centroidLat - inradiusLat
-    ));
+        centroidLong - SQRT_3 * inradiusLong,
+        centroidLat - inradiusLat));
 
     return gisCentroids;
   }
@@ -150,7 +139,58 @@ public class Neighbors {
     Map<Integer, Hexagon> hexagons = new LinkedHashMap<Integer, Hexagon>();
 
     centroids.forEach((key, centroid) -> {
-      hexagons.put(key, new Hexagon(centroid, rootHexagon.getCircumradius()));
+      // We use swtch - case statement on key of gisCentroids Map to determine
+      // HexagonDirection
+      switch (key) {
+        case 0:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.ZERO));
+          break;
+
+        case 1:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.ONE));
+          break;
+
+        case 2:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.TWO));
+          break;
+
+        case 3:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.THREE));
+          break;
+
+        case 4:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.FOUR));
+          break;
+
+        case 5:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.FIVE));
+          break;
+
+        case 6:
+          hexagons.put(
+              key,
+              new Hexagon(centroid, this.rootHexagon,
+                  HexagonDirection.SIX));
+          break;
+      }
     });
 
     return hexagons;
@@ -160,7 +200,58 @@ public class Neighbors {
     Map<Integer, Hexagon> gisHexagons = new LinkedHashMap<Integer, Hexagon>();
 
     gisCentroids.forEach((key, gisCentroid) -> {
-      gisHexagons.put(key, new Hexagon(gisCentroid, rootHexagon.getCircumradius()));
+      // We use swtch - case statement on key of gisCentroids Map to determine
+      // HexagonDirection
+      switch (key) {
+        case 0:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.ZERO));
+          break;
+
+        case 1:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.ONE));
+          break;
+
+        case 2:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.TWO));
+          break;
+
+        case 3:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.THREE));
+          break;
+
+        case 4:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.FOUR));
+          break;
+
+        case 5:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.FIVE));
+          break;
+
+        case 6:
+          gisHexagons.put(
+              key,
+              new Hexagon(gisCentroid, this.rootHexagon,
+                  HexagonDirection.SIX));
+          break;
+      }
     });
 
     return gisHexagons;

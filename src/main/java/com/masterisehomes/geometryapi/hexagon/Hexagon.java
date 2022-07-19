@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Math;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -13,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.index.HexagonDirection;
+import com.masterisehomes.geometryapi.neighbors.Neighbors;
 
 @ToString
 @Getter
@@ -37,24 +39,27 @@ public class Hexagon {
 
     this.vertices = generateVertices(centroid);
     this.gisVertices = generateGisVertices(centroid);
-
     
     this.direction = HexagonDirection.ZERO;
     this.previousCCI = null;
     this.CCI = new CubeCoordinatesIndex(this.previousCCI, this.direction);
   }
 
-  public Hexagon(Hexagon rootHexagon, HexagonDirection direction) {
-    this.direction = direction;
-    this.previousCCI = rootHexagon.getCCI();
-    this.CCI = new CubeCoordinatesIndex(this.previousCCI, direction);
-
-    this.centroid = rootHexagon.getCentroid();
+  public Hexagon(Coordinates centroid, Hexagon rootHexagon, HexagonDirection direction) {
+    this.centroid = centroid;
     this.circumradius = rootHexagon.getCircumradius();
     this.inradius = this.circumradius * Math.sqrt(3)/2;
 
-    this.vertices = generateVertices(this.centroid);
-    this.gisVertices = generateGisVertices(this.centroid);
+    this.vertices = generateVertices(centroid);
+    this.gisVertices = generateGisVertices(centroid);
+
+    this.direction = direction;
+    if (direction == HexagonDirection.ZERO) {
+      this.previousCCI = null;
+    } else {
+      this.previousCCI = rootHexagon.getCCI();
+    }
+    this.CCI = new CubeCoordinatesIndex(this.previousCCI, direction);
   }
 
   // Methods
@@ -123,26 +128,32 @@ public class Hexagon {
   public static void main(String[] args) {
     Coordinates centroid = new Coordinates(100, 100);
     Hexagon hex0 = new Hexagon(centroid, 5000);
-    Hexagon hex1 = new Hexagon(hex0, HexagonDirection.ONE);
-    Hexagon hex2 = new Hexagon(hex0, HexagonDirection.TWO);
-    Hexagon hex3 = new Hexagon(hex0, HexagonDirection.THREE);
-    Hexagon hex4 = new Hexagon(hex0, HexagonDirection.FOUR);
-    Hexagon hex5 = new Hexagon(hex0, HexagonDirection.FIVE);
-    Hexagon hex6 = new Hexagon(hex0, HexagonDirection.SIX);
+    Neighbors neighbors = new Neighbors(hex0);
+
+    // Generate indexes from Hexagon class
+    Hexagon hex1 = new Hexagon(neighbors.getGisCentroids().get(1), hex0, HexagonDirection.ONE);
+    Hexagon hex2 = new Hexagon(neighbors.getGisCentroids().get(2), hex0, HexagonDirection.TWO);
+    Hexagon hex3 = new Hexagon(neighbors.getGisCentroids().get(3), hex0, HexagonDirection.THREE);
+    Hexagon hex4 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FOUR);
+    Hexagon hex5 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FIVE);
+    Hexagon hex6 = new Hexagon(neighbors.getGisCentroids().get(6), hex0, HexagonDirection.SIX);
 
     List<Object> hexList = Arrays.asList(
-      hex0.getCCI(), 
-      hex1.getCCI(), 
-      hex2.getCCI(), 
-      hex3.getCCI(), 
-      hex4.getCCI(), 
-      hex5.getCCI(),
-      hex6.getCCI()
+      hex0, 
+      hex1, 
+      hex2, 
+      hex3, 
+      hex4, 
+      hex5,
+      hex6
     );
+
+    // Generate indexes from Neighbors
+    Map<Integer, Hexagon> gisHexagons = neighbors.getGisHexagons();
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    System.out.println(gson.toJson(hexList));
+    System.out.println(gson.toJson(gisHexagons.values()));
   }
 
 }
