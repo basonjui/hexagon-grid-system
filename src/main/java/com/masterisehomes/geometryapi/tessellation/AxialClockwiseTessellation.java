@@ -1,16 +1,21 @@
 package com.masterisehomes.geometryapi.tessellation;
 
+import java.lang.Math;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.ToString;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
+
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
+import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
+import com.masterisehomes.geometryapi.geodesy.Harversine;
 
 @ToString
 public class AxialClockwiseTessellation {
@@ -49,18 +54,18 @@ public class AxialClockwiseTessellation {
     private List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
     @Getter
     private List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
-
-
-    // Updaters
     @Getter
     private int totalRings;
+
+    // Updaters
+    private int maxRings;
     private int nthRing;
-    private int maxNthRing;
+
 
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
         this.circumradius = circumradius;
-        this.inradius = circumradius * Math.sqrt(3)/2;
+        this.inradius = circumradius * Math.sqrt(3) / 2;
         this.rootHexagon = new Hexagon(origin, circumradius);
     }
 
@@ -76,10 +81,10 @@ public class AxialClockwiseTessellation {
          * tessellate method is re-runnable
          * 
          * Every time this method is run, it does the following actions:
-         *   1. takes in a new Boundary as parameter
-         *   2. clears all the generated centroids & hexagons ArrayList
-         *   3. reset updaters (totalRings, nthRing)
-         *   3. populate new centroids & hexagons with new Boundary
+         * 1. takes in a new Boundary as parameter
+         * 2. clears all the generated centroids & hexagons ArrayList
+         * 3. reset updaters (totalRings, nthRing)
+         * 3. populate new centroids & hexagons with new Boundary
          */
 
         // Set boundary to instance
@@ -97,6 +102,9 @@ public class AxialClockwiseTessellation {
         this.clearHexagons(); // both hexagons and gisHexagons
         this.resetUpdaters();
 
+        // Calculate maxRings from Boundary
+        this.maxRings = calculateMaxRings(boundary);
+
         // Check nthRing
         switch (this.nthRing) {
             case 0:
@@ -108,6 +116,7 @@ public class AxialClockwiseTessellation {
     // Reset data
     private void resetUpdaters() {
         this.totalRings = 0;
+        this.maxRings = 0;
         this.nthRing = 0;
     }
 
@@ -131,39 +140,53 @@ public class AxialClockwiseTessellation {
     }
 
     // Calculations
-    private int calculateMaxNthRing(Boundary boundary) {
-        int maximumNthRing = 0;
+    private int calculateMaxRings(Boundary boundary) {
+        // Get boundary coordinates
+        double minLat = boundary.getMinLatitude();
+        double minLng = boundary.getMinLongitude();
+        double maxLat = boundary.getMaxLatitude();
+        double maxLng = boundary.getMaxLongitude();
 
-        // distance between centroids == 2 * inradius
+        // Calculate the Great-circle Distance between the MIN and MAX coordinates
+        double maxDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
 
-        // 1. we convert inradius to respective Latitude & Longitude first
+        /*
+         * Distance between hexagons centroids at Hexagonal direction (neighbor) is:
+         * = inradius * 2
+         * 
+         * Given maxDistance,
+         * the maximum number of hexagons stack up in any Hexagonal direction is:
+         * = maxDistance / inradius * 2
+         * 
+         * However, we need to use Math.ceil() to round it up to nearest int
+         */
+        int maximumRings = (int) Math.ceil(maxDistance / (this.inradius * 2));
 
-        // 2. then, calculate the Max Longitude & Latitude displacements
-
-        // 3. perform operations: 
-        // - maxLngDisplacement % inradiusLng = maxNthRingLng
-        // - maxLatDisplacement % inradiusLat = maxNthRingLat
-
-        // 4. compare maxNthRingLng & maxNthRingLat
-
-        // 5. maxNthRing = the larger ring above
-        double inradiusLng = SphericalMercatorProjection.xToLongitude(this.inradius);
-        double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
-
-        
-
-        return maximumNthRing;
+        return maximumRings;
     }
 
     public static void main(String[] args) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Coordinates origin = new Coordinates(10, 10);
+
         Hexagon hexagon = new Hexagon(origin, 5000);
+        Neighbors neighbors = new Neighbors(hexagon);
+
         AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-        Neighbors neighbors = new Neighbors(hexagon);
-        System.out.println(neighbors.getGisCentroids());
-        System.out.println(gson.toJson(tessellation));
+        Double[] boundaryCoords = new Double[] {10.0, 10.0, 10.5, 10.5};
+        Boundary boundary = new Boundary(Arrays.asList(boundaryCoords));
+        int maxRings = tessellation.calculateMaxRings(boundary);
+
+        // Test harversine
+        double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(), boundary.getMaxLatitude(), boundary.getMaxLongitude());
+
+        // System.out.println(neighbors.getGisCentroids());
+        // System.out.println(gson.toJson(tessellation));
+        // System.out.println(boundary);
+        System.out.println("Great-circle distance: " + greatCircleDistance);
+        System.out.println("Max hexagon rings: " + maxRings);
+        System.out.println("inradius (meters): " + hexagon.getInradius());
     }
 }

@@ -24,8 +24,8 @@ public class Boundary {
   private Coordinates start, end;
 
   // WGS84 Coordinates attributes
-  private double minLongitude, maxLongitude;
-  private double minLatitude, maxLatitude;
+  private double minLatitude, minLongitude;
+  private double maxLatitude, maxLongitude;
 
   // Builder pattern to take in dimension ,
   public Boundary(float x, float y, int width, int height) {
