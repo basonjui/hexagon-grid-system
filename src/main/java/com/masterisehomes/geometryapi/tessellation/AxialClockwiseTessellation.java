@@ -50,17 +50,18 @@ public class AxialClockwiseTessellation {
     @Getter
     private List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
 
+
     // Updaters
     @Getter
     private int totalRings;
-    @Getter
     private int nthRing;
+    private int maxNthRing;
 
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
         this.circumradius = circumradius;
         this.inradius = circumradius * Math.sqrt(3)/2;
-        this.rootHexagon = new Hexagon(this.origin, this.circumradius);
+        this.rootHexagon = new Hexagon(origin, circumradius);
     }
 
     public AxialClockwiseTessellation(Hexagon rootHexagon) {
@@ -131,7 +132,7 @@ public class AxialClockwiseTessellation {
 
     // Calculations
     private int calculateMaxNthRing(Boundary boundary) {
-        int maxNthRing = 0;
+        int maximumNthRing = 0;
 
         // distance between centroids == 2 * inradius
 
@@ -149,9 +150,9 @@ public class AxialClockwiseTessellation {
         double inradiusLng = SphericalMercatorProjection.xToLongitude(this.inradius);
         double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
 
+        
 
-
-        return maxNthRing;
+        return maximumNthRing;
     }
 
     public static void main(String[] args) {
