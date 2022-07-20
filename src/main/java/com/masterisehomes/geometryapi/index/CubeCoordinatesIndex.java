@@ -6,18 +6,19 @@ import lombok.ToString;
 @ToString
 public class CubeCoordinatesIndex {
     @Getter
-    private int q;
+    private final int q;
     @Getter
-    private int r;
+    private final int r;
     @Getter
-    private int s;
+    private final int s;
 
     public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, HexagonDirection direction) {
-        // Flat-top orientation of Hexagon
-        
-        // For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
+        /*
+         * Flat-top orientation of Hexagon
+         * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
+         */
         switch (direction) {
-            case ZERO: // default case - where previousCCI == null & direction == 0
+            case ZERO: // case 0 - where previousCCI == null or direction == 0
                 this.q = 0;
                 this.r = 0;
                 this.s = 0;
@@ -29,7 +30,7 @@ public class CubeCoordinatesIndex {
                 this.r = previousCCI.getR() - 1;
                 this.s = previousCCI.getS() + 1;
                 break;
-                
+
             case TWO:
                 // q+, r-
                 this.q = previousCCI.getQ() + 1;
@@ -64,10 +65,13 @@ public class CubeCoordinatesIndex {
                 this.r = previousCCI.getR();
                 this.s = previousCCI.getS() + 1;
                 break;
+
+            default:
+                throw new IllegalStateException("Invalid Hexagon direction - This line should be unreachable");
         }
     }
 
     public String getIndex() {
-        return String.format("(q=%s, r=%s, s=%s)", this.q, this.r, this.s); 
+        return String.format("(q=%s, r=%s, s=%s)", this.q, this.r, this.s);
     }
 }

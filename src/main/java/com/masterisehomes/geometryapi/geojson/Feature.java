@@ -14,23 +14,23 @@ import lombok.ToString;
 class Feature {
     private final String type = "Feature";
     private Geometry geometry;
-    private Map<Object, Object> properties = new LinkedHashMap<Object, Object>();
+    private Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
     Feature(Geometry geometry) {
         this.geometry = geometry;
     }
 
     // properties methods
-    void addProperty(Object key, Object value) {
+    void addProperty(String key, Object value) {
         this.properties.put(key, value);
     }
 
-    void addProperties(Map<Object, Object> properties) {
+    void addProperties(Map<String, Object> properties) {
         this.properties.putAll(properties);
     }
 
     // key:value getters
-    Object getPropertyByKey(Object key) {
+    Object getPropertyByKey(String key) {
         return this.properties.get(key);
     }
 
@@ -38,7 +38,7 @@ class Feature {
         return this.properties.entrySet();
     }
 
-    Set<Object> getPropertiesKeys() {
+    Set<String> getPropertiesKeys() {
         return this.properties.keySet();
     }
 

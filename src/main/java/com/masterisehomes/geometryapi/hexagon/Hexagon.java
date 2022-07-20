@@ -1,7 +1,6 @@
 package com.masterisehomes.geometryapi.hexagon;
 
 import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -131,29 +130,20 @@ public class Hexagon {
 
     // Generate indexes from Hexagon class
     Hexagon hex1 = new Hexagon(neighbors.getGisCentroids().get(1), hex0, HexagonDirection.ONE);
-    Hexagon hex2 = new Hexagon(neighbors.getGisCentroids().get(2), hex0, HexagonDirection.TWO);
-    Hexagon hex3 = new Hexagon(neighbors.getGisCentroids().get(3), hex0, HexagonDirection.THREE);
-    Hexagon hex4 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FOUR);
-    Hexagon hex5 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FIVE);
-    Hexagon hex6 = new Hexagon(neighbors.getGisCentroids().get(6), hex0, HexagonDirection.SIX);
-
-    List<Object> hexList = Arrays.asList(
-      hex0, 
-      hex1, 
-      hex2, 
-      hex3, 
-      hex4, 
-      hex5,
-      hex6
-    );
+    // Hexagon hex2 = new Hexagon(neighbors.getGisCentroids().get(2), hex0, HexagonDirection.TWO);
+    // Hexagon hex3 = new Hexagon(neighbors.getGisCentroids().get(3), hex0, HexagonDirection.THREE);
+    // Hexagon hex4 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FOUR);
+    // Hexagon hex5 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FIVE);
+    // Hexagon hex6 = new Hexagon(neighbors.getGisCentroids().get(6), hex0, HexagonDirection.SIX);
 
     // Generate indexes from Neighbors
     GeoJsonManager manager = new GeoJsonManager(neighbors);
 
     Gson gson = new Gson();
 
-    // System.out.println(gson.toJson(manager.getFeatureCollection()));
-    System.out.println(gson.toJson(hex0));
+    System.out.println(gson.toJson(manager.getFeatureCollection()));
+    // System.out.println(gson.toJson(hex0));
+    System.out.println(gson.toJson(hex1.getCCI()));
   }
 
 }
