@@ -1,17 +1,16 @@
-package com.masterisehomes.geometryapi;
+package com.masterisehomes.geometryapi.lambda;
 
 import java.util.Map;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import com.masterisehomes.geometryapi.neighbors.NeighborsDto;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NeighborsHandler implements RequestHandler<Map<String, Object>, String> {
     private static final Logger logger = LoggerFactory.getLogger(NeighborsHandler.class);

@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Math;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.ToString;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
