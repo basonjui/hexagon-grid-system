@@ -94,8 +94,8 @@ public class Hexagon {
      *  so we need to convert the displacement into degrees of latitude & longitude
      *  (where meters/longitude is dependent on current latitude).
     */
-    double circumradiusLong = SphericalMercatorProjection.xToLongitude(this.circumradius);
-    double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
+    final double circumradiusLng = SphericalMercatorProjection.xToLongitude(this.circumradius);
+    final double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
 
     /* Use SphericalMetricConversion algorithm
     double circumradiusInLongitude = SphericalMetricConversion.meterToLongitude(this.circumradius, latitude);
@@ -106,12 +106,12 @@ public class Hexagon {
      * - The first and last positions are equivalent, and they MUST contain
      * identical values; their representation SHOULD also be identical.
      */
-    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong * 1/2, centroidLat - inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong * 1/2, centroidLat - inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong, centroidLat));
-    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLong * 1/2, centroidLat + inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong * 1/2, centroidLat + inradiusLat));
-    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLong, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLng * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLng * 1/2, centroidLat - inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLng, centroidLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLng * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLng * 1/2, centroidLat + inradiusLat));
+    gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLng, centroidLat));
     // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
     gisCoordinatesList.add(gisCoordinatesList.get(0));
 
