@@ -14,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 
 @ToString
@@ -100,7 +99,7 @@ public class AxialClockwiseTessellation {
         this.clearDirectionalCentroids();
         this.clearCentroids();
         this.clearHexagons(); // both hexagons and gisHexagons
-        this.resetUpdaters();
+        this.clearHexagonRings();
 
         // Calculate maxRings from Boundary
         this.maxRings = calculateMaxRings(boundary);
@@ -114,7 +113,7 @@ public class AxialClockwiseTessellation {
     }
 
     // Reset data
-    private void resetUpdaters() {
+    private void clearHexagonRings() {
         this.totalRings = 0;
         this.maxRings = 0;
         this.nthRing = 0;
