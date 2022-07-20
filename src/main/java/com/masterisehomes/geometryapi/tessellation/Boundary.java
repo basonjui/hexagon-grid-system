@@ -49,18 +49,19 @@ public class Boundary {
     double centroidLat = centroid.getLatitude();
     double centroidLng = centroid.getLongitude();
 
-    if (this._containsLat(centroidLat) && this._containsLng(centroidLng)) {
+    if (this.containsLat(centroidLat) && this.containsLng(centroidLng)) {
       return true;
     } else { return false; }
   }
 
-  private boolean _containsLat(double lat) {
+  // Internal methods
+  private boolean containsLat(double lat) {
     if (lat >= this.minLatitude && lat <= this.maxLatitude) {
       return true;
     } else { return false; }
   }
 
-  private boolean _containsLng(double lng) {
+  private boolean containsLng(double lng) {
     if (lng >= this.minLongitude && lng <= this.maxLongitude) {
       return true;
     } else { return false; }
