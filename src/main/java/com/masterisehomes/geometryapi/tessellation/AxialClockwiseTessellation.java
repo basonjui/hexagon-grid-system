@@ -54,6 +54,9 @@ public class AxialClockwiseTessellation {
     @Getter
     private int nthRing;
 
+    // Flags
+    private boolean tessellated = false;
+
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
         this.circumradius = circumradius;
@@ -66,16 +69,17 @@ public class AxialClockwiseTessellation {
         this.circumradius = rootHexagon.getCircumradius();
     }
 
+    // this method is re-runnable and clear the ArrayList each run
     public void tessellate(Boundary boundary) {
-        // Set boundary
-        this.boundary = boundary;
+            // Set boundarythis method should only run once
+            this.boundary = boundary;
 
-        // Check nthRing
-        switch (this.nthRing) {
-            case 0:
-                //
-                break;
-        }
+            // Check nthRing
+            switch (this.nthRing) {
+                case 0:
+                    //
+                    break;
+            }
     }
 
     public static void main(String[] args) {
@@ -86,7 +90,7 @@ public class AxialClockwiseTessellation {
         AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
         Neighbors neighbors = new Neighbors(hexagon);
-        // System.out.println(neighbors.getGisCentroids());
+        System.out.println(neighbors.getGisCentroids());
         System.out.println(gson.toJson(tessellation));
     }
 }
