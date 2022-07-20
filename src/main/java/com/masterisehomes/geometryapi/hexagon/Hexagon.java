@@ -154,7 +154,8 @@ public class Hexagon {
 
     Gson gson = new Gson();
 
-    System.out.println(gson.toJson(manager.getFeatureCollection()));
+    // System.out.println(gson.toJson(manager.getFeatureCollection()));
+    System.out.println(gson.toJson(hex0));
   }
 
 }

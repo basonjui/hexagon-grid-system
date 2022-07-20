@@ -200,8 +200,7 @@ public class Neighbors {
     Map<Integer, Hexagon> gisHexagons = new LinkedHashMap<Integer, Hexagon>();
 
     gisCentroids.forEach((key, gisCentroid) -> {
-      // We use swtch - case statement on key of gisCentroids Map to determine
-      // HexagonDirection
+      // We use swtch - case statement on key of gisCentroids Map to determine HexagonDirection
       switch (key) {
         case 0:
           gisHexagons.put(
