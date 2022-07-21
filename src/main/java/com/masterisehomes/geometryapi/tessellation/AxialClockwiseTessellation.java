@@ -3,6 +3,8 @@ package com.masterisehomes.geometryapi.tessellation;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import lombok.Getter;
@@ -115,7 +117,7 @@ public class AxialClockwiseTessellation {
         this.inradius = rootHexagon.getInradius();
     }
 
-    public void tessellate(Boundary boundary) {
+    public void generateGisCentroids(Boundary boundary) {
         /*
          * tessellate method is re-runnable
          * 
@@ -144,9 +146,50 @@ public class AxialClockwiseTessellation {
         // Set the maximum amount of tessellation rings
         this.maxRings = calculateMaxRings(boundary);
 
-        // Set
+        // Set EDGE centroids counter
+        int edgeCentroidsCount = 0;
+
         // Loop tessellation logic until nthRing == maxRing
         while (this.nthRing <= this.maxRings) {
+            /* Handle special cases: 0 - 1 */
+            if (this.nthRing == 0) {
+                // Ring 0 is just rootHexagon
+                this.gisCentroids.add(this.origin);
+            } 
+            
+            else if (this.nthRing == 1) {
+                Neighbors neighbors = new Neighbors(this.rootHexagon);
+                Map<Integer, Coordinates> neighborGisCentroids = neighbors.getGisCentroids();
+
+                // Exclude neighbors' rootHexagon centroid
+                for (int i = 1; i <= 6; i++) {
+                    // populate Corner Centroids
+                    switch (i) {
+                        case 1:
+                            this.c1Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                        case 2:
+                            this.c2Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                        case 3:
+                            this.c3Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                        case 4:
+                            this.c4Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                        case 5:
+                            this.c5Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                        case 6:
+                            this.c6Centroids.add(neighborGisCentroids.get(i));
+                            break;
+                    }
+
+                    // populate this.gisCentroids
+                    this.gisCentroids.add(neighborGisCentroids.get(i));
+                }
+            }
+
             this.nthRing++;
         }
 
@@ -254,10 +297,13 @@ public class AxialClockwiseTessellation {
                 boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
         // System.out.println(neighbors.getGisCentroids());
-        // System.out.println(gson.toJson(tessellation));
         // System.out.println(boundary);
         System.out.println("Great-circle distance: " + greatCircleDistance);
         System.out.println("Max hexagon rings: " + maxRings);
-        System.out.println("inradius (meters): " + hexagon.getInradius());
+        System.out.println("inradius: " + hexagon.getInradius());
+
+        tessellation.generateGisCentroids(boundary);
+        System.out.println(gson.toJson(tessellation));
+
     }
 }
