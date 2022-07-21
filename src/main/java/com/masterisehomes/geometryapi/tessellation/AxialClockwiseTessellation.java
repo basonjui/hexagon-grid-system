@@ -30,13 +30,52 @@ public class AxialClockwiseTessellation {
     @Getter
     private Boundary boundary;
 
-    // Directional centroids - generate centroids in hexagon's axial directions
-    private List<Coordinates> d1Centroids = new ArrayList<Coordinates>(100);
-    private List<Coordinates> d2Centroids = new ArrayList<Coordinates>(100);
-    private List<Coordinates> d3Centroids = new ArrayList<Coordinates>(100);
-    private List<Coordinates> d4Centroids = new ArrayList<Coordinates>(100);
-    private List<Coordinates> d5Centroids = new ArrayList<Coordinates>(100);
-    private List<Coordinates> d6Centroids = new ArrayList<Coordinates>(100);
+    /*
+     * CORNER HEXAGONS & EDGE HEXAGONS
+     * ---
+     * 
+     * From a Central Hexagon, you can find 6 immediate Neighbor Hexagons that
+     * fit to the central hexagon on its EDGES - given a centroid & inradius.
+     * 
+     * If you keep extending these 6 Neighbors using their centroids and the same
+     * inradius (distance), you will be able to extend the hexagons infinitely in
+     * 6 diagonal directions (or 3 axes).
+     * 
+     * However, the more you extend, the more hexagons you will miss in between the
+     * diagonal directions, in a systematic way.
+     * 
+     * This gap can be perfectly filled with the right number of hexagons (same
+     * size) to form a Hexagonal Grid Map.
+     * - https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
+     * geometric-hexagon-pattern
+     * 
+     * When you look at a complete Hexagon Grid Map, you will see that the grid map
+     * itself form a large Hexagon (in different orientation), that is tiled by
+     * smaller hexagons perfectly without gaps - this concept is Tessellation.
+     * 
+     * What interesting is, these direct Neighbors from the Central Hexagon, when
+     * extended, 
+     * - always become the CORNERS of the Hexagon Grid Map (see the website
+     * above).
+     * - and the hexagons that fill the gaps between these Corner Hexagons, always
+     * become the EDGES of the Grid Map. 
+     * 
+     * It is much easier to see this when you look at Hexagon Grid Maps as rings
+     * of hexagons around the Central Hexagons.
+     * The more rings wrap around the Central Hexagons, the more EDGE HEXAGONS
+     * exist between the CORNER HEXAGONS in a special 1:1 ratio.
+     * 
+     * From the 2nd ring onward, the geometric property is: 
+     *      +1 ring = +1 EDGE HEXAGON 
+     */
+
+    // Corner Centroids - numbered the same way as Neighbors directions
+    private List<Coordinates> c1Centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> c2Centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> c3Centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> c4Centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> c5Centroids = new ArrayList<Coordinates>(100);
+    private List<Coordinates> c6Centroids = new ArrayList<Coordinates>(100);
 
     /*
      * Output data
@@ -58,7 +97,8 @@ public class AxialClockwiseTessellation {
     @Getter
     private int totalRings = 0; // keep track of hexagon rings generated
     // The below updaters are used internally only
-    private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate
+    private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate; it counts
+                              // rootHexagon as 1 ring.
     private int nthRing = 0; // the latest nth rings that tessellate generated
 
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
@@ -104,14 +144,12 @@ public class AxialClockwiseTessellation {
         // Set the maximum amount of tessellation rings
         this.maxRings = calculateMaxRings(boundary);
 
+        // Set
         // Loop tessellation logic until nthRing == maxRing
-
-        // Check nthRing
-        switch (this.nthRing) {
-            case 0:
-                //
-                break;
+        while (this.nthRing <= this.maxRings) {
+            this.nthRing++;
         }
+
     }
 
     // Reset data
@@ -122,12 +160,12 @@ public class AxialClockwiseTessellation {
     }
 
     private void clearDirectionalCentroids() {
-        this.d1Centroids.clear();
-        this.d2Centroids.clear();
-        this.d3Centroids.clear();
-        this.d4Centroids.clear();
-        this.d5Centroids.clear();
-        this.d6Centroids.clear();
+        this.c1Centroids.clear();
+        this.c2Centroids.clear();
+        this.c3Centroids.clear();
+        this.c4Centroids.clear();
+        this.c5Centroids.clear();
+        this.c6Centroids.clear();
     }
 
     private void clearCentroids() {
@@ -149,20 +187,50 @@ public class AxialClockwiseTessellation {
         double maxLng = boundary.getMaxLongitude();
 
         // Calculate the Great-circle Distance between the MIN and MAX coordinates
-        double maxDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
+        double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
 
         /*
          * Hexagon's height - distance between hexagon neighbors is:
          * = inradius * 2
          * 
          * Given maxDistance,
-         * the maximum number of hexagons stack up in any Hexagonal direction is:
+         * the maximum number of hexagons stack up in any axial direction is:
          * = maxDistance / inradius * 2
          * 
          * However, we need to use Math.ceil() to round it up to nearest int
          */
         double hexagonDistance = this.inradius * 2;
-        int maximumRings = (int) Math.ceil(maxDistance / hexagonDistance);
+
+        /*
+         * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
+         * directions):
+         * - maxAxialHexagons is the maximum amount of hexagons that can stack up (from
+         * edges)
+         * in those 3 axes to cover the grid map largest diameter.
+         */
+        int maxAxialHexagons = (int) Math.ceil(maxBoundaryDistance / hexagonDistance);
+
+        /*
+         * We then arrive at 2 cases: odd vs even maxAxialHexagons
+         * 
+         * But to form a regular Hexagon Grids, the maxAxialHexagons must always be odd
+         * in order to divide to an even amount of Hexagons on each side of the axis
+         * -> because it has to subtract rootHexagon from the axis:
+         * maxAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
+         */
+        int maximumRings;
+        if (maxAxialHexagons % 2 == 0) {
+            /*
+             * If even: we can think of it as the rootHexagon is already subtracted
+             * 
+             * Then, because each ring of hexagons consist of 2 hexagons (1 on each side
+             * of the axis), we divide by 2 to get the number of hexagon rings.
+             */
+            maximumRings = maxAxialHexagons / 2;
+        } else {
+            /* If odd: subtract rootHexagon from maxAxialHexagons and divide by 2 */
+            maximumRings = (maxAxialHexagons - 1) / 2;
+        }
 
         return maximumRings;
     }
