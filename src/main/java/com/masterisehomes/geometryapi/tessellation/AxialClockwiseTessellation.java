@@ -53,13 +53,13 @@ public class AxialClockwiseTessellation {
     private List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
     @Getter
     private List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+
+    /* Updaters */
     @Getter
-    private int totalRings;
-
-    // Updaters
-    private int maxRings;
-    private int nthRing;
-
+    private int totalRings = 0; // keep track of hexagon rings generated
+    // The below updaters are used internally only
+    private int maxRings = 0; // limit the maximum amount of hexagon rings that tessellate can generate
+    private int nthRing = 0; // the latest nth rings that tessellate generated
 
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
@@ -101,7 +101,7 @@ public class AxialClockwiseTessellation {
         this.clearHexagons(); // both hexagons and gisHexagons
         this.clearHexagonRings();
 
-        // Calculate maxRings from Boundary
+        // Set the maximum amount of tessellation rings
         this.maxRings = calculateMaxRings(boundary);
 
         // Check nthRing
@@ -174,12 +174,13 @@ public class AxialClockwiseTessellation {
 
         AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-        Double[] boundaryCoords = new Double[] {10.0, 10.0, 10.5, 10.5};
+        Double[] boundaryCoords = new Double[] { 10.0, 10.0, 10.5, 10.5 };
         Boundary boundary = new Boundary(Arrays.asList(boundaryCoords));
         int maxRings = tessellation.calculateMaxRings(boundary);
 
         // Test harversine
-        double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(), boundary.getMaxLatitude(), boundary.getMaxLongitude());
+        double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
+                boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
         // System.out.println(neighbors.getGisCentroids());
         // System.out.println(gson.toJson(tessellation));
