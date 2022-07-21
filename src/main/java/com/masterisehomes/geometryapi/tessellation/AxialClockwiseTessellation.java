@@ -58,7 +58,7 @@ public class AxialClockwiseTessellation {
     @Getter
     private int totalRings = 0; // keep track of hexagon rings generated
     // The below updaters are used internally only
-    private int maxRings = 0; // limit the maximum amount of hexagon rings that tessellate can generate
+    private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate
     private int nthRing = 0; // the latest nth rings that tessellate generated
 
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
@@ -103,6 +103,8 @@ public class AxialClockwiseTessellation {
 
         // Set the maximum amount of tessellation rings
         this.maxRings = calculateMaxRings(boundary);
+
+        // Loop tessellation logic until nthRing == maxRing
 
         // Check nthRing
         switch (this.nthRing) {
@@ -150,7 +152,7 @@ public class AxialClockwiseTessellation {
         double maxDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
 
         /*
-         * Distance between hexagons centroids at Hexagonal direction (neighbor) is:
+         * Hexagon's height - distance between hexagon neighbors is:
          * = inradius * 2
          * 
          * Given maxDistance,
@@ -159,7 +161,8 @@ public class AxialClockwiseTessellation {
          * 
          * However, we need to use Math.ceil() to round it up to nearest int
          */
-        int maximumRings = (int) Math.ceil(maxDistance / (this.inradius * 2));
+        double hexagonDistance = this.inradius * 2;
+        int maximumRings = (int) Math.ceil(maxDistance / hexagonDistance);
 
         return maximumRings;
     }

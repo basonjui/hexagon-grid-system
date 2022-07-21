@@ -13,14 +13,14 @@ public class Harversine {
      * Calculate the Great-Circle Distance between two coordinates - which is the
      * shortest distance over Earth's surface (fly distance)
      */
-    public static double distance(double latitude_1, double longitude_1, double latitude_2, double longitude_2) {
+    public static double distance(double lat1, double lng1, double lat2, double lng2) {
         // Convert latitudes to Radians
-        double phi_1 = Math.toRadians(latitude_1);
-        double phi_2 = Math.toRadians(latitude_2);
+        double phi_1 = Math.toRadians(lat1);
+        double phi_2 = Math.toRadians(lat2);
 
         // Distance between latitudes and longitudes
-        double delta_phi = Math.toRadians(latitude_2 - latitude_1);
-        double delta_lambda = Math.toRadians(longitude_2 - longitude_1);
+        double delta_phi = Math.toRadians(lat2 - lat1);
+        double delta_lambda = Math.toRadians(lng2 - lng1);
 
         // Apply Harversine formula
         double a = Math.pow(Math.sin(delta_phi / 2), 2)
