@@ -36,6 +36,81 @@ public class Neighbors {
         this.gisHexagons = generateGisHexagons(this.gisCentroids);
     }
 
+    /* Public methods */
+    public static Coordinates generateCentroid(Coordinates rootCentroid, double rootInradius, int direction) {
+        final double SQRT_3 = Math.sqrt(3);
+        final double rootCentroidX = rootCentroid.getX();
+        final double rootCentroidY = rootCentroid.getY();
+
+        switch (direction) {
+            case 1:
+                return new Coordinates(
+                        rootCentroidX,
+                        rootCentroidY - 2 * rootInradius);
+            case 2:
+                return new Coordinates(
+                        rootCentroidX + SQRT_3 * rootInradius,
+                        rootCentroidY - 2 * rootInradius);
+            case 3:
+                return new Coordinates(
+                        rootCentroidX + SQRT_3 * rootInradius,
+                        rootCentroidY + rootInradius);
+            case 4:
+                return new Coordinates(
+                        rootCentroidX,
+                        rootCentroidY + 2 * rootInradius);
+            case 5:
+                return new Coordinates(
+                        rootCentroidX - SQRT_3 * rootInradius,
+                        rootCentroidY + rootInradius);
+            case 6:
+                return new Coordinates(
+                        rootCentroidX - SQRT_3 * rootInradius,
+                        rootCentroidY - rootInradius);
+            default:
+                throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
+        }
+    };
+
+    public static Coordinates generateGisCentroid(Coordinates rootGisCentroid, double rootInradius, int direction) {
+        final double SQRT_3 = Math.sqrt(3);
+        final double gisCentroidLng = rootGisCentroid.getLongitude();
+        final double gisCentroidLat = rootGisCentroid.getLatitude();
+
+        // Convert inradius (which is currently in Meter unit) to Degrees unit
+        final double inradiusLng = SphericalMercatorProjection.xToLongitude(rootInradius);
+        final double inradiusLat = SphericalMercatorProjection.yToLatitude(rootInradius);
+
+        switch (direction) {
+            case 1:
+                return new Coordinates(
+                        gisCentroidLng,
+                        gisCentroidLat - 2 * inradiusLat);
+            case 2:
+                return new Coordinates(
+                        gisCentroidLng + SQRT_3 * inradiusLng,
+                        gisCentroidLat - 2 * inradiusLat);
+            case 3:
+                return new Coordinates(
+                        gisCentroidLng + SQRT_3 * inradiusLng,
+                        gisCentroidLat + inradiusLat);
+            case 4:
+                return new Coordinates(
+                        gisCentroidLng,
+                        gisCentroidLat + 2 * inradiusLat);
+            case 5:
+                return new Coordinates(
+                        gisCentroidLng - SQRT_3 * inradiusLng,
+                        gisCentroidLat + inradiusLat);
+            case 6:
+                return new Coordinates(
+                        gisCentroidLng - SQRT_3 * inradiusLng,
+                        gisCentroidLat - inradiusLat);
+            default:
+                throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
+        }
+    };
+
     /* Internal methods */
     private Map<Integer, Coordinates> generateCentroids(Hexagon rootHexagon) {
         final double SQRT_3 = Math.sqrt(3);
@@ -77,7 +152,7 @@ public class Neighbors {
         centroids.put(2, new Coordinates(
                 centroidX + SQRT_3 * inradius,
                 centroidY - inradius));
-
+                
         centroids.put(3, new Coordinates(
                 centroidX + SQRT_3 * inradius,
                 centroidY + inradius));
@@ -149,44 +224,31 @@ public class Neighbors {
             switch (key) {
                 case 0:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.ZERO));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.ZERO));
                     break;
-
                 case 1:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.ONE));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.ONE));
                     break;
-
                 case 2:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.TWO));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.TWO));
                     break;
-
                 case 3:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.THREE));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.THREE));
                     break;
-
                 case 4:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.FOUR));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.FOUR));
                     break;
-
                 case 5:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.FIVE));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.FIVE));
                     break;
-
                 case 6:
                     hexagons.put(key,
-                            new Hexagon(centroid, this.rootHexagon,
-                                    HexagonDirection.SIX));
+                            new Hexagon(centroid, this.rootHexagon, HexagonDirection.SIX));
                     break;
             }
         });
@@ -203,135 +265,35 @@ public class Neighbors {
             switch (key) {
                 case 0:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.ZERO));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.ZERO));
                     break;
-
                 case 1:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.ONE));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.ONE));
                     break;
-
                 case 2:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.TWO));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.TWO));
                     break;
-
                 case 3:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.THREE));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.THREE));
                     break;
-
                 case 4:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.FOUR));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.FOUR));
                     break;
-
                 case 5:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.FIVE));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.FIVE));
                     break;
-
                 case 6:
                     gisHexagons.put(key,
-                            new Hexagon(gisCentroid, this.rootHexagon,
-                                    HexagonDirection.SIX));
+                            new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.SIX));
                     break;
             }
         });
 
         return gisHexagons;
     }
-
-    /* Public methods */
-    public static Coordinates generateCentroid(Coordinates rootCentroid, double rootInradius, int direction) {
-        final double SQRT_3 = Math.sqrt(3);
-        final double rootCentroidX = rootCentroid.getX();
-        final double rootCentroidY = rootCentroid.getY();
-
-        switch (direction) {
-            case 1:
-                return new Coordinates(
-                    rootCentroidX, 
-                    rootCentroidY - 2 * rootInradius);
-
-            case 2:
-                return new Coordinates(
-                    rootCentroidX + SQRT_3 * rootInradius, 
-                    rootCentroidY - 2 * rootInradius);
-
-            case 3:
-                return new Coordinates(
-                    rootCentroidX + SQRT_3 * rootInradius,
-                    rootCentroidY + rootInradius);
-
-            case 4:
-                return new Coordinates(
-                    rootCentroidX,
-                    rootCentroidY + 2 * rootInradius);
-
-            case 5:
-                return new Coordinates(
-                    rootCentroidX - SQRT_3 * rootInradius,
-                    rootCentroidY + rootInradius);
-
-            case 6:
-                return new Coordinates(
-                    rootCentroidX - SQRT_3 * rootInradius,
-                    rootCentroidY - rootInradius);
-
-            default:
-                throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
-        }
-    };
-
-    public static Coordinates generateGisCentroid(Coordinates rootGisCentroid, double rootInradius, int direction) {
-        final double SQRT_3 = Math.sqrt(3);
-        final double gisCentroidLng = rootGisCentroid.getLongitude();
-        final double gisCentroidLat = rootGisCentroid.getLatitude();
-
-        // Convert inradius (which is currently in Meter unit) to Degrees unit
-        final double inradiusLng = SphericalMercatorProjection.xToLongitude(rootInradius);
-        final double inradiusLat = SphericalMercatorProjection.yToLatitude(rootInradius);
-
-        switch (direction) {
-            case 1:
-                return new Coordinates(
-                    gisCentroidLng, 
-                    gisCentroidLat - 2 * inradiusLat);
-
-            case 2:
-                return new Coordinates(
-                    gisCentroidLng + SQRT_3 * inradiusLng, 
-                    gisCentroidLat - 2 * inradiusLat);
-
-            case 3:
-                return new Coordinates(
-                    gisCentroidLng + SQRT_3 * inradiusLng,
-                    gisCentroidLat + inradiusLat);
-
-            case 4:
-                return new Coordinates(
-                    gisCentroidLng,
-                    gisCentroidLat + 2 * inradiusLat);
-
-            case 5:
-                return new Coordinates(
-                    gisCentroidLng - SQRT_3 * inradiusLng,
-                    gisCentroidLat + inradiusLat);
-
-            case 6:
-                return new Coordinates(
-                    gisCentroidLng - SQRT_3 * inradiusLng,
-                    gisCentroidLat - inradiusLat);
-                    
-            default:
-                throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
-        }
-    };
 }
