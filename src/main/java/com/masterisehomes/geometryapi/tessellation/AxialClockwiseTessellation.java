@@ -1,11 +1,10 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -48,7 +47,8 @@ public class AxialClockwiseTessellation {
      * 
      * This gap can be perfectly filled with the right number of hexagons (same
      * size) to form a Hexagonal Grid Map.
-     * - https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
+     * -
+     * https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
      * geometric-hexagon-pattern
      * 
      * When you look at a complete Hexagon Grid Map, you will see that the grid map
@@ -56,19 +56,19 @@ public class AxialClockwiseTessellation {
      * smaller hexagons perfectly without gaps - this concept is Tessellation.
      * 
      * What interesting is, these direct Neighbors from the Central Hexagon, when
-     * extended, 
+     * extended,
      * - always become the CORNERS of the Hexagon Grid Map (see the website
      * above).
      * - and the hexagons that fill the gaps between these Corner Hexagons, always
-     * become the EDGES of the Grid Map. 
+     * become the EDGES of the Grid Map.
      * 
      * It is much easier to see this when you look at Hexagon Grid Maps as rings
      * of hexagons around the Central Hexagons.
      * The more rings wrap around the Central Hexagons, the more EDGE HEXAGONS
      * exist between the CORNER HEXAGONS in a special 1:1 ratio.
      * 
-     * From the 2nd ring onward, the geometric property is: 
-     *      +1 ring = +1 EDGE HEXAGON 
+     * From the 2nd ring onward, the geometric property is:
+     * +1 ring = +1 EDGE HEXAGON
      */
 
     // Corner Centroids - numbered the same way as Neighbors directions
@@ -98,11 +98,11 @@ public class AxialClockwiseTessellation {
     /* Updaters */
     @Getter
     private int totalRings = 0; // keep track of hexagon rings generated
-    // The below updaters are used internally only
-    private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate; it counts
-                              // rootHexagon as 1 ring.
+    /* The below updaters are used internally only */
+    private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate
     private int nthRing = 0; // the latest nth rings that tessellate generated
 
+    /* Constructors */
     public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
         this.origin = origin;
         this.circumradius = circumradius;
@@ -117,6 +117,7 @@ public class AxialClockwiseTessellation {
         this.inradius = rootHexagon.getInradius();
     }
 
+    /* Tessellation methods */
     public void generateGisCentroids(Boundary boundary) {
         /*
          * tessellate method is re-runnable
@@ -155,8 +156,8 @@ public class AxialClockwiseTessellation {
             if (this.nthRing == 0) {
                 // Ring 0 is just rootHexagon
                 this.gisCentroids.add(this.origin);
-            } 
-            
+            }
+
             else if (this.nthRing == 1) {
                 Neighbors neighbors = new Neighbors(this.rootHexagon);
                 Map<Integer, Coordinates> neighborGisCentroids = neighbors.getGisCentroids();
@@ -183,6 +184,9 @@ public class AxialClockwiseTessellation {
                         case 6:
                             this.c6Centroids.add(neighborGisCentroids.get(i));
                             break;
+                        default:
+                            throw new IllegalStateException(
+                                    "Should not reach this code, check logic where nthRing == 1");
                     }
 
                     // populate this.gisCentroids
@@ -195,7 +199,7 @@ public class AxialClockwiseTessellation {
 
     }
 
-    // Reset data
+    /* Reset data */
     private void clearHexagonRings() {
         this.totalRings = 0;
         this.maxRings = 0;
@@ -221,7 +225,7 @@ public class AxialClockwiseTessellation {
         this.gisHexagons.clear();
     }
 
-    // Calculations
+    /* Calculations */
     private int calculateMaxRings(Boundary boundary) {
         // Get boundary coordinates
         double minLat = boundary.getMinLatitude();
