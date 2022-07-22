@@ -288,26 +288,28 @@ public class AxialClockwiseTessellation {
         Coordinates origin = new Coordinates(10, 10);
 
         Hexagon hexagon = new Hexagon(origin, 5000);
-        Neighbors neighbors = new Neighbors(hexagon);
 
         AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-        Double[] boundaryCoords = new Double[] { 10.0, 10.0, 10.5, 10.5 };
-        Boundary boundary = new Boundary(Arrays.asList(boundaryCoords));
+        Boundary boundary = new Boundary(Arrays.asList(10.0, 10.0, 10.5, 10.5));
         int maxRings = tessellation.calculateMaxRings(boundary);
 
         // Test harversine
         double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
                 boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
-        // System.out.println(neighbors.getGisCentroids());
-        // System.out.println(boundary);
-        System.out.println("Great-circle distance: " + greatCircleDistance);
-        System.out.println("Max hexagon rings: " + maxRings);
-        System.out.println("inradius: " + hexagon.getInradius());
+        // System.out.println("Great-circle distance: " + greatCircleDistance);
+        // System.out.println("Max hexagon rings: " + maxRings);
+        // System.out.println("inradius: " + hexagon.getInradius());
 
-        tessellation.generateGisCentroids(boundary);
-        System.out.println(gson.toJson(tessellation));
+        // tessellation.generateGisCentroids(boundary);
+        // System.out.println(gson.toJson(tessellation));
+
+        for (int i = 1; i <= 6; i++) {
+            int direction = i;
+            Coordinates neighborCentroid = Neighbors.generateCentroid(origin, hexagon.getInradius(), direction);
+            System.out.println(neighborCentroid);
+        }
 
     }
 }
