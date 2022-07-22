@@ -259,26 +259,32 @@ public class Neighbors {
                 return new Coordinates(
                     rootCentroidX, 
                     rootCentroidY - 2 * rootInradius);
+
             case 2:
                 return new Coordinates(
                     rootCentroidX + SQRT_3 * rootInradius, 
                     rootCentroidY - 2 * rootInradius);
+
             case 3:
                 return new Coordinates(
                     rootCentroidX + SQRT_3 * rootInradius,
                     rootCentroidY + rootInradius);
+
             case 4:
                 return new Coordinates(
                     rootCentroidX,
                     rootCentroidY + 2 * rootInradius);
+
             case 5:
                 return new Coordinates(
                     rootCentroidX - SQRT_3 * rootInradius,
                     rootCentroidY + rootInradius);
+
             case 6:
                 return new Coordinates(
                     rootCentroidX - SQRT_3 * rootInradius,
                     rootCentroidY - rootInradius);
+
             default:
                 throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
         }
@@ -298,26 +304,32 @@ public class Neighbors {
                 return new Coordinates(
                     gisCentroidLng, 
                     gisCentroidLat - 2 * inradiusLat);
+
             case 2:
                 return new Coordinates(
                     gisCentroidLng + SQRT_3 * inradiusLng, 
                     gisCentroidLat - 2 * inradiusLat);
+
             case 3:
                 return new Coordinates(
                     gisCentroidLng + SQRT_3 * inradiusLng,
                     gisCentroidLat + inradiusLat);
+
             case 4:
                 return new Coordinates(
                     gisCentroidLng,
                     gisCentroidLat + 2 * inradiusLat);
+
             case 5:
                 return new Coordinates(
                     gisCentroidLng - SQRT_3 * inradiusLng,
                     gisCentroidLat + inradiusLat);
+
             case 6:
                 return new Coordinates(
                     gisCentroidLng - SQRT_3 * inradiusLng,
                     gisCentroidLat - inradiusLat);
+                    
             default:
                 throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
         }

@@ -1,5 +1,7 @@
 package com.masterisehomes.geometryapi.index;
 
+import java.security.InvalidParameterException;
+
 import lombok.Getter;
 import lombok.ToString;
 
@@ -67,7 +69,7 @@ public class CubeCoordinatesIndex {
                 break;
 
             default:
-                throw new IllegalStateException("Invalid Hexagon direction - This line should be unreachable");
+                throw new InvalidParameterException("Invalid Hexagon direction: " + direction);
         }
     }
 
