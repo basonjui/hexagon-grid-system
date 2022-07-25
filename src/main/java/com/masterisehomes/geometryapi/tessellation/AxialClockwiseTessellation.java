@@ -11,8 +11,8 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+// import com.google.gson.Gson;
+// import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
@@ -273,6 +273,7 @@ public class AxialClockwiseTessellation {
         }
     }
 
+    // TODO: implement this into populateRing1Centroids
     private void populateCornerCentroids(Hexagon rootHexagon, int nthRing, String type) {
         // Handle Corner Centroids special case: ring 1
         if (nthRing == 1) {
@@ -377,29 +378,28 @@ public class AxialClockwiseTessellation {
                                 nthCornerGisCentroid = Neighbors.generateGisCentroid(rootHexagon, direction, nthNeighbor);
                                 this.c1Centroids.add(nthCornerGisCentroid);
                                 // TODO: NEED TO VALIDATE THIS SHIT
-
                                 break;
                             case 2:
-                                this.c2Centroids.add(neighborsCentroids.get(i));
+                                // this.c2Centroids.add(neighborsCentroids.get(i));
                                 break;
                             case 3:
-                                this.c3Centroids.add(neighborsCentroids.get(i));
+                                // this.c3Centroids.add(neighborsCentroids.get(i));
                                 break;
                             case 4:
-                                this.c4Centroids.add(neighborsCentroids.get(i));
+                                // this.c4Centroids.add(neighborsCentroids.get(i));
                                 break;
                             case 5:
-                                this.c5Centroids.add(neighborsCentroids.get(i));
+                                // this.c5Centroids.add(neighborsCentroids.get(i));
                                 break;
                             case 6:
-                                this.c6Centroids.add(neighborsCentroids.get(i));
+                                // this.c6Centroids.add(neighborsCentroids.get(i));
                                 break;
                             default:
                                 throw new IllegalStateException("Should not reach this code.");
                         }
 
                         // populate this.centroids
-                        this.centroids.add(neighborsCentroids.get(i));
+                        // this.centroids.add(neighborsCentroids.get(i));
                     }
 
 
@@ -502,7 +502,7 @@ public class AxialClockwiseTessellation {
     }
 
     public static void main(String[] args) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        // Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         Coordinates origin = new Coordinates(10, 10);
 
@@ -517,18 +517,8 @@ public class AxialClockwiseTessellation {
         double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
                 boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
-        // System.out.println("Great-circle distance: " + greatCircleDistance);
-        // System.out.println("Max hexagon rings: " + maxRings);
-        // System.out.println("inradius: " + hexagon.getInradius());
-
-        // tessellation.generateGisCentroids(boundary);
-        // System.out.println(gson.toJson(tessellation));
-
-        for (int i = 1; i <= 6; i++) {
-            int direction = i;
-            Coordinates neighborCentroid = Neighbors.generateCentroid(origin, hexagon.getInradius(), direction);
-            System.out.println(neighborCentroid);
-        }
-
+        System.out.println("Great-circle distance: " + greatCircleDistance);
+        System.out.println("Max hexagon rings: " + maxRings);
+        System.out.println("inradius: " + hexagon.getInradius());
     }
 }
