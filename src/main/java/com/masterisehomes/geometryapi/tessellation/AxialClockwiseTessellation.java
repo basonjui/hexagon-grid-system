@@ -162,47 +162,29 @@ public class AxialClockwiseTessellation {
 
         // Loop tessellation logic until nthRing == maxRing
         while (this.nthRing <= this.maxRings) {
-            /* Handle special cases: 0 - 1 */
-            if (this.nthRing == 0) {
-                // Ring 0 is just rootHexagon
-                this.gisCentroids.add(this.origin);
-            } else if (this.nthRing == 1) {
-                Neighbors neighbors = new Neighbors(this.rootHexagon);
-                Map<Integer, Coordinates> neighborGisCentroids = neighbors.getGisCentroids();
 
-                // Exclude neighbors' rootHexagon centroid
-                for (int i = 1; i <= 6; i++) {
-                    // populate Corner Centroids
-                    switch (i) {
-                        case 1:
-                            this.c1GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        case 2:
-                            this.c2GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        case 3:
-                            this.c3GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        case 4:
-                            this.c4GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        case 5:
-                            this.c5GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        case 6:
-                            this.c6GisCentroids.add(neighborGisCentroids.get(i));
-                            break;
-                        default:
-                            throw new IllegalStateException(
-                                    "Should not reach this code, check logic where nthRing == 1");
-                    }
+            switch (this.nthRing) {
+                /* Handle special cases: 0 - 1 */
+                case 0:
+                    // Ring 0 is just the rootHexagon
+                    this.gisCentroids.add(this.origin);
+                    break;
+                
+                case 1:
+                    Neighbors neighbors = new Neighbors(this.rootHexagon);
+                    Map<Integer, Coordinates> neighborGisCentroids = neighbors.getGisCentroids();
 
-                    // populate this.gisCentroids
-                    this.gisCentroids.add(neighborGisCentroids.get(i));
-                }
-            } else if (this.nthRing >= 2) {
-                // Update requiredEdgeCentroids
-                requiredEdgeCentroids = this.nthRing - 1;
+                    // Exclude neighbors' rootHexagon centroid
+                    populateRing1Centroids(neighbors, "gis");
+                    break;
+
+                default: // nthRing >= 2
+                    // Calculate requiredEdgeCentroids
+                    requiredEdgeCentroids = this.nthRing - 1;
+
+                    // logic
+
+                    break;
             }
 
             // Update nthRing each iteration
@@ -212,8 +194,80 @@ public class AxialClockwiseTessellation {
     }
 
     /*
-     * Internal methods
+     * Data population methods
      */
+    private void populateRing1Centroids(Neighbors neighbors, String centroidsType) {
+        if (centroidsType == "gis") {
+            // Get GIS centroids Map
+            Map<Integer, Coordinates> neighborsGisCentroids = neighbors.getGisCentroids();
+
+            // Exclude neighbors' rootHexagon centroid
+            for (int i = 1; i <= 6; i++) {
+                // populate Corner Centroids
+                switch (i) {
+                    case 1:
+                        this.c1GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    case 2:
+                        this.c2GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    case 3:
+                        this.c3GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    case 4:
+                        this.c4GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    case 5:
+                        this.c5GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    case 6:
+                        this.c6GisCentroids.add(neighborsGisCentroids.get(i));
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Should not reach this code, check logic where nthRing == 1");
+                }
+
+                // populate this.gisCentroids
+                this.gisCentroids.add(neighborsGisCentroids.get(i));
+            }
+        } 
+        
+        else { // Pixel; by default if not Gis type
+            Map<Integer, Coordinates> neighborsCentroids = neighbors.getCentroids();
+
+            // Exclude neighbors' rootHexagon centroid
+            for (int i = 1; i <= 6; i++) {
+                // populate Corner Centroids
+                switch (i) {
+                    case 1:
+                        this.c1Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    case 2:
+                        this.c2Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    case 3:
+                        this.c3Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    case 4:
+                        this.c4Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    case 5:
+                        this.c5Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    case 6:
+                        this.c6Centroids.add(neighborsCentroids.get(i));
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Should not reach this code, check logic where nthRing == 1");
+                }
+
+                // populate this.centroids
+                this.centroids.add(neighborsCentroids.get(i));
+            }
+        }
+    }
 
     /* Reset data */
     private void clearHexagonRings() {
