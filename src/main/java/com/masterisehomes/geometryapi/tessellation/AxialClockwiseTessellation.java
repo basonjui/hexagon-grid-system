@@ -22,13 +22,11 @@ import com.masterisehomes.geometryapi.geodesy.Harversine;
 public class AxialClockwiseTessellation {
     // Initialization data
     @Getter
-    private final Coordinates origin;
+    private final Hexagon rootHexagon;
     @Getter
     private final double circumradius;
     @Getter
     private final double inradius;
-    @Getter
-    private final Hexagon rootHexagon;
     @Getter
     private Boundary boundary;
 
@@ -113,22 +111,14 @@ public class AxialClockwiseTessellation {
     private int nthRing = 0; // the latest nth rings that tessellate generated
 
     /* Constructors */
-    public AxialClockwiseTessellation(Coordinates origin, double circumradius) {
-        this.origin = origin;
-        this.circumradius = circumradius;
-        this.inradius = circumradius * Math.sqrt(3) / 2;
-        this.rootHexagon = new Hexagon(origin, circumradius);
-    }
-
     public AxialClockwiseTessellation(Hexagon rootHexagon) {
         this.rootHexagon = rootHexagon;
-        this.origin = rootHexagon.getCentroid();
         this.circumradius = rootHexagon.getCircumradius();
         this.inradius = rootHexagon.getInradius();
     }
 
-    /* Tessellation methods */
-    public void generateGisCentroids(Boundary boundary) {
+    /* Tessellation */
+    public void populateGisCentroids(Boundary boundary) {
         /*
          * tessellate method is re-runnable
          * 
@@ -166,15 +156,14 @@ public class AxialClockwiseTessellation {
             switch (this.nthRing) {
                 /* Handle special cases: 0 - 1 */
                 case 0:
-                    // Ring 0 is just the rootHexagon
-                    this.gisCentroids.add(this.origin);
+                    // Ring 0 is just the rootHexagon (hence "Centroid")
+                    populateRing0Centroid(this.rootHexagon, "gis");
                     break;
-                
+
                 case 1:
                     Neighbors neighbors = new Neighbors(this.rootHexagon);
-                    Map<Integer, Coordinates> neighborGisCentroids = neighbors.getGisCentroids();
 
-                    // Exclude neighbors' rootHexagon centroid
+                    // Ring 1 is basically Neighbors without rootHexagon
                     populateRing1Centroids(neighbors, "gis");
                     break;
 
@@ -182,7 +171,17 @@ public class AxialClockwiseTessellation {
                     // Calculate requiredEdgeCentroids
                     requiredEdgeCentroids = this.nthRing - 1;
 
-                    // logic
+                    /*
+                     * Axial Clock-wise Tessellation algorithm steps
+                     * 
+                     * 1. Generate next Corner Centroids (nthRing from origin centroid) c1 - c6
+                     * 2. Store Corner Centroids
+                     * 3. Store Gis/Pixel Centroids
+                     * 4. Start with c5, calculate n Edge Cenroids of Corner Centroids clock-wise
+                     * (n = requiredEdgeCentroids)
+                     * 5. Store Edge Centroids
+                     * 6. Store Gis/Pixel Centroids
+                     */
 
                     break;
             }
@@ -194,10 +193,20 @@ public class AxialClockwiseTessellation {
     }
 
     /*
-     * Data population methods
+     * Data population
      */
-    private void populateRing1Centroids(Neighbors neighbors, String centroidsType) {
-        if (centroidsType == "gis") {
+    private void populateRing0Centroid(Hexagon rootHexagon, String type) {
+        Coordinates rootCentroid = rootHexagon.getCentroid();
+
+        if (type == "gis") {
+            this.gisCentroids.add(rootCentroid);
+        } else {
+            this.centroids.add(rootCentroid);
+        }
+    }
+
+    private void populateRing1Centroids(Neighbors neighbors, String type) {
+        if (type == "gis") {
             // Get GIS centroids Map
             Map<Integer, Coordinates> neighborsGisCentroids = neighbors.getGisCentroids();
 
@@ -231,9 +240,7 @@ public class AxialClockwiseTessellation {
                 // populate this.gisCentroids
                 this.gisCentroids.add(neighborsGisCentroids.get(i));
             }
-        } 
-        
-        else { // Pixel; by default if not Gis type
+        } else { // Pixel; by default if not "gis" type
             Map<Integer, Coordinates> neighborsCentroids = neighbors.getCentroids();
 
             // Exclude neighbors' rootHexagon centroid
