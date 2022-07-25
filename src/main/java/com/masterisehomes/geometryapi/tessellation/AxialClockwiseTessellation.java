@@ -1,6 +1,7 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -192,9 +193,7 @@ public class AxialClockwiseTessellation {
 
     }
 
-    /*
-     * Data population
-     */
+    /* Centroids population */
     private void populateRing0Centroid(Hexagon rootHexagon, String type) {
         Coordinates rootCentroid = rootHexagon.getCentroid();
 
@@ -233,8 +232,7 @@ public class AxialClockwiseTessellation {
                         this.c6GisCentroids.add(neighborsGisCentroids.get(i));
                         break;
                     default:
-                        throw new IllegalStateException(
-                                "Should not reach this code, check logic where nthRing == 1");
+                        throw new IllegalStateException("Should not reach this code.");
                 }
 
                 // populate this.gisCentroids
@@ -266,13 +264,157 @@ public class AxialClockwiseTessellation {
                         this.c6Centroids.add(neighborsCentroids.get(i));
                         break;
                     default:
-                        throw new IllegalStateException(
-                                "Should not reach this code, check logic where nthRing == 1");
+                        throw new IllegalStateException("Should not reach this code.");
                 }
 
                 // populate this.centroids
                 this.centroids.add(neighborsCentroids.get(i));
             }
+        }
+    }
+
+    private void populateCornerCentroids(Hexagon rootHexagon, int nthRing, String type) {
+        // Handle Corner Centroids special case: ring 1
+        if (nthRing == 1) {
+            /*
+             * Generate neighbors from rootHexagon: due to Corner Centroids are extended in
+             * Neighbor directions (1 - 6)
+             */
+            Neighbors neighbors = new Neighbors(rootHexagon);
+
+            switch (type) {
+                case "gis":
+                    // Get GIS centroids Map
+                    Map<Integer, Coordinates> neighborsGisCentroids = neighbors.getGisCentroids();
+
+                    // Exclude neighbors' rootHexagon centroid
+                    for (int i = 1; i <= 6; i++) {
+                        // populate Corner Centroids
+                        switch (i) {
+                            case 1:
+                                this.c1GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            case 2:
+                                this.c2GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            case 3:
+                                this.c3GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            case 4:
+                                this.c4GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            case 5:
+                                this.c5GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            case 6:
+                                this.c6GisCentroids.add(neighborsGisCentroids.get(i));
+                                break;
+                            default:
+                                throw new IllegalStateException("Should not reach this code.");
+                        }
+
+                        // populate this.gisCentroids
+                        this.gisCentroids.add(neighborsGisCentroids.get(i));
+                    }
+                    break;
+
+                case "pixel":
+                    // Get centroids Map
+                    Map<Integer, Coordinates> neighborsCentroids = neighbors.getCentroids();
+
+                    // Exclude neighbors' rootHexagon centroid
+                    for (int i = 1; i <= 6; i++) {
+                        // populate Corner Centroids
+                        switch (i) {
+                            case 1:
+                                this.c1Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 2:
+                                this.c2Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 3:
+                                this.c3Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 4:
+                                this.c4Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 5:
+                                this.c5Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 6:
+                                this.c6Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            default:
+                                throw new IllegalStateException("Should not reach this code.");
+                        }
+
+                        // populate this.centroids
+                        this.centroids.add(neighborsCentroids.get(i));
+                    }
+                    break;
+
+                default:
+                    throw new InvalidParameterException(
+                            "Invalid type: " + type + ", only handles \"gis\" or \"pixel\".");
+            }
+        }
+
+        else if (nthRing >= 2) { // Regular case
+            int nthNeighbor = nthRing;
+
+            // Populate Corner Centroids (gis/pixel)
+            switch (type) {
+                case "gis":
+                    // Add nthNeighborCentroid to c1Giscentroids - c6GisCentroids
+
+                    // Iterate through 6 neighbor directions (1-6)
+                    for (int direction = 1; direction <= 6; direction++) {
+                        // populate Corner GIS Centroids
+                        switch (direction) {
+                            case 1:
+                                // Find nthCornerGisCentroid from nthRing
+                                Coordinates nthCornerGisCentroid;
+                                nthCornerGisCentroid = Neighbors.generateGisCentroid(rootHexagon, direction, nthNeighbor);
+                                this.c1Centroids.add(nthCornerGisCentroid);
+                                // TODO: NEED TO VALIDATE THIS SHIT
+
+                                break;
+                            case 2:
+                                this.c2Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 3:
+                                this.c3Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 4:
+                                this.c4Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 5:
+                                this.c5Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            case 6:
+                                this.c6Centroids.add(neighborsCentroids.get(i));
+                                break;
+                            default:
+                                throw new IllegalStateException("Should not reach this code.");
+                        }
+
+                        // populate this.centroids
+                        this.centroids.add(neighborsCentroids.get(i));
+                    }
+
+
+                case "pixel":
+
+
+                default:
+                    throw new InvalidParameterException(
+                            "Invalid type: " + type + ", only handles \"gis\" or \"pixel\".");
+            }
+        }
+
+        else {
+            throw new IllegalStateException(
+                    "Something happened, nthRing should be >= 1. Current nthRing: " + nthRing);
         }
     }
 
