@@ -41,12 +41,12 @@ class GeoJsonCoordinates {
 
     // Internal methods: handle data processing in this class (private)
     private static List<List<Double>> _generateArrayPositions(Hexagon hexagon) {
-        List<Coordinates> vertices = hexagon.getGisVertices();
+        List<Coordinates> gisVertices = hexagon.getGisVertices();
         List<List<Double>> positions = new ArrayList<List<Double>>();
 
-        vertices.forEach((vertex) -> {
+        gisVertices.forEach((gisVertex) -> {
             positions.add(
-                vertex.toGeoJsonPosition() // Convert vertex's Coordinates -> Position
+                gisVertex.toGeoJsonPosition() // Convert vertex's Coordinates -> Position
             );
         });
 

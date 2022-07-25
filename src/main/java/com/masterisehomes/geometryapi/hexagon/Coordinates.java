@@ -34,9 +34,9 @@ public class Coordinates {
   }
 
   // Comparison methods
-  public boolean isEqual(Coordinates coord) {
-    double latitude = coord.getLatitude();
-    double longitude = coord.getLongitude();
+  public boolean isEqual(Coordinates gisCoordinates) {
+    double latitude = gisCoordinates.getLatitude();
+    double longitude = gisCoordinates.getLongitude();
 
     if (this.latitude == latitude && this.longitude == longitude) {
       return true;
@@ -45,9 +45,9 @@ public class Coordinates {
     }
   }
 
-  public boolean isLarger(Coordinates coord) {
-    double latitude = coord.getLatitude();
-    double longitude = coord.getLongitude();
+  public boolean isLarger(Coordinates gisCoordinates) {
+    double latitude = gisCoordinates.getLatitude();
+    double longitude = gisCoordinates.getLongitude();
 
     if (this.latitude > latitude && this.longitude > longitude) {
       return true;
@@ -56,9 +56,9 @@ public class Coordinates {
     }
   }
 
-  public boolean isSmaller(Coordinates coord) {
-    double latitude = coord.getLatitude();
-    double longitude = coord.getLongitude();
+  public boolean isSmaller(Coordinates gisCoordinates) {
+    double latitude = gisCoordinates.getLatitude();
+    double longitude = gisCoordinates.getLongitude();
 
     if (this.latitude < latitude && this.longitude < longitude) {
       return true;
@@ -86,7 +86,7 @@ public class Coordinates {
      * or longitude, latitude, altitude for coordinates in a geographic coordinate
      * reference system).
      */
-    List<Double> coordinates = Arrays.asList(this.longitude, this.latitude);
-    return coordinates;
+    List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
+    return gisCoordinates;
   }
 }

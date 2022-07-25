@@ -6,13 +6,10 @@ import java.lang.Math;
 
 import lombok.Getter;
 import lombok.ToString;
-import com.google.gson.Gson;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
-import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.index.HexagonDirection;
-import com.masterisehomes.geometryapi.neighbors.Neighbors;
 
 @ToString
 @Getter
@@ -112,7 +109,7 @@ public class Hexagon {
     gisCoordinatesList.add(new Coordinates(centroidLng + circumradiusLng * 1/2, centroidLat + inradiusLat));
     gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLng * 1/2, centroidLat + inradiusLat));
     gisCoordinatesList.add(new Coordinates(centroidLng - circumradiusLng, centroidLat));
-    // Closing coordinate in GeoJSON, it is the first vertex, which is indexed 0
+    // Closing coordinate in GeoJSON, it is the same as first vertex, which is indexed 0
     gisCoordinatesList.add(gisCoordinatesList.get(0));
 
     return gisCoordinatesList;
@@ -122,28 +119,4 @@ public class Hexagon {
   public String getIndex() {
     return String.format("Hexagon%s=(direction=%s, previousCCI=%s, CCI=%s)", this.getDirection(), this.direction, this.previousCCI, this.CCI);
   }
-
-  public static void main(String[] args) {
-    Coordinates centroid = new Coordinates(10, 11);
-    Hexagon hex0 = new Hexagon(centroid, 5000);
-    Neighbors neighbors = new Neighbors(hex0);
-
-    // Generate indexes from Hexagon class
-    Hexagon hex1 = new Hexagon(neighbors.getGisCentroids().get(1), hex0, HexagonDirection.ONE);
-    // Hexagon hex2 = new Hexagon(neighbors.getGisCentroids().get(2), hex0, HexagonDirection.TWO);
-    // Hexagon hex3 = new Hexagon(neighbors.getGisCentroids().get(3), hex0, HexagonDirection.THREE);
-    // Hexagon hex4 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FOUR);
-    // Hexagon hex5 = new Hexagon(neighbors.getGisCentroids().get(5), hex0, HexagonDirection.FIVE);
-    // Hexagon hex6 = new Hexagon(neighbors.getGisCentroids().get(6), hex0, HexagonDirection.SIX);
-
-    // Generate indexes from Neighbors
-    GeoJsonManager manager = new GeoJsonManager(neighbors);
-
-    Gson gson = new Gson();
-
-    System.out.println(gson.toJson(manager.getFeatureCollection()));
-    // System.out.println(gson.toJson(hex0));
-    System.out.println(gson.toJson(hex1.getCCI()));
-  }
-
 }
