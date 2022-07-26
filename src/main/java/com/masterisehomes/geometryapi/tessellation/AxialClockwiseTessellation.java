@@ -209,7 +209,7 @@ public class AxialClockwiseTessellation {
             case "gis":
                 // Get GIS centroids Map
                 Map<Integer, Coordinates> neighborsGisCentroids = neighbors.getGisCentroids();
-    
+
                 // Exclude neighbors' rootHexagon centroid
                 for (int i = 1; i <= 6; i++) {
                     // populate Corner Centroids
@@ -235,14 +235,14 @@ public class AxialClockwiseTessellation {
                         default:
                             throw new IllegalStateException("Should not reach this code.");
                     }
-    
+
                     // populate this.gisCentroids
                     this.gisCentroids.add(neighborsGisCentroids.get(i));
                 }
 
             case "pixel":
                 Map<Integer, Coordinates> neighborsCentroids = neighbors.getCentroids();
-    
+
                 // Exclude neighbors' rootHexagon centroid
                 for (int i = 1; i <= 6; i++) {
                     // populate Corner Centroids
@@ -268,31 +268,66 @@ public class AxialClockwiseTessellation {
                         default:
                             throw new IllegalStateException("Should not reach this code.");
                     }
-    
+
                     // populate this.centroids
                     this.centroids.add(neighborsCentroids.get(i));
                 }
-            
+
             default:
                 throw new InvalidParameterException(
-                    "Invalid type: " + type + ", only handles \"gis\" or \"pixel\".");
+                        "Invalid type: " + type + ", only handles \"gis\" or \"pixel\".");
         }
     }
 
     private void populateRingNthCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
-        /* Steps:
-         * 1. Find a Corner Centroid (CC):  Neighbor.generateCentroid(rootHexagon, direction, nthRing)
-         * 2. From CC, find an Edge Centroid (cornerCentroid, rootInradius, direction, requiredEdgeCentroids) 
-         * 3. Add Corner Centroid, Edge Centroid(s) to centroids (IN ORDER)    
+        /*
+         * Steps:
+         * 1. Find a Corner Centroid (CC): Neighbor.generateCentroid(rootHexagon,
+         * direction, nthRing)
+         * 2. From CC, find an Edge Centroid (cornerCentroid, rootInradius, direction,
+         * requiredEdgeCentroids)
+         * 3. Add Corner Centroid, Edge Centroid(s) to centroids (IN ORDER)
          */
-        
+
     }
 
     private void populateRingNthGisCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
-        /* Steps:
-         * 1. Find a Corner GIS Centroid (CC):  Neighbor.generateGisCentroid(rootHexagon, direction, nthRing)
-         * 2. From CC, find an Edge Gis Centroid (cornerGisCentroid, rootInradius, direction, requiredEdgeCentroids) 
-         * 3. Add Corner GIS Centroid, Edge GIS Centroid(s) to gisCentroids (IN ORDER)    
+        /*
+         * Steps:
+         * 1. Find a Corner GIS Centroid (CC): Neighbor.generateGisCentroid(rootHexagon,
+         * direction, nthRing)
+         * 2. From CC, find an Edge Gis Centroid (cornerGisCentroid, rootInradius,
+         * direction, requiredEdgeCentroids)
+         * 3. Add Corner GIS Centroid, Edge GIS Centroid(s) to gisCentroids (IN ORDER)
+         */
+    }
+
+    /* TESSELLATE */
+    private void tessellate() {
+        /*
+         * GOALS: produce hexagons
+         * 1. generate hexagons 0 (CCI = 0,0,0)
+         * 2. generate hexagon 1 - 6 for each nthRing (with CCI)
+         * 
+         * Given maxRings:
+         *      While nthRing <= maxRings:
+         *          Case nthRing == 0:
+         *              1. Add rootHexagon to hexagons[]
+         * 
+         *          Case nthRing == 1:
+         *              1. Generate neighbors from rootHexagon
+         *              2. Add Neighbors' hexagons 1 - 6 to hexagons[]
+         * 
+         *          Case nthRing >= 2:
+         *              For each nthRing (until maxRings):
+         *                  For each direction (1 - 6):
+         *                      Calculate c,r,s displacement (dpm == 1 * nthRing)
+         *                      Generate CORNER centroid
+         *                      Generate CORNER Hexagon (centroid, rootHexagon, direction, displacement)
+         *                      
+         *                      For requiredEdgeHexagons:
+         *                          Generate EDGE centroid
+         *                          Generate EDGE hexagon
          */
     }
 
