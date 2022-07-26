@@ -153,7 +153,6 @@ public class AxialClockwiseTessellation {
 
         // Loop tessellation logic until nthRing == maxRing
         while (this.nthRing <= this.maxRings) {
-
             switch (this.nthRing) {
                 /* Handle special cases: 0 - 1 */
                 case 0:
@@ -193,6 +192,7 @@ public class AxialClockwiseTessellation {
     }
 
     /* Centroids population */
+    // TODO: split to 2 methods: Gis vs Pixel
     private void populateRing0Centroid(Hexagon rootHexagon, String type) {
         Coordinates rootCentroid = rootHexagon.getCentroid();
 
@@ -203,6 +203,7 @@ public class AxialClockwiseTessellation {
         }
     }
 
+    // TODO: split to 2 methods: Gis vs Pixel
     private void populateRing1Centroids(Neighbors neighbors, String type) {
         switch (type) {
             case "gis":
@@ -278,15 +279,21 @@ public class AxialClockwiseTessellation {
         }
     }
 
-    private void populateRingNthCentroids(Hexagon rootHexagon, String type) {
-        /* Algorithm (2 cases: Gis & Pixel; steps below are for Pixel case)
-         * 
-         * PIXEL case:
+    private void populateRingNthCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
+        /* Steps:
          * 1. Find a Corner Centroid (CC):  Neighbor.generateCentroid(rootHexagon, direction, nthRing)
-         * 2. From CC, find an Edge Centroid (cornerCentroid, rootInradius, direction, edgeCentroidsCount) 
+         * 2. From CC, find an Edge Centroid (cornerCentroid, rootInradius, direction, requiredEdgeCentroids) 
          * 3. Add Corner Centroid, Edge Centroid(s) to centroids (IN ORDER)    
          */
         
+    }
+
+    private void populateRingNthGisCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
+        /* Steps:
+         * 1. Find a Corner GIS Centroid (CC):  Neighbor.generateGisCentroid(rootHexagon, direction, nthRing)
+         * 2. From CC, find an Edge Gis Centroid (cornerGisCentroid, rootInradius, direction, requiredEdgeCentroids) 
+         * 3. Add Corner GIS Centroid, Edge GIS Centroid(s) to gisCentroids (IN ORDER)    
+         */
     }
 
     /* Reset data */
