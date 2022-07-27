@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
-import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
+import com.masterisehomes.geometryapi.index.CubeCoordinateIndex;
 import com.masterisehomes.geometryapi.index.HexagonDirection;
 
 @ToString
@@ -23,8 +23,8 @@ public class Hexagon {
 
 	// Cube Coordinates Indexing
 	private final HexagonDirection direction;
-	private final CubeCoordinatesIndex previousCCI;
-	private final CubeCoordinatesIndex CCI;
+	private final CubeCoordinateIndex previousCCI;
+	private final CubeCoordinateIndex CCI;
 
 	public Hexagon(Coordinates centroid, double circumradius) {
 		this.centroid = centroid;
@@ -36,7 +36,7 @@ public class Hexagon {
 
 		this.direction = HexagonDirection.ZERO;
 		this.previousCCI = null;
-		this.CCI = new CubeCoordinatesIndex(this.previousCCI, this.direction);
+		this.CCI = new CubeCoordinateIndex(this.previousCCI, this.direction);
 	}
 
 	public Hexagon(Coordinates centroid, Hexagon rootHexagon, HexagonDirection direction) {
@@ -53,7 +53,7 @@ public class Hexagon {
 		} else {
 			this.previousCCI = rootHexagon.getCCI();
 		}
-		this.CCI = new CubeCoordinatesIndex(this.previousCCI, direction);
+		this.CCI = new CubeCoordinateIndex(this.previousCCI, direction);
 	}
 
 	// Methods

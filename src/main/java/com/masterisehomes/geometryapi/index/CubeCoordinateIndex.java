@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 @ToString
-public class CubeCoordinatesIndex {
+public class CubeCoordinateIndex {
 	@Getter
 	private final int q;
 	@Getter
@@ -14,7 +14,7 @@ public class CubeCoordinatesIndex {
 	@Getter
 	private final int s;
 
-	public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, HexagonDirection direction) {
+	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, HexagonDirection direction) {
 		/*
 		 * Flat-top orientation of Hexagon
 		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
