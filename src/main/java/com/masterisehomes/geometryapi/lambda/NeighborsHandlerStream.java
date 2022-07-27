@@ -26,41 +26,43 @@ import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.neighbors.NeighborsDto;
 
 public class NeighborsHandlerStream implements RequestStreamHandler {
-  Gson gson = new Gson();
+	Gson gson = new Gson();
 
-  @Override
-  public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-    LambdaLogger logger = context.getLogger();
-    BufferedReader reader = new BufferedReader(
-        new InputStreamReader(inputStream, Charset.forName("US-ASCII")));
-    PrintWriter writer = new PrintWriter(
-        new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("US-ASCII"))));
+	@Override
+	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context)
+			throws IOException {
+		LambdaLogger logger = context.getLogger();
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(inputStream, Charset.forName("US-ASCII")));
+		PrintWriter writer = new PrintWriter(
+				new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("US-ASCII"))));
 
-    try {
-      Type stringObjectMap = new TypeToken<Map<String, Object>>() {}.getType();
-      Map<String, Object> event = gson.fromJson(reader, stringObjectMap);
-      logger.log("STREAM TYPE: " + inputStream.getClass().toString());
-      logger.log("EVENT TYPE: " + event.getClass().toString());
+		try {
+			Type stringObjectMap = new TypeToken<Map<String, Object>>() {
+			}.getType();
+			Map<String, Object> event = gson.fromJson(reader, stringObjectMap);
+			logger.log("STREAM TYPE: " + inputStream.getClass().toString());
+			logger.log("EVENT TYPE: " + event.getClass().toString());
 
-      // Generate DTO from event Map
-      NeighborsDto dto = new NeighborsDto(event);
-      GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
-      FeatureCollection collection = manager.getFeatureCollection();
+			// Generate DTO from event Map
+			NeighborsDto dto = new NeighborsDto(event);
+			GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
+			FeatureCollection collection = manager.getFeatureCollection();
 
-      // Write JSON result to output stream
-      writer.write(gson.toJson(collection));
-      if (writer.checkError()) {
-        logger.log("WARNING: Writer encountered an error.");
-      }
-    }
+			// Write JSON result to output stream
+			writer.write(gson.toJson(collection));
+			if (writer.checkError()) {
+				logger.log("WARNING: Writer encountered an error.");
+			}
+		}
 
-    catch (IllegalStateException | JsonSyntaxException exception) {
-      logger.log(exception.toString());
-    }
+		catch (IllegalStateException | JsonSyntaxException exception) {
+			logger.log(exception.toString());
+		}
 
-    finally {
-      reader.close();
-      writer.close();
-    }
-  }
+		finally {
+			reader.close();
+			writer.close();
+		}
+	}
 }

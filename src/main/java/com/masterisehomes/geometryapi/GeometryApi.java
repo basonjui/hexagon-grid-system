@@ -11,51 +11,51 @@ import com.masterisehomes.geometryapi.neighbors.*;
 import com.masterisehomes.geometryapi.utils.JsonTransformer;
 
 public class GeometryApi {
-    public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    // public final static Gson gson = new Gson();
+	public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	// public final static Gson gson = new Gson();
 
-    public static void main(String[] args) {
-        before((request, response) -> response.type("application/json"));
+	public static void main(String[] args) {
+		before((request, response) -> response.type("application/json"));
 
-        post("/api/hexagon", "application/json", (request, response) -> {
-            try {
-                // Parse request payload to a JSONObject with Gson
-                JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
+		post("/api/hexagon", "application/json", (request, response) -> {
+			try {
+				// Parse request payload to a JSONObject with Gson
+				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
-                // Initialize a HexagonDto with payload to get all required data
-                HexagonDto dto = new HexagonDto(payload);
-                // From dto, you can get lat, long, centroid, radius, hexagon
+				// Initialize a HexagonDto with payload to get all required data
+				HexagonDto dto = new HexagonDto(payload);
+				// From dto, you can get lat, long, centroid, radius, hexagon
 
-                // GeoJsonManager handles all GeoJSON operations
-                GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
-                FeatureCollection collection = manager.getFeatureCollection();
+				// GeoJsonManager handles all GeoJSON operations
+				GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
+				FeatureCollection collection = manager.getFeatureCollection();
 
-                // Return GeoJSON response
-                return collection;
-            }
+				// Return GeoJSON response
+				return collection;
+			}
 
-            catch (Exception e) {
-                return "Invalid JSON data provided: " + e;
-            }
-        }, new JsonTransformer());
+			catch (Exception e) {
+				return "Invalid JSON data provided: " + e;
+			}
+		}, new JsonTransformer());
 
-        post("/api/neighbors", "application/json", (request, response) -> {
-            try {
-                // Parse request payload to a JSONObject with Gson
-                JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
+		post("/api/neighbors", "application/json", (request, response) -> {
+			try {
+				// Parse request payload to a JSONObject with Gson
+				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
-                // Initialize a HexagonDto with payload to store all required data
-                NeighborsDto dto = new NeighborsDto(payload);
+				// Initialize a HexagonDto with payload to store all required data
+				NeighborsDto dto = new NeighborsDto(payload);
 
-                GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
-                FeatureCollection collection = manager.getFeatureCollection();
+				GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
+				FeatureCollection collection = manager.getFeatureCollection();
 
-                return collection;
-            }
+				return collection;
+			}
 
-            catch (Exception e) {
-                return "Invalid JSON data provided: " + e;
-            }
-        }, new JsonTransformer());
-    }
+			catch (Exception e) {
+				return "Invalid JSON data provided: " + e;
+			}
+		}, new JsonTransformer());
+	}
 }

@@ -26,42 +26,44 @@ import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.HexagonDto;
 
 public class HexagonHandlerStream implements RequestStreamHandler {
-  Gson gson = new Gson();
+	Gson gson = new Gson();
 
-  @Override
-  public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-    LambdaLogger logger = context.getLogger();
-    BufferedReader reader = new BufferedReader(
-        new InputStreamReader(inputStream, Charset.forName("US-ASCII")));
-    PrintWriter writer = new PrintWriter(
-        new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("US-ASCII"))));
+	@Override
+	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context)
+			throws IOException {
+		LambdaLogger logger = context.getLogger();
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(inputStream, Charset.forName("US-ASCII")));
+		PrintWriter writer = new PrintWriter(
+				new BufferedWriter(new OutputStreamWriter(outputStream, Charset.forName("US-ASCII"))));
 
-    try {
-      // BufferedReader -> Gson (JsonObject) -> Map<String, String>
-      Type stringObjectMap = new TypeToken<Map<String, Object>>() {}.getType();
-      Map<String, Object> event = gson.fromJson(reader, stringObjectMap);
-      logger.log("STREAM TYPE: " + inputStream.getClass().toString());
-      logger.log("EVENT TYPE: " + event.getClass().toString());
+		try {
+			// BufferedReader -> Gson (JsonObject) -> Map<String, String>
+			Type stringObjectMap = new TypeToken<Map<String, Object>>() {
+			}.getType();
+			Map<String, Object> event = gson.fromJson(reader, stringObjectMap);
+			logger.log("STREAM TYPE: " + inputStream.getClass().toString());
+			logger.log("EVENT TYPE: " + event.getClass().toString());
 
-      // Generate DTO from event Map
-      HexagonDto dto = new HexagonDto(event);
-      GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
-      FeatureCollection collection = manager.getFeatureCollection();
+			// Generate DTO from event Map
+			HexagonDto dto = new HexagonDto(event);
+			GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
+			FeatureCollection collection = manager.getFeatureCollection();
 
-      // Write JSON result to output stream
-      writer.write(gson.toJson(collection));
-      if (writer.checkError()) {
-        logger.log("WARNING: Writer encountered an error.");
-      }
-    }
+			// Write JSON result to output stream
+			writer.write(gson.toJson(collection));
+			if (writer.checkError()) {
+				logger.log("WARNING: Writer encountered an error.");
+			}
+		}
 
-    catch (IllegalStateException | JsonSyntaxException exception) {
-      logger.log(exception.toString());
-    }
+		catch (IllegalStateException | JsonSyntaxException exception) {
+			logger.log(exception.toString());
+		}
 
-    finally {
-      reader.close();
-      writer.close();
-    }
-  }
+		finally {
+			reader.close();
+			writer.close();
+		}
+	}
 }

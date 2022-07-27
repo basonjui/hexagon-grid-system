@@ -20,73 +20,75 @@ import lombok.ToString;
 @Getter
 @ToString
 public class Coordinates {
-  private final double x;
-  private final double y;
-  private final double latitude;
-  private final double longitude;
+	private final double x;
+	private final double y;
+	private final double latitude;
+	private final double longitude;
 
-  // Constructors
-  public Coordinates(double longitude, double latitude) {
-    this.x = longitude;
-    this.y = latitude;
-    this.latitude = latitude;
-    this.longitude = longitude;
-  }
+	// Constructors
+	public Coordinates(double longitude, double latitude) {
+		this.x = longitude;
+		this.y = latitude;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
 
-  // Comparison methods
-  public boolean isEqual(Coordinates gisCoordinates) {
-    double latitude = gisCoordinates.getLatitude();
-    double longitude = gisCoordinates.getLongitude();
+	// Comparison methods
+	public boolean isEqual(Coordinates gisCoordinates) {
+		double latitude = gisCoordinates.getLatitude();
+		double longitude = gisCoordinates.getLongitude();
 
-    if (this.latitude == latitude && this.longitude == longitude) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+		if (this.latitude == latitude && this.longitude == longitude) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-  public boolean isLarger(Coordinates gisCoordinates) {
-    double latitude = gisCoordinates.getLatitude();
-    double longitude = gisCoordinates.getLongitude();
+	public boolean isLarger(Coordinates gisCoordinates) {
+		double latitude = gisCoordinates.getLatitude();
+		double longitude = gisCoordinates.getLongitude();
 
-    if (this.latitude > latitude && this.longitude > longitude) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+		if (this.latitude > latitude && this.longitude > longitude) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-  public boolean isSmaller(Coordinates gisCoordinates) {
-    double latitude = gisCoordinates.getLatitude();
-    double longitude = gisCoordinates.getLongitude();
+	public boolean isSmaller(Coordinates gisCoordinates) {
+		double latitude = gisCoordinates.getLatitude();
+		double longitude = gisCoordinates.getLongitude();
 
-    if (this.latitude < latitude && this.longitude < longitude) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+		if (this.latitude < latitude && this.longitude < longitude) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-  /* GeoJSON stuff */
+	/* GeoJSON stuff */
 
-  /* Position
-   * 
-   * A position is an array of coordinates in order:
-   * this is the smallest unit that we can really consider ‘a place’ since it can
-   * represent a point on earth.
-   * 
-   * GeoJSON describes an order for coordinates: they should go, in order:
-   * [longitude, latitude, elevation]
-   */
-  public List<Double> toGeoJsonPosition() {
-    /* The order of elements must follow x, y, z order
-     * 
-     * (easting, northing, altitude for coordinates in a projected coordinate
-     * reference system,
-     * or longitude, latitude, altitude for coordinates in a geographic coordinate
-     * reference system).
-     */
-    List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
-    return gisCoordinates;
-  }
+	/*
+	 * Position
+	 * 
+	 * A position is an array of coordinates in order:
+	 * this is the smallest unit that we can really consider ‘a place’ since it can
+	 * represent a point on earth.
+	 * 
+	 * GeoJSON describes an order for coordinates: they should go, in order:
+	 * [longitude, latitude, elevation]
+	 */
+	public List<Double> toGeoJsonPosition() {
+		/*
+		 * The order of elements must follow x, y, z order
+		 * 
+		 * (easting, northing, altitude for coordinates in a projected coordinate
+		 * reference system,
+		 * or longitude, latitude, altitude for coordinates in a geographic coordinate
+		 * reference system).
+		 */
+		List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
+		return gisCoordinates;
+	}
 }

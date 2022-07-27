@@ -8,30 +8,30 @@ import lombok.ToString;
 
 @ToString
 public class FeatureCollection {
-    private final String type = "FeatureCollection";
+	private final String type = "FeatureCollection";
 
-    @Getter
-    private final List<Feature> features = new ArrayList<Feature>();
+	@Getter
+	private final List<Feature> features = new ArrayList<Feature>();
 
-    FeatureCollection() {
-    }
+	FeatureCollection() {
+	}
 
-    // Setter
-    public void addFeature(Feature feature) {
-        this.features.add(feature);
-    }
+	// Setter
+	public void addFeature(Feature feature) {
+		this.features.add(feature);
+	}
 
-    // Getter
-    public Feature getFeature(int index) {
-        return this.features.get(index);
-    }
+	// Getter
+	public Feature getFeature(int index) {
+		return this.features.get(index);
+	}
 
-    // Utility
-    public boolean isEmpty() {
-        return this.features.isEmpty();
-    }
+	// Utility
+	public boolean isEmpty() {
+		return this.features.isEmpty();
+	}
 
-    public int size() {
-        return this.features.size();
-    }
+	public int size() {
+		return this.features.size();
+	}
 }
