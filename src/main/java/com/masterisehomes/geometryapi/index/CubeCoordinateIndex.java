@@ -14,13 +14,13 @@ public class CubeCoordinateIndex {
 	@Getter
 	private final int s;
 
-	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, HexagonDirection direction) {
+	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, HexagonalDirection direction) {
 		/*
 		 * Flat-top orientation of Hexagon
 		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
 		 */
 		switch (direction) {
-			case ZERO: // case 0 - where previousCCI == null or direction == 0
+			case NONE: // case 0 - where previousCCI == null or direction == 0
 				this.q = 0;
 				this.r = 0;
 				this.s = 0;

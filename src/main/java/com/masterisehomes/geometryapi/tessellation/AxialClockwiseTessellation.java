@@ -11,8 +11,8 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
 
-// import com.google.gson.Gson;
-// import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
@@ -415,7 +415,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	public static void main(String[] args) {
-		// Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		Coordinates origin = new Coordinates(10, 10);
 
@@ -433,5 +433,7 @@ public class AxialClockwiseTessellation {
 		System.out.println("Great-circle distance: " + greatCircleDistance);
 		System.out.println("Max hexagon rings: " + maxRings);
 		System.out.println("inradius: " + hexagon.getInradius());
+		
+		System.out.println(gson.toJson(new Neighbors(hexagon).getRootHexagon().getCCI()));
 	}
 }

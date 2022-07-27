@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
-import com.masterisehomes.geometryapi.index.HexagonDirection;
+import com.masterisehomes.geometryapi.index.HexagonalDirection;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
@@ -242,31 +242,31 @@ public class Neighbors {
 			switch (key) {
 				case 0:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.ZERO));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.NONE));
 					break;
 				case 1:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.ONE));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.ONE));
 					break;
 				case 2:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.TWO));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.TWO));
 					break;
 				case 3:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.THREE));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.THREE));
 					break;
 				case 4:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.FOUR));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.FOUR));
 					break;
 				case 5:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.FIVE));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.FIVE));
 					break;
 				case 6:
 					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonDirection.SIX));
+							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.SIX));
 					break;
 			}
 		});
@@ -283,31 +283,31 @@ public class Neighbors {
 			switch (key) {
 				case 0:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.ZERO));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.NONE));
 					break;
 				case 1:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.ONE));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.ONE));
 					break;
 				case 2:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.TWO));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.TWO));
 					break;
 				case 3:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.THREE));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.THREE));
 					break;
 				case 4:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.FOUR));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.FOUR));
 					break;
 				case 5:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.FIVE));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.FIVE));
 					break;
 				case 6:
 					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonDirection.SIX));
+							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.SIX));
 					break;
 			}
 		});

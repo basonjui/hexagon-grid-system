@@ -9,7 +9,7 @@ import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.index.CubeCoordinateIndex;
-import com.masterisehomes.geometryapi.index.HexagonDirection;
+import com.masterisehomes.geometryapi.index.HexagonalDirection;
 
 @ToString
 @Getter
@@ -22,7 +22,7 @@ public class Hexagon {
 	private List<Coordinates> gisVertices;
 
 	// Cube Coordinates Indexing
-	private final HexagonDirection direction;
+	private final HexagonalDirection direction;
 	private final CubeCoordinateIndex previousCCI;
 	private final CubeCoordinateIndex CCI;
 
@@ -34,12 +34,12 @@ public class Hexagon {
 		this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		this.direction = HexagonDirection.ZERO;
+		this.direction = HexagonalDirection.NONE;
 		this.previousCCI = null;
 		this.CCI = new CubeCoordinateIndex(this.previousCCI, this.direction);
 	}
 
-	public Hexagon(Coordinates centroid, Hexagon rootHexagon, HexagonDirection direction) {
+	public Hexagon(Coordinates centroid, Hexagon rootHexagon, HexagonalDirection direction) {
 		this.centroid = centroid;
 		this.circumradius = rootHexagon.getCircumradius();
 		this.inradius = this.circumradius * Math.sqrt(3) / 2;
@@ -48,7 +48,7 @@ public class Hexagon {
 		this.gisVertices = generateGisVertices(centroid);
 
 		this.direction = direction;
-		if (direction == HexagonDirection.ZERO) {
+		if (direction == HexagonalDirection.NONE) {
 			this.previousCCI = null;
 		} else {
 			this.previousCCI = rootHexagon.getCCI();
