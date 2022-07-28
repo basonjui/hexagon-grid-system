@@ -45,9 +45,8 @@ class GeoJsonCoordinates {
 		List<List<Double>> positions = new ArrayList<List<Double>>();
 
 		gisVertices.forEach((gisVertex) -> {
-			positions.add(
-					gisVertex.toGeoJsonPosition() // Convert vertex's Coordinates -> Position
-			);
+			// Convert vertex's Coordinates -> Position
+			positions.add(gisVertex.toGeoJsonPosition());
 		});
 
 		return positions;
