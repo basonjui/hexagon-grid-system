@@ -194,14 +194,16 @@ public class AxialClockwiseTessellation {
 	/* Hexagons population */
 	private void populateRing0(Hexagon rootHexagon) {
 		this.hexagons.add(rootHexagon);
+		this.gisHexagons.add(rootHexagon);
 	}
 
-	// TODO: split to 2 methods: Gis vs Pixel
 	private void populateRing1(Neighbors neighbors) {
 		List<Hexagon> neighborsHexagons = neighbors.getHexagons();
 		List<Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
 		
-		
+		// Populate Tessellation's hexagons & gisHexagons
+		this.hexagons.addAll(neighborsHexagons.subList(1, 7));
+		this.gisHexagons.addAll(neighborsGisHexagons.subList(1, 7));
 	}
 
 	private void populateRingNthCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
@@ -354,6 +356,7 @@ public class AxialClockwiseTessellation {
 		Coordinates origin = new Coordinates(10, 10);
 
 		Hexagon hexagon = new Hexagon(origin, 5000);
+		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
@@ -367,7 +370,18 @@ public class AxialClockwiseTessellation {
 		System.out.println("Great-circle distance: " + greatCircleDistance);
 		System.out.println("Max hexagon rings: " + maxRings);
 		System.out.println("inradius: " + hexagon.getInradius());
+
+		tessellation.populateRing0(hexagon);
+		tessellation.populateRing1(neighbors);
 		
-		System.out.println(gson.toJson(new Neighbors(hexagon).getRootHexagon().getCCI()));
+		System.out.println("Tessellation ring 0 + 1:");
+		tessellation.getGisHexagons().forEach((hex) -> {
+			System.out.println(hex.getCentroid());
+		});
+
+		System.out.println("\nNeighbors:");
+		neighbors.getGisHexagons().forEach((hex) -> {
+			System.out.println(hex.getCentroid());
+		});
 	}
 }
