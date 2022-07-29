@@ -3,6 +3,8 @@ package com.masterisehomes.geometryapi.geojson;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 
@@ -25,16 +27,22 @@ public class GeoJsonManager {
 	}
 
 	public GeoJsonManager(Neighbors neighbors) {
-		neighbors.getGisHexagons().forEach((id, hexagon) -> {
+		List<Hexagon> gisHexagons = neighbors.getGisHexagons();
+
+		for (int i = 0; i < gisHexagons.size(); i++) {
+			Hexagon hexagon = gisHexagons.get(i);
+
 			this.geometry = new PolygonGeometry(hexagon);
 			this.feature = new Feature(this.geometry);
-			this.feature.addProperty("id", id);
+
+			this.feature.addProperty("id", i);
 			this.feature.addProperty("ccid", hexagon.getCCI());
 			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
 			this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
 			this.feature.addProperty("circumradius", hexagon.getCircumradius());
+
 			this.featureCollection.addFeature(this.feature);
-		});
+		};
 	}
 
 	// Utility methods

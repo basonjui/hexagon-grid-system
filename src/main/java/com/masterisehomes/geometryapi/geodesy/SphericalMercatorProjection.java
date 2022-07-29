@@ -24,11 +24,16 @@ public class SphericalMercatorProjection {
 	 * These functions take their angle parameter in degrees and return a length in
 	 * meters
 	 */
-	public static double latitudeToX(double latitude) {
+	public static double latitudeToY(double latitude) {
 		return Math.log(Math.tan(Math.PI / 4 + Math.toRadians(latitude) / 2)) * RADIUS;
 	}
 
-	public static double longitudeToY(double longitude) {
+	public static double longitudeToX(double longitude) {
 		return Math.toRadians(longitude) * RADIUS;
+	}
+
+	public static void main(String[] args) {
+		double latitude = 100;
+		System.out.println(Math.log(-11.43));
 	}
 }

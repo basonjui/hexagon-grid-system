@@ -1,12 +1,14 @@
 package com.masterisehomes.geometryapi.neighbors;
 
 import java.security.InvalidParameterException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.index.HexagonalDirection;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
 import lombok.Getter;
@@ -17,13 +19,13 @@ public class Neighbors {
 	@Getter
 	private Hexagon rootHexagon;
 	@Getter
-	private Map<Integer, Coordinates> centroids;
+	private List<Coordinates> centroids;
 	@Getter
-	private Map<Integer, Coordinates> gisCentroids;
+	private List<Coordinates> gisCentroids;
 	@Getter
-	private Map<Integer, Hexagon> hexagons;
+	private List<Hexagon> hexagons;
 	@Getter
-	private Map<Integer, Hexagon> gisHexagons;
+	private List<Hexagon> gisHexagons;
 
 	/* Constructor */
 	public Neighbors(Hexagon rootHexagon) {
@@ -130,7 +132,7 @@ public class Neighbors {
 	};
 
 	/* Internal methods */
-	private Map<Integer, Coordinates> generateCentroids(Hexagon rootHexagon) {
+	private List<Coordinates> generateCentroids(Hexagon rootHexagon) {
 		final double SQRT_3 = Math.sqrt(3);
 		final double centroidX = rootHexagon.getCentroid().getX();
 		final double centroidY = rootHexagon.getCentroid().getY();
@@ -155,42 +157,42 @@ public class Neighbors {
 		 * centroid.
 		 * There are 2 approaches: geometric vs trigonometric.
 		 * 
-		 * We mostly used Trigonometry.
+		 * We use primarily geometric approach (for visual intuitiveness).
 		 */
+		List<Coordinates> centroids = new ArrayList<Coordinates>();
 
-		// Calculate neighbor centroids and put them into a Map
-		Map<Integer, Coordinates> centroids = new LinkedHashMap<Integer, Coordinates>();
+		// Root hexagon
+		centroids.add(0, rootHexagon.getCentroid());
 
-		centroids.put(0, rootHexagon.getCentroid());
-
-		centroids.put(1, new Coordinates(
+		// Neighbors
+		centroids.add(1, new Coordinates(
 				centroidX,
 				centroidY - 2 * inradius));
 
-		centroids.put(2, new Coordinates(
+		centroids.add(2, new Coordinates(
 				centroidX + SQRT_3 * inradius,
 				centroidY - inradius));
 
-		centroids.put(3, new Coordinates(
+		centroids.add(3, new Coordinates(
 				centroidX + SQRT_3 * inradius,
 				centroidY + inradius));
 
-		centroids.put(4, new Coordinates(
+		centroids.add(4, new Coordinates(
 				centroidX,
 				centroidY + 2 * inradius));
 
-		centroids.put(5, new Coordinates(
+		centroids.add(5, new Coordinates(
 				centroidX - SQRT_3 * inradius,
 				centroidY + inradius));
 
-		centroids.put(6, new Coordinates(
+		centroids.add(6, new Coordinates(
 				centroidX - SQRT_3 * inradius,
 				centroidY - inradius));
 
 		return centroids;
 	}
 
-	private Map<Integer, Coordinates> generateGisCentroids(Hexagon rootHexagon) {
+	private List<Coordinates> generateGisCentroids(Hexagon rootHexagon) {
 		final double SQRT_3 = Math.sqrt(3);
 		final double centroidLng = rootHexagon.getCentroid().getLongitude();
 		final double centroidLat = rootHexagon.getCentroid().getLatitude();
@@ -200,118 +202,139 @@ public class Neighbors {
 		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius); // x
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
 
-		Map<Integer, Coordinates> gisCentroids = new LinkedHashMap<Integer, Coordinates>();
+		List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
 
-		gisCentroids.put(0, rootHexagon.getCentroid());
+		// Root hexagon
+		gisCentroids.add(0, rootHexagon.getCentroid());
 
-		gisCentroids.put(1, new Coordinates(
+		// Neighbors
+		gisCentroids.add(1, new Coordinates(
 				centroidLng,
 				centroidLat - 2 * inradiusLat));
 
-		gisCentroids.put(2, new Coordinates(
+		gisCentroids.add(2, new Coordinates(
 				centroidLng + SQRT_3 * inradiusLng,
 				centroidLat - inradiusLat));
 
-		gisCentroids.put(3, new Coordinates(
+		gisCentroids.add(3, new Coordinates(
 				centroidLng + SQRT_3 * inradiusLng,
 				centroidLat + inradiusLat));
 
-		gisCentroids.put(4, new Coordinates(
+		gisCentroids.add(4, new Coordinates(
 				centroidLng,
 				centroidLat + 2 * inradiusLat));
 
-		gisCentroids.put(5, new Coordinates(
+		gisCentroids.add(5, new Coordinates(
 				centroidLng - SQRT_3 * inradiusLng,
 				centroidLat + inradiusLat));
 
-		gisCentroids.put(6, new Coordinates(
+		gisCentroids.add(6, new Coordinates(
 				centroidLng - SQRT_3 * inradiusLng,
 				centroidLat - inradiusLat));
 
 		return gisCentroids;
 	}
 
-	private Map<Integer, Hexagon> generateHexagons(Map<Integer, Coordinates> centroids) {
-		Map<Integer, Hexagon> hexagons = new LinkedHashMap<Integer, Hexagon>();
+	private List<Hexagon> generateHexagons(List<Coordinates> centroids) {
+		List<Hexagon> hexagons = new ArrayList<Hexagon>();
 
-		centroids.forEach((key, centroid) -> {
+		for (int i = 0; i < centroids.size(); i++) {
 			/*
 			 * We use switch - case statement on key of gisCentroids Map to determine
 			 * HexagonDirection
 			 */
-			switch (key) {
+			switch (i) {
 				case 0:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.NONE));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.NONE));
 					break;
 				case 1:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.ONE));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.ONE));
 					break;
 				case 2:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.TWO));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.TWO));
 					break;
 				case 3:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.THREE));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.THREE));
 					break;
 				case 4:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.FOUR));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.FOUR));
 					break;
 				case 5:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.FIVE));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.FIVE));
 					break;
 				case 6:
-					hexagons.put(key,
-							new Hexagon(centroid, this.rootHexagon, HexagonalDirection.SIX));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+							HexagonalDirection.SIX));
 					break;
+				default:
+					throw new IllegalStateException(
+							"Centroids index must be only 1-6 (inclusive), current index: "
+									+ i);
 			}
-		});
+		}
 
 		return hexagons;
 	}
 
-	private Map<Integer, Hexagon> generateGisHexagons(Map<Integer, Coordinates> gisCentroids) {
-		Map<Integer, Hexagon> gisHexagons = new LinkedHashMap<Integer, Hexagon>();
+	private List<Hexagon> generateGisHexagons(List<Coordinates> gisCentroids) {
+		List<Hexagon> gisHexagons = new ArrayList<Hexagon>();
 
-		gisCentroids.forEach((key, gisCentroid) -> {
+		for (int i = 0; i < gisCentroids.size(); i++) {
 			// We use switch - case statement on key of gisCentroids Map to determine
 			// HexagonDirection
-			switch (key) {
+			switch (i) {
 				case 0:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.NONE));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.NONE));
 					break;
 				case 1:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.ONE));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.ONE));
 					break;
 				case 2:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.TWO));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.TWO));
 					break;
 				case 3:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.THREE));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.THREE));
 					break;
 				case 4:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.FOUR));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.FOUR));
 					break;
 				case 5:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.FIVE));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.FIVE));
 					break;
 				case 6:
-					gisHexagons.put(key,
-							new Hexagon(gisCentroid, this.rootHexagon, HexagonalDirection.SIX));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							HexagonalDirection.SIX));
 					break;
+				default:
+					throw new IllegalStateException(
+							"Centroids index must be only 1-6 (inclusive), current index: "
+									+ i);
 			}
-		});
+		}
 
 		return gisHexagons;
+	}
+
+	public static void main(String[] args) {
+		Coordinates centroid = new Coordinates(100, 100);
+		Hexagon hexagon = new Hexagon(centroid, 50);
+		Neighbors neighbors = new Neighbors(hexagon);
+
+		// Gson gson = new Gson();
+		Gson gson = new GsonBuilder().serializeSpecialFloatingPointValues().create();
+
+		System.out.println(gson.toJson(neighbors));
 	}
 }

@@ -3,7 +3,6 @@ package com.masterisehomes.geometryapi.hexagon;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.Math;
-import java.security.InvalidParameterException;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -50,7 +49,8 @@ public class Hexagon {
 		this.gisVertices = generateGisVertices(centroid);
 
 		if (direction == HexagonalDirection.NONE) {
-			throw new InvalidParameterException("HexagonalDirection should not be: " + direction);
+			this.direction = direction;
+			this.previousCCI = null;
 		} else {
 			this.direction = direction;
 			this.previousCCI = rootHexagon.getCCI();

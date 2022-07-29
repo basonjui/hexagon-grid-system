@@ -72,21 +72,21 @@ public class AxialClockwiseTessellation {
 	 */
 
 	/* Corner Centroids - numbered the same way as Neighbors directions */
-	private Map<Integer, List<Coordinates>> cornerCentroids = new LinkedHashMap<Integer, List<Coordinates>>();
-	private List<Coordinates> c1Centroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c2Centroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c3Centroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c4Centroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c5Centroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c6Centroids = new ArrayList<Coordinates>(100);
+	private Map<Integer, List<Hexagon>> hexagonsCorners = new LinkedHashMap<Integer, List<Hexagon>>();
+	private List<Hexagon> c1Hexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c2Hexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c3Hexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c4Hexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c5Hexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c6Hexagons = new ArrayList<Hexagon>(100);
 
-	private Map<Integer, List<Coordinates>> cornerGisCentroids = new LinkedHashMap<Integer, List<Coordinates>>();
-	private List<Coordinates> c1GisCentroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c2GisCentroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c3GisCentroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c4GisCentroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c5GisCentroids = new ArrayList<Coordinates>(100);
-	private List<Coordinates> c6GisCentroids = new ArrayList<Coordinates>(100);
+	private Map<Integer, List<Hexagon>> gisHexagonsCorners = new LinkedHashMap<Integer, List<Hexagon>>();
+	private List<Hexagon> c1GisHexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c2GisHexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c3GisHexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c4GisHexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c5GisHexagons = new ArrayList<Hexagon>(100);
+	private List<Hexagon> c6GisHexagons = new ArrayList<Hexagon>(100);
 
 	/*
 	 * Output data
@@ -119,7 +119,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Tessellation */
-	public void populateGisCentroids(Boundary boundary) {
+	public void populateGisHexagons(Boundary boundary) {
 		/*
 		 * tessellate method is re-runnable
 		 * 
@@ -135,40 +135,41 @@ public class AxialClockwiseTessellation {
 
 		/*
 		 * Clear all tessellation data (in case already generated):
-		 * - directional centroids
-		 * - centroids
+		 * - corner hexagons
 		 * - hexagons
-		 * - updaters
+		 * - centroids
+		 * - tesselllation rings
 		 */
-		this.clearDirectionalCentroids();
+		this.clearCornerHexagons();
+		this.clearHexagons();
 		this.clearCentroids();
-		this.clearHexagons(); // both hexagons and gisHexagons
-		this.clearHexagonRings();
+		this.resetRings();
 
-		// Set the maximum amount of tessellation rings
+		/* Set the maximum amount of tessellation rings */
 		this.maxRings = calculateMaxRings(boundary);
 
-		// Initialize EDGE centroids counter
-		int requiredEdgeCentroids = 0;
+		/* Initialize EDGE centroids counter */
+		int requiredEdgeHexagons = 0;
 
-		// Loop tessellation logic until nthRing == maxRing
+		/* Loop tessellation logic until nthRing == maxRing */
 		while (this.nthRing <= this.maxRings) {
 			switch (this.nthRing) {
 				/* Handle special cases: 0 - 1 */
 				case 0:
 					// Ring 0 is just the rootHexagon (hence "Centroid")
-					populateRing0Centroid(this.rootHexagon, "gis");
+					populateRing0(this.rootHexagon);
 					break;
 
 				case 1:
 					// Ring 1 is basically Neighbors without rootHexagon
 					Neighbors neighbors = new Neighbors(this.rootHexagon);
-					populateRing1Centroids(neighbors, "gis");
+					populateRing1(neighbors);
 					break;
-
-				default: // nthRing >= 2
-						// Calculate requiredEdgeCentroids
-					requiredEdgeCentroids = this.nthRing - 1;
+				
+				// nthRing >= 2
+				default: 
+					// Calculate requiredEdgeCentroids
+					requiredEdgeHexagons = this.nthRing - 1;
 
 					/*
 					 * Axial Clock-wise Tessellation algorithm steps
@@ -191,92 +192,17 @@ public class AxialClockwiseTessellation {
 
 	}
 
-	/* Centroids population */
-	// TODO: split to 2 methods: Gis vs Pixel
-	private void populateRing0Centroid(Hexagon rootHexagon, String type) {
-		Coordinates rootCentroid = rootHexagon.getCentroid();
-
-		if (type == "gis") {
-			this.gisCentroids.add(rootCentroid);
-		} else {
-			this.centroids.add(rootCentroid);
-		}
+	/* Hexagons population */
+	private void populateRing0(Hexagon rootHexagon) {
+		this.hexagons.add(rootHexagon);
 	}
 
 	// TODO: split to 2 methods: Gis vs Pixel
-	private void populateRing1Centroids(Neighbors neighbors, String type) {
-		switch (type) {
-			case "gis":
-				// Get GIS centroids Map
-				Map<Integer, Coordinates> neighborsGisCentroids = neighbors.getGisCentroids();
-
-				// Exclude neighbors' rootHexagon centroid
-				for (int i = 1; i <= 6; i++) {
-					// populate Corner Centroids
-					switch (i) {
-						case 1:
-							this.c1GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						case 2:
-							this.c2GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						case 3:
-							this.c3GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						case 4:
-							this.c4GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						case 5:
-							this.c5GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						case 6:
-							this.c6GisCentroids.add(neighborsGisCentroids.get(i));
-							break;
-						default:
-							throw new IllegalStateException("Should not reach this code.");
-					}
-
-					// populate this.gisCentroids
-					this.gisCentroids.add(neighborsGisCentroids.get(i));
-				}
-
-			case "pixel":
-				Map<Integer, Coordinates> neighborsCentroids = neighbors.getCentroids();
-
-				// Exclude neighbors' rootHexagon centroid
-				for (int i = 1; i <= 6; i++) {
-					// populate Corner Centroids
-					switch (i) {
-						case 1:
-							this.c1Centroids.add(neighborsCentroids.get(i));
-							break;
-						case 2:
-							this.c2Centroids.add(neighborsCentroids.get(i));
-							break;
-						case 3:
-							this.c3Centroids.add(neighborsCentroids.get(i));
-							break;
-						case 4:
-							this.c4Centroids.add(neighborsCentroids.get(i));
-							break;
-						case 5:
-							this.c5Centroids.add(neighborsCentroids.get(i));
-							break;
-						case 6:
-							this.c6Centroids.add(neighborsCentroids.get(i));
-							break;
-						default:
-							throw new IllegalStateException("Should not reach this code.");
-					}
-
-					// populate this.centroids
-					this.centroids.add(neighborsCentroids.get(i));
-				}
-
-			default:
-				throw new InvalidParameterException(
-						"Invalid type: " + type + ", only handles \"gis\" or \"pixel\".");
-		}
+	private void populateRing1(Neighbors neighbors) {
+		Map<Integer, Hexagon> neighborsHexagons = neighbors.getHexagons();
+		Map<Integer, Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
+		
+		
 	}
 
 	private void populateRingNthCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
@@ -332,19 +258,28 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Reset data */
-	private void clearHexagonRings() {
+	private void resetRings() {
 		this.totalRings = 0;
 		this.maxRings = 0;
 		this.nthRing = 0;
 	}
 
-	private void clearDirectionalCentroids() {
-		this.c1Centroids.clear();
-		this.c2Centroids.clear();
-		this.c3Centroids.clear();
-		this.c4Centroids.clear();
-		this.c5Centroids.clear();
-		this.c6Centroids.clear();
+	private void clearCornerHexagons() {
+		// Corner hexagons
+		this.c1Hexagons.clear();
+		this.c2Hexagons.clear();
+		this.c3Hexagons.clear();
+		this.c4Hexagons.clear();
+		this.c5Hexagons.clear();
+		this.c6Hexagons.clear();
+
+		// Corner GIS hexagons
+		this.c1GisHexagons.clear();
+		this.c2GisHexagons.clear();
+		this.c3GisHexagons.clear();
+		this.c4GisHexagons.clear();
+		this.c5GisHexagons.clear();
+		this.c6GisHexagons.clear();
 	}
 
 	private void clearCentroids() {

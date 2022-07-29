@@ -25,8 +25,23 @@ public class Coordinates {
 	private final double latitude;
 	private final double longitude;
 
-	// Constructors
+	/* Constructors */
 	public Coordinates(double longitude, double latitude) {
+		/*
+		 * There is no possible way to convert a longitude, latitude coordinates
+		 * to Cartesian coordinates. Due to Cartesian coordinates can extend
+		 * infinitely, but longitude and latitude are finite.
+		 * 
+		 * The Spherical Mercator can approximate distances (meters) into
+		 * degrees using Trigonometry, but they cannot use to determine
+		 * points.
+		 * 
+		 * Conclusion: we use the same centroid coordinates for both 
+		 * Cartesian and Geographic coordinates. 
+		 * 
+		 * The radiuses can be convert to longitude/latitude using
+		 * SphericalMercatorProjection formulas.
+		 */
 		this.x = longitude;
 		this.y = latitude;
 		this.latitude = latitude;

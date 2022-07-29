@@ -3,7 +3,6 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Map;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
@@ -15,10 +14,10 @@ class GeoJsonCoordinates {
 
 	// For Neighbors type
 	static List<List<List<List<Double>>>> generateMultiPolygonCoordinates(Neighbors neighbors) {
-		Map<Integer, Hexagon> hexagons = neighbors.getGisHexagons();
+		List<Hexagon> hexagons = neighbors.getGisHexagons();
 		List<List<List<List<Double>>>> multiPolygonCoordinates = new ArrayList<>();
 
-		hexagons.forEach((neighborPos, hexagon) -> {
+		hexagons.forEach((hexagon) -> {
 			multiPolygonCoordinates.add(generatePolygonCoordinates(hexagon));
 		});
 
