@@ -1,7 +1,6 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
-import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -199,8 +198,8 @@ public class AxialClockwiseTessellation {
 
 	// TODO: split to 2 methods: Gis vs Pixel
 	private void populateRing1(Neighbors neighbors) {
-		Map<Integer, Hexagon> neighborsHexagons = neighbors.getHexagons();
-		Map<Integer, Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
+		List<Hexagon> neighborsHexagons = neighbors.getHexagons();
+		List<Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
 		
 		
 	}
