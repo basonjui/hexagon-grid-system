@@ -70,8 +70,9 @@ public class AxialClockwiseTessellation {
 	 * +1 ring = +1 EDGE HEXAGON
 	 */
 
-	/* Corner Centroids - numbered the same way as Neighbors directions */
-	private Map<Integer, List<Hexagon>> hexagonsCorners = new LinkedHashMap<Integer, List<Hexagon>>();
+	/* Corner Hexagons - used to find Edge Hexagons (based on nthRing) 
+	 * - nthRing should equals any cornerHexagonList.size()
+	*/
 	private List<Hexagon> c1Hexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c2Hexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c3Hexagons = new ArrayList<Hexagon>(100);
@@ -79,7 +80,6 @@ public class AxialClockwiseTessellation {
 	private List<Hexagon> c5Hexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c6Hexagons = new ArrayList<Hexagon>(100);
 
-	private Map<Integer, List<Hexagon>> gisHexagonsCorners = new LinkedHashMap<Integer, List<Hexagon>>();
 	private List<Hexagon> c1GisHexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c2GisHexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c3GisHexagons = new ArrayList<Hexagon>(100);
@@ -153,19 +153,20 @@ public class AxialClockwiseTessellation {
 		/* Loop tessellation logic until nthRing == maxRing */
 		while (this.nthRing <= this.maxRings) {
 			switch (this.nthRing) {
-				/* Handle special cases: 0 - 1 */
+				/* Handle special cases: nthRing == 0 -> 1 */
 				case 0:
 					// Ring 0 is just the rootHexagon (hence "Centroid")
-					populateRing0(this.rootHexagon);
+					populateGisRing0(this.rootHexagon);
 					break;
 
 				case 1:
 					// Ring 1 is basically Neighbors without rootHexagon
 					Neighbors neighbors = new Neighbors(this.rootHexagon);
-					populateRing1(neighbors);
+					// TODO: not implemented
+					populateGisRing1(neighbors);
 					break;
 				
-				// nthRing >= 2
+				/* nthRing >= 2 */
 				default: 
 					// Calculate requiredEdgeCentroids
 					requiredEdgeHexagons = this.nthRing - 1;
@@ -191,42 +192,100 @@ public class AxialClockwiseTessellation {
 
 	}
 
-	/* Hexagons population */
-	private void populateRing0(Hexagon rootHexagon) {
+	/* Hexagon rings population */
+	private void populateRing0(Hexagon rootHexagon) { // Ring 0 has no corners
 		this.hexagons.add(rootHexagon);
+	}
+
+	private void populateGisRing0(Hexagon rootHexagon) { // Ring 0 has no corners
 		this.gisHexagons.add(rootHexagon);
 	}
 
 	private void populateRing1(Neighbors neighbors) {
 		List<Hexagon> neighborsHexagons = neighbors.getHexagons();
-		List<Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
+
+		/* Validate neighbors */
+		assert neighborsHexagons.size() == 7
+				: String.format("neighborsHexagon size must equals 7, currently: ",
+						neighborsHexagons.size());
+		final int NEIGHBORS_SIZE = 7;
+
+		/* Populate Corner Hexagon lists using Neighbors
+		 * 
+		 * Since we populated rootHexagon already (from populateRing0 method),
+		 * we will skip index 0 of Neighbors' hexagons list.
+		*/
+		// TODO: not implemented
+
 		
 		// Populate Tessellation's hexagons & gisHexagons
 		this.hexagons.addAll(neighborsHexagons.subList(1, 7));
+	}
+
+	private void populateGisRing1(Neighbors neighbors) {
+		List<Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
+
+		/* Validate neighbors */
+
+		assert neighborsGisHexagons.size() == 7
+				: String.format("neighborsGisHexagons size must equals 7, currently: ",
+						neighborsGisHexagons.size());
+		final int NEIGHBORS_SIZE = 7;
+
+		/* Populate Corner Hexagon lists using Neighbors
+		 * 
+		 * Since we populated rootHexagon already (from populateRing0 method),
+		 * we will skip index 0 of Neighbors' hexagons list.
+		*/
+		// TODO: not implemented
+		
+		
+		// Populate Tessellation's hexagons & gisHexagons
 		this.gisHexagons.addAll(neighborsGisHexagons.subList(1, 7));
 	}
 
-	private void populateRingNthCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
-		/*
-		 * Steps:
-		 * 1. Find a Corner Centroid (CC): Neighbor.generateCentroid(rootHexagon,
-		 * direction, nthRing)
-		 * 2. From CC, find an Edge Centroid (cornerCentroid, rootInradius, direction,
-		 * requiredEdgeCentroids)
-		 * 3. Add Corner Centroid, Edge Centroid(s) to centroids (IN ORDER)
-		 */
+	private void populateRingNth() {
 
 	}
 
-	private void populateRingNthGisCentroids(Hexagon rootHexagon, int nthRing, int requiredEdgeCentroids) {
-		/*
-		 * Steps:
-		 * 1. Find a Corner GIS Centroid (CC): Neighbor.generateGisCentroid(rootHexagon,
-		 * direction, nthRing)
-		 * 2. From CC, find an Edge Gis Centroid (cornerGisCentroid, rootInradius,
-		 * direction, requiredEdgeCentroids)
-		 * 3. Add Corner GIS Centroid, Edge GIS Centroid(s) to gisCentroids (IN ORDER)
-		 */
+	private void populateGisRingNth() {
+
+	}
+
+	/* Corner hexagons population */
+	private void populateCorners(List<Hexagon> cornerHexagons) {
+		// cornerHexagons must be ORDERED (c1 - c6) & size == 6
+		assert cornerHexagons.size() == 6;
+
+		// TODO: not implemented
+		for (int i = 0; i < cornerHexagons.size(); i++) {
+			switch (i) {
+				case 1:
+					this.c1Hexagons.add(cornerHexagons.get(i));
+					break;
+				case 2:
+					this.c2Hexagons.add(cornerHexagons.get(i));
+					break;
+			}
+		}
+
+	}
+
+	private void populateGisCorners(List<Hexagon> cornerGisHexagons) {
+		// cornerGisHexagons must be ORDERED (c1 - c6) & size == 6
+		assert cornerGisHexagons.size() == 6;
+
+		// TODO: not implemented
+		for (int i = 0; i < cornerGisHexagons.size(); i++) {
+			switch (i) {
+				case 1:
+					this.c1Hexagons.add(cornerGisHexagons.get(i));
+					break;
+				case 2:
+					this.c2Hexagons.add(cornerGisHexagons.get(i));
+					break;
+			}
+		}
 	}
 
 	/* TESSELLATE */
@@ -320,8 +379,7 @@ public class AxialClockwiseTessellation {
 		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
 		 * directions):
 		 * - maxAxialHexagons is the maximum amount of hexagons that can stack up (from
-		 * edges)
-		 * in those 3 axes to cover the grid map largest diameter.
+		 * edges) in those 3 axes to cover the grid map largest diameter.
 		 */
 		int maxAxialHexagons = (int) Math.ceil(maxBoundaryDistance / hexagonDistance);
 
@@ -331,7 +389,8 @@ public class AxialClockwiseTessellation {
 		 * But to form a regular Hexagon Grids, the maxAxialHexagons must always be odd
 		 * in order to divide to an even amount of Hexagons on each side of the axis
 		 * -> because it has to subtract rootHexagon from the axis:
-		 * maxAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
+		 * 
+		 * 	maxAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
 		 */
 		int maximumRings;
 		if (maxAxialHexagons % 2 == 0) {
