@@ -208,14 +208,21 @@ public class AxialClockwiseTessellation {
 		assert neighborsHexagons.size() == 7
 				: String.format("neighborsHexagon size must equals 7, currently: ",
 						neighborsHexagons.size());
-		final int NEIGHBORS_SIZE = 7;
 
 		/* Populate Corner Hexagon lists using Neighbors
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
 		 * we will skip index 0 of Neighbors' hexagons list.
+		 * 
+		 * Since ring 1 is a special case, there is no need for dynamic
 		*/
-		// TODO: not implemented
+		this.c1Hexagons.add(neighborsHexagons.get(1));
+		this.c2Hexagons.add(neighborsHexagons.get(2));
+		this.c3Hexagons.add(neighborsHexagons.get(3));
+		this.c4Hexagons.add(neighborsHexagons.get(4));
+		this.c5Hexagons.add(neighborsHexagons.get(5));
+		this.c6Hexagons.add(neighborsHexagons.get(6));
+
 
 		
 		// Populate Tessellation's hexagons & gisHexagons
@@ -253,40 +260,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Corner hexagons population */
-	private void populateCorners(List<Hexagon> cornerHexagons) {
-		// cornerHexagons must be ORDERED (c1 - c6) & size == 6
-		assert cornerHexagons.size() == 6;
-
-		// TODO: not implemented
-		for (int i = 0; i < cornerHexagons.size(); i++) {
-			switch (i) {
-				case 1:
-					this.c1Hexagons.add(cornerHexagons.get(i));
-					break;
-				case 2:
-					this.c2Hexagons.add(cornerHexagons.get(i));
-					break;
-			}
-		}
-
-	}
-
-	private void populateGisCorners(List<Hexagon> cornerGisHexagons) {
-		// cornerGisHexagons must be ORDERED (c1 - c6) & size == 6
-		assert cornerGisHexagons.size() == 6;
-
-		// TODO: not implemented
-		for (int i = 0; i < cornerGisHexagons.size(); i++) {
-			switch (i) {
-				case 1:
-					this.c1Hexagons.add(cornerGisHexagons.get(i));
-					break;
-				case 2:
-					this.c2Hexagons.add(cornerGisHexagons.get(i));
-					break;
-			}
-		}
-	}
+	
 
 	/* TESSELLATE */
 	private void tessellate() {
@@ -440,7 +414,7 @@ public class AxialClockwiseTessellation {
 
 		System.out.println("\nNeighbors:");
 		neighbors.getGisHexagons().forEach((hex) -> {
-			System.out.println(hex.getCentroid());
+			System.out.println(hex.getIndex());
 		});
 	}
 }

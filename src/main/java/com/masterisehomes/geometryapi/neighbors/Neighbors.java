@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
-import com.masterisehomes.geometryapi.index.HexagonalDirection;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -245,32 +244,31 @@ public class Neighbors {
 			 */
 			switch (i) {
 				case 0:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.NONE));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon.getCircumradius()));
 					break;
 				case 1:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.ONE));
+							NeighborDirection.ONE));
 					break;
 				case 2:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.TWO));
+							NeighborDirection.TWO));
 					break;
 				case 3:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.THREE));
+							NeighborDirection.THREE));
 					break;
 				case 4:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.FOUR));
+							NeighborDirection.FOUR));
 					break;
 				case 5:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.FIVE));
+							NeighborDirection.FIVE));
 					break;
 				case 6:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							HexagonalDirection.SIX));
+							NeighborDirection.SIX));
 					break;
 				default:
 					throw new IllegalStateException(
@@ -290,32 +288,31 @@ public class Neighbors {
 			// HexagonDirection
 			switch (i) {
 				case 0:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.NONE));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon.getCircumradius()));
 					break;
 				case 1:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.ONE));
+							NeighborDirection.ONE));
 					break;
 				case 2:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.TWO));
+							NeighborDirection.TWO));
 					break;
 				case 3:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.THREE));
+							NeighborDirection.THREE));
 					break;
 				case 4:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.FOUR));
+							NeighborDirection.FOUR));
 					break;
 				case 5:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.FIVE));
+							NeighborDirection.FIVE));
 					break;
 				case 6:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							HexagonalDirection.SIX));
+							NeighborDirection.SIX));
 					break;
 				default:
 					throw new IllegalStateException(

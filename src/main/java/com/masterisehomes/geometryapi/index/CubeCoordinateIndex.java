@@ -2,6 +2,8 @@ package com.masterisehomes.geometryapi.index;
 
 import java.security.InvalidParameterException;
 
+import com.masterisehomes.geometryapi.neighbors.NeighborDirection;
+
 import lombok.Getter;
 import lombok.ToString;
 
@@ -13,19 +15,20 @@ public class CubeCoordinateIndex {
 	private final int r;
 	@Getter
 	private final int s;
+	
+	/* Only use this constructor for Root Hexagon */
+	public CubeCoordinateIndex() {
+		this.q = 0;
+		this.r = 0;
+		this.s = 0;
+	}
 
-	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, HexagonalDirection direction) {
+	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, NeighborDirection direction) {
 		/*
 		 * Flat-top orientation of Hexagon
 		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
 		 */
 		switch (direction) {
-			case NONE: // case 0 - where previousCCI == null or direction == 0
-				this.q = 0;
-				this.r = 0;
-				this.s = 0;
-				break;
-
 			case ONE:
 				// s+, r-
 				this.q = previousCCI.getQ();
