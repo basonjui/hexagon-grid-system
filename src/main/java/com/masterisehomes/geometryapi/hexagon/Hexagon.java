@@ -40,7 +40,7 @@ public class Hexagon {
 	}
 
 	// Construct a new Hexagon from a rootHexagon
-	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborPosition direction) {
+	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborPosition position) {
 		this.centroid = centroid;
 		this.circumradius = rootHexagon.getCircumradius();
 		this.inradius = this.circumradius * Math.sqrt(3) / 2;
@@ -48,11 +48,11 @@ public class Hexagon {
 		this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		assert direction != null : "Direction cannot be null.";
-		this.position = direction;
+		assert position != null : "Position cannot be null.";
+		this.position = position;
 		this.previousCCI = rootHexagon.getCCI();
 
-		this.CCI = new CubeCoordinateIndex(this.previousCCI, direction);
+		this.CCI = new CubeCoordinateIndex(this.previousCCI, position);
 	}
 
 	/* Methods */
@@ -121,7 +121,7 @@ public class Hexagon {
 	public String getIndex() {
 		// We use the Hexagon's position as its name when print out
 		String name = this.position.toString();
-		
+
 		return String.format("Hexagon%s=(position=%s, previousCCI=%s, CCI=%s)",
 				name, this.position, this.previousCCI, this.CCI);
 	}
