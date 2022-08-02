@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 
@@ -202,31 +203,38 @@ public class AxialClockwiseTessellation {
 	}
 
 	private void populateRing1(Neighbors neighbors) {
-		List<Hexagon> neighborsHexagons = neighbors.getHexagons();
+		List<Hexagon> neighborHexagons = neighbors.getHexagons();
 
 		/* Validate neighbors */
-		assert neighborsHexagons.size() == 7
-				: String.format("neighborsHexagon size must equals 7, currently: ",
-						neighborsHexagons.size());
+		assert neighborHexagons.size() == 7
+				: String.format("neighborHexagons size must equals 7, currently: ",
+						neighborHexagons.size());
 
-		/* Populate Corner Hexagon lists using Neighbors
+		/* Get neighbors 1 - 6 
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
 		 * we will skip index 0 of Neighbors' hexagons list.
 		 * 
-		 * Since ring 1 is a special case, there is no need for dynamic
+		 * We use NeighborPosition enum ordinals to get hexagons in Neighbors 
+		 * based on its position. 
 		*/
-		this.c1Hexagons.add(neighborsHexagons.get(1));
-		this.c2Hexagons.add(neighborsHexagons.get(2));
-		this.c3Hexagons.add(neighborsHexagons.get(3));
-		this.c4Hexagons.add(neighborsHexagons.get(4));
-		this.c5Hexagons.add(neighborsHexagons.get(5));
-		this.c6Hexagons.add(neighborsHexagons.get(6));
+		final Hexagon NEIGHBOR_1 = neighborHexagons.get(NeighborPosition.ONE.ordinal());
+		final Hexagon NEIGHBOR_2 = neighborHexagons.get(NeighborPosition.TWO.ordinal());
+		final Hexagon NEIGHBOR_3 = neighborHexagons.get(NeighborPosition.THREE.ordinal());
+		final Hexagon NEIGHBOR_4 = neighborHexagons.get(NeighborPosition.FOUR.ordinal());
+		final Hexagon NEIGHBOR_5 = neighborHexagons.get(NeighborPosition.FIVE.ordinal());
+		final Hexagon NEIGHBOR_6 = neighborHexagons.get(NeighborPosition.SIX.ordinal());
 
-
+		/* Populate Corner Hexagon lists using Neighbors */
+		this.c1Hexagons.add(NEIGHBOR_1);
+		this.c2Hexagons.add(NEIGHBOR_2);
+		this.c3Hexagons.add(NEIGHBOR_3);
+		this.c4Hexagons.add(NEIGHBOR_4);
+		this.c5Hexagons.add(NEIGHBOR_5);
+		this.c6Hexagons.add(NEIGHBOR_6);
 		
-		// Populate Tessellation's hexagons & gisHexagons
-		this.hexagons.addAll(neighborsHexagons.subList(1, 7));
+		// Populate Tessellation's hexagons
+		this.hexagons.addAll(neighborHexagons.subList(1, 7));
 	}
 
 	private void populateGisRing1(Neighbors neighbors) {
