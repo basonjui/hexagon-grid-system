@@ -2,7 +2,7 @@ package com.masterisehomes.geometryapi.index;
 
 import java.security.InvalidParameterException;
 
-import com.masterisehomes.geometryapi.neighbors.NeighborDirection;
+import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -23,7 +23,7 @@ public class CubeCoordinateIndex {
 		this.s = 0;
 	}
 
-	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, NeighborDirection direction) {
+	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, NeighborPosition direction) {
 		/*
 		 * Flat-top orientation of Hexagon
 		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1

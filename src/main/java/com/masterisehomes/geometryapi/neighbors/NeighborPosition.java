@@ -1,5 +1,5 @@
 package com.masterisehomes.geometryapi.neighbors;
 
-public enum NeighborDirection {
+public enum NeighborPosition {
 	ONE, TWO, THREE, FOUR, FIVE, SIX;
 }

@@ -9,7 +9,7 @@ import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.index.CubeCoordinateIndex;
-import com.masterisehomes.geometryapi.neighbors.NeighborDirection;
+import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
 @ToString
 @Getter
@@ -22,7 +22,7 @@ public class Hexagon {
 	private List<Coordinates> gisVertices;
 
 	// Cube Coordinates Indexing
-	private final NeighborDirection direction;
+	private final NeighborPosition position;
 	private final CubeCoordinateIndex previousCCI;
 	private final CubeCoordinateIndex CCI;
 
@@ -34,13 +34,13 @@ public class Hexagon {
 		this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		this.direction = null;
+		this.position = null;
 		this.previousCCI = null;
 		this.CCI = new CubeCoordinateIndex();
 	}
 
 	// Construct a new Hexagon from a rootHexagon
-	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborDirection direction) {
+	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborPosition direction) {
 		this.centroid = centroid;
 		this.circumradius = rootHexagon.getCircumradius();
 		this.inradius = this.circumradius * Math.sqrt(3) / 2;
@@ -49,7 +49,7 @@ public class Hexagon {
 		this.gisVertices = generateGisVertices(centroid);
 
 		assert direction != null : "Direction cannot be null.";
-		this.direction = direction;
+		this.position = direction;
 		this.previousCCI = rootHexagon.getCCI();
 
 		this.CCI = new CubeCoordinateIndex(this.previousCCI, direction);
@@ -119,13 +119,13 @@ public class Hexagon {
 
 	// Getters
 	public String getIndex() {
-		if (this.direction == null) {
+		if (this.position == null) {
 			return String.format("HexagonROOT=(direction=%s, previousCCI=%s, CCI=%s)",
-					this.direction, this.previousCCI, this.CCI);
+					this.position, this.previousCCI, this.CCI);
 		} else {
-			String name = this.direction.toString();
+			String name = this.position.toString();
 			return String.format("Hexagon%s=(direction=%s, previousCCI=%s, CCI=%s)",
-					name, this.direction, this.previousCCI, this.CCI);
+					name, this.position, this.previousCCI, this.CCI);
 		}
 	}
 }

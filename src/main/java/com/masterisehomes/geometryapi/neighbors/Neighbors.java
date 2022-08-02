@@ -248,27 +248,27 @@ public class Neighbors {
 					break;
 				case 1:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.ONE));
+							NeighborPosition.ONE));
 					break;
 				case 2:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.TWO));
+							NeighborPosition.TWO));
 					break;
 				case 3:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.THREE));
+							NeighborPosition.THREE));
 					break;
 				case 4:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.FOUR));
+							NeighborPosition.FOUR));
 					break;
 				case 5:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.FIVE));
+							NeighborPosition.FIVE));
 					break;
 				case 6:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
-							NeighborDirection.SIX));
+							NeighborPosition.SIX));
 					break;
 				default:
 					throw new IllegalStateException(
@@ -292,27 +292,27 @@ public class Neighbors {
 					break;
 				case 1:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.ONE));
+							NeighborPosition.ONE));
 					break;
 				case 2:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.TWO));
+							NeighborPosition.TWO));
 					break;
 				case 3:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.THREE));
+							NeighborPosition.THREE));
 					break;
 				case 4:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.FOUR));
+							NeighborPosition.FOUR));
 					break;
 				case 5:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.FIVE));
+							NeighborPosition.FIVE));
 					break;
 				case 6:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborDirection.SIX));
+							NeighborPosition.SIX));
 					break;
 				default:
 					throw new IllegalStateException(
