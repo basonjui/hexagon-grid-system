@@ -254,25 +254,53 @@ public class AxialClockwiseTessellation {
 	}
 
 	private void populateGisRing1(Neighbors neighbors) {
-		List<Hexagon> neighborsGisHexagons = neighbors.getGisHexagons();
+		List<Hexagon> neighborGisHexagons = neighbors.getGisHexagons();
 
 		/* Validate neighbors */
+		assert neighborGisHexagons.size() == 7
+				: String.format("neighborHexagons size must equals 7, currently: ",
+						neighborGisHexagons.size());
 
-		assert neighborsGisHexagons.size() == 7
-				: String.format("neighborsGisHexagons size must equals 7, currently: ",
-						neighborsGisHexagons.size());
-		final int NEIGHBORS_SIZE = 7;
-
-		/* Populate Corner Hexagon lists using Neighbors
+		/*
+		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition 
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
-		 * we will skip index 0 of Neighbors' hexagons list.
-		*/
-		// TODO: not implemented
+		 * we will skip position 0 of Neighbors' hexagons list.
+		 */
+		for (Hexagon gisHexagon : neighborGisHexagons) {
+			NeighborPosition position = gisHexagon.getPosition();
+
+			switch (position) {
+				case ZERO:
+					// Ignore position ZERO, already added rootHexagon
+					break;
+				case ONE:
+					this.c1GisHexagons.add(gisHexagon);
+					break;
+				case TWO:
+					this.c2GisHexagons.add(gisHexagon);
+					break;
+				case THREE:
+					this.c4GisHexagons.add(gisHexagon);
+					break;
+				case FOUR:
+					this.c4GisHexagons.add(gisHexagon);
+					break;
+				case FIVE:
+					this.c5GisHexagons.add(gisHexagon);
+					break;
+				case SIX:
+					this.c6GisHexagons.add(gisHexagon);
+					break;
+				// Handle illegal position
+				default:
+					throw new IllegalStateException("Only position 1-6 are valid, currently: "
+							+ position);
+			}
+		}
 		
-		
-		// Populate Tessellation's hexagons & gisHexagons
-		this.gisHexagons.addAll(neighborsGisHexagons.subList(1, 7));
+		/* Populate hexagons with Neighbors 1 - 6 */
+		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
 	private void populateRingNth() {
@@ -424,21 +452,27 @@ public class AxialClockwiseTessellation {
 		double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
 				boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
-		System.out.println("Great-circle distance: " + greatCircleDistance);
-		System.out.println("Max hexagon rings: " + maxRings);
-		System.out.println("inradius: " + hexagon.getInradius());
-
+		// Call tessellation population methods here
 		tessellation.populateRing0(hexagon);
 		tessellation.populateRing1(neighbors);
+
+		tessellation.populateGisRing0(hexagon);
+		tessellation.populateGisRing1(neighbors);
+
+		tessellation.populateGisHexagons(boundary);
+
+		System.out.println("Great-circle distance: " + greatCircleDistance);
+		System.out.println("Max rings: " + maxRings);
+		System.out.println("Current ring: " + tessellation.nthRing + "\n");
 		
-		System.out.println("Tessellation ring 0 + 1:");
-		tessellation.getHexagons().forEach((hex) -> {
-			System.out.println(hex.getCentroid());
+		System.out.println("Tessellation:");
+		tessellation.getGisHexagons().forEach((hex) -> {
+			System.out.println(hex.getCentroid().toGeoJsonPosition());
 		});
 
 		System.out.println("\nNeighbors:");
-		neighbors.getHexagons().forEach((hex) -> {
-			System.out.println(hex.getCentroid());
+		neighbors.getGisHexagons().forEach((hex) -> {
+			System.out.println(hex.getCentroid().toGeoJsonPosition());
 		});
 	}
 }

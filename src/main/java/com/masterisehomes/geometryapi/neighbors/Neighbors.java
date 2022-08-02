@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
-import com.google.gson.Gson;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
 import lombok.Getter;
@@ -37,10 +36,10 @@ public class Neighbors {
 	}
 
 	/* Public methods */
-	public static Coordinates generateCentroid(Hexagon rootHexagon, int direction, int nthNeighbor) {
+	public static Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position, int nthNeighbor) {
 		/* Validate nthNeighbor */
 		if (nthNeighbor <= 0) {
-			throw new InvalidParameterException("Invalid nthNeighbor, must be <= 1, currently: " + nthNeighbor);
+			throw new InvalidParameterException("Invalid nthNeighbor, must be >= 1, currently: " + nthNeighbor);
 		}
 		
 		/* Constants */
@@ -51,37 +50,38 @@ public class Neighbors {
 		// Calculate nthInradius (inradius of the nthNeighbor)
 		final double nthInradius = rootInradius * nthNeighbor;
 
-		switch (direction) {
-			case 1:
+		/* Switch - case on NeighborPosition to generate a neighbor centroid */
+		switch (position) {
+			case ONE:
 				return new Coordinates(
 						centroidX,
 						centroidY - 2 * nthInradius);
-			case 2:
+			case TWO:
 				return new Coordinates(
 						centroidX + SQRT_3 * nthInradius,
 						centroidY - nthInradius);
-			case 3:
+			case THREE:
 				return new Coordinates(
 						centroidX + SQRT_3 * nthInradius,
 						centroidY + nthInradius);
-			case 4:
+			case FOUR:
 				return new Coordinates(
 						centroidX,
 						centroidY + 2 * nthInradius);
-			case 5:
+			case FIVE:
 				return new Coordinates(
 						centroidX - SQRT_3 * nthInradius,
 						centroidY + nthInradius);
-			case 6:
+			case SIX:
 				return new Coordinates(
 						centroidX - SQRT_3 * nthInradius,
 						centroidY - nthInradius);
 			default:
-				throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
+				throw new InvalidParameterException("Only accept position 1 - 6, currently: " + position);
 		}
 	};
 
-	public static Coordinates generateGisCentroid(Hexagon rootHexagon, int direction, int nthNeighbor) {
+	public static Coordinates generateGisCentroid(Hexagon rootHexagon, NeighborPosition position, int nthNeighbor) {
 		/* Validate nthNeighbor */
 		if (nthNeighbor <= 0) {
 			throw new InvalidParameterException("Invalid nthNeighbor, must be <= 1, currently: " + nthNeighbor);
@@ -89,43 +89,46 @@ public class Neighbors {
 		
 		/* Constants */
 		final double SQRT_3 = Math.sqrt(3);
+
 		final double gisCentroidLng = rootHexagon.getCentroid().getLongitude();
 		final double gisCentroidLat = rootHexagon.getCentroid().getLatitude();
+
 		final double rootInradius = rootHexagon.getInradius();
 		// Calculate nthInradius (inradius of the nthNeighbor)
 		final double nthInradius = rootInradius * nthNeighbor;
 
-		/* Convert neighborDistance (which is currently in Meter unit) to Degrees unit */
+		// Convert neighborDistance (which is currently in Meter unit) to Degrees unit
 		final double nthInradiusLng = SphericalMercatorProjection.xToLongitude(nthInradius);
 		final double nthInradiusLat = SphericalMercatorProjection.yToLatitude(nthInradius);
 
-		switch (direction) {
-			case 1:
+		/* Switch - case on NeighborPosition to generate a neighbor centroid */
+		switch (position) {
+			case ONE:
 				return new Coordinates(
 						gisCentroidLng,
 						gisCentroidLat - 2 * nthInradiusLat);
-			case 2:
+			case TWO:
 				return new Coordinates(
 						gisCentroidLng + SQRT_3 * nthInradiusLng,
 						gisCentroidLat - nthInradiusLat);
-			case 3:
+			case THREE:
 				return new Coordinates(
 						gisCentroidLng + SQRT_3 * nthInradiusLng,
 						gisCentroidLat + nthInradiusLat);
-			case 4:
+			case FOUR:
 				return new Coordinates(
 						gisCentroidLng,
 						gisCentroidLat + 2 * nthInradiusLat);
-			case 5:
+			case FIVE:
 				return new Coordinates(
 						gisCentroidLng - SQRT_3 * nthInradiusLng,
 						gisCentroidLat + nthInradiusLat);
-			case 6:
+			case SIX:
 				return new Coordinates(
 						gisCentroidLng - SQRT_3 * nthInradiusLng,
 						gisCentroidLat - nthInradiusLat);
 			default:
-				throw new InvalidParameterException("Invalid Hexagonal direction: " + direction);
+				throw new InvalidParameterException("Only accept position 1 - 6, currently: " + position);
 		}
 	};
 
@@ -329,8 +332,6 @@ public class Neighbors {
 		Coordinates centroid = new Coordinates(100, 100);
 		Hexagon hexagon = new Hexagon(centroid, 50);
 		Neighbors neighbors = new Neighbors(hexagon);
-
-		Gson gson = new Gson();
 
 		for (int i = 0; i < neighbors.getHexagons().size(); i++) {
 			System.out.println(
