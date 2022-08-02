@@ -13,6 +13,7 @@ import lombok.ToString;
 
 @ToString
 public class Neighbors {
+	/* Fields */
 	@Getter
 	private Hexagon rootHexagon;
 	@Getter
@@ -36,10 +37,10 @@ public class Neighbors {
 	}
 
 	/* Public methods */
-	public static Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position, int nthNeighbor) {
-		/* Validate nthNeighbor */
-		if (nthNeighbor <= 0) {
-			throw new InvalidParameterException("Invalid nthNeighbor, must be >= 1, currently: " + nthNeighbor);
+	public static Coordinates generateNthCentroid(Hexagon rootHexagon, NeighborPosition position, int nthRing) {
+		/* Validate nthRing */
+		if (nthRing <= 0) {
+			throw new InvalidParameterException("Invalid nthRing, must be >= 1, currently: " + nthRing);
 		}
 		
 		/* Constants */
@@ -47,8 +48,8 @@ public class Neighbors {
 		final double centroidX = rootHexagon.getCentroid().getX();
 		final double centroidY = rootHexagon.getCentroid().getY();
 		final double rootInradius = rootHexagon.getInradius();
-		// Calculate nthInradius (inradius of the nthNeighbor)
-		final double nthInradius = rootInradius * nthNeighbor;
+		// Calculate nthInradius (inradius of the nthRing)
+		final double nthInradius = rootInradius * nthRing;
 
 		/* Switch - case on NeighborPosition to generate a neighbor centroid */
 		switch (position) {
@@ -81,10 +82,10 @@ public class Neighbors {
 		}
 	};
 
-	public static Coordinates generateGisCentroid(Hexagon rootHexagon, NeighborPosition position, int nthNeighbor) {
-		/* Validate nthNeighbor */
-		if (nthNeighbor <= 0) {
-			throw new InvalidParameterException("Invalid nthNeighbor, must be <= 1, currently: " + nthNeighbor);
+	public static Coordinates generateNthGisCentroid(Hexagon rootHexagon, NeighborPosition position, int nthRing) {
+		/* Validate nthRing */
+		if (nthRing <= 0) {
+			throw new InvalidParameterException("Invalid nthRing, must be <= 1, currently: " + nthRing);
 		}
 		
 		/* Constants */
@@ -94,8 +95,8 @@ public class Neighbors {
 		final double gisCentroidLat = rootHexagon.getCentroid().getLatitude();
 
 		final double rootInradius = rootHexagon.getInradius();
-		// Calculate nthInradius (inradius of the nthNeighbor)
-		final double nthInradius = rootInradius * nthNeighbor;
+		// Calculate nthInradius (inradius of the nthRing)
+		final double nthInradius = rootInradius * nthRing;
 
 		// Convert neighborDistance (which is currently in Meter unit) to Degrees unit
 		final double nthInradiusLng = SphericalMercatorProjection.xToLongitude(nthInradius);
@@ -132,7 +133,65 @@ public class Neighbors {
 		}
 	};
 
-	/* Internal methods */
+	public Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position) {
+		// TODO
+	}
+
+	public Coordinates generateGisCentroid(Hexagon rootHexagon, NeighborPosition position) {
+
+	}
+
+	/* Generate Centroid in NeighborPosition */
+	private Coordinates generateP1Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP2Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP3Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP4Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP5Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP6Centroid(Coordinates centroid, double inradius) {
+
+	}
+
+	/* Generate GIS Centroid in NeighborPosition */
+	private Coordinates generateP1GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP2GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP3GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP4GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP5GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	private Coordinates generateP6GisCentroid(Coordinates centroid, double inradius) {
+
+	}
+
+	/* Generate Centroids */
 	private List<Coordinates> generateCentroids(Hexagon rootHexagon) {
 		final double SQRT_3 = Math.sqrt(3);
 		final double centroidX = rootHexagon.getCentroid().getX();
@@ -236,6 +295,7 @@ public class Neighbors {
 		return gisCentroids;
 	}
 
+	/* Generate Hexagons */
 	private List<Hexagon> generateHexagons(List<Coordinates> centroids) {
 		List<Hexagon> hexagons = new ArrayList<Hexagon>();
 
