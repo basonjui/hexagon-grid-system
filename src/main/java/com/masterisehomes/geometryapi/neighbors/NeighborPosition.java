@@ -1,5 +1,9 @@
 package com.masterisehomes.geometryapi.neighbors;
 
 public enum NeighborPosition {
-	ONE, TWO, THREE, FOUR, FIVE, SIX;
+	ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX;
+
+	public static void main(String[] args) {
+		System.out.println(NeighborPosition.values());
+	}
 }

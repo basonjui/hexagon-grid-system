@@ -34,9 +34,9 @@ public class Hexagon {
 		this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		this.position = null;
+		this.position = NeighborPosition.ZERO;
 		this.previousCCI = null;
-		this.CCI = new CubeCoordinateIndex();
+		this.CCI = new CubeCoordinateIndex(this.previousCCI, this.position);
 	}
 
 	// Construct a new Hexagon from a rootHexagon
@@ -119,13 +119,10 @@ public class Hexagon {
 
 	// Getters
 	public String getIndex() {
-		if (this.position == null) {
-			return String.format("HexagonROOT=(direction=%s, previousCCI=%s, CCI=%s)",
-					this.position, this.previousCCI, this.CCI);
-		} else {
-			String name = this.position.toString();
-			return String.format("Hexagon%s=(direction=%s, previousCCI=%s, CCI=%s)",
-					name, this.position, this.previousCCI, this.CCI);
-		}
+		// We use the Hexagon's position as its name when print out
+		String name = this.position.toString();
+		
+		return String.format("Hexagon%s=(position=%s, previousCCI=%s, CCI=%s)",
+				name, this.position, this.previousCCI, this.CCI);
 	}
 }
