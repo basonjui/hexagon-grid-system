@@ -7,7 +7,6 @@ import java.util.List;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 
 import lombok.Getter;
@@ -244,7 +243,8 @@ public class Neighbors {
 			 */
 			switch (i) {
 				case 0:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon.getCircumradius()));
+					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon, 
+							NeighborPosition.ZERO));
 					break;
 				case 1:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
@@ -288,7 +288,8 @@ public class Neighbors {
 			// HexagonDirection
 			switch (i) {
 				case 0:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon.getCircumradius()));
+					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+							NeighborPosition.ZERO));
 					break;
 				case 1:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
@@ -329,9 +330,12 @@ public class Neighbors {
 		Hexagon hexagon = new Hexagon(centroid, 50);
 		Neighbors neighbors = new Neighbors(hexagon);
 
-		// Gson gson = new Gson();
-		Gson gson = new GsonBuilder().serializeSpecialFloatingPointValues().create();
+		Gson gson = new Gson();
 
-		System.out.println(gson.toJson(neighbors));
+		for (int i = 0; i < neighbors.getHexagons().size(); i++) {
+			System.out.println(
+				neighbors.getHexagons().get(i).getPosition()
+			);
+		}
 	}
 }

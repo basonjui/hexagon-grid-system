@@ -1,11 +1,10 @@
 package com.masterisehomes.geometryapi.neighbors;
 
 public enum NeighborPosition {
+	/* The order is important, since we use its ordinal value */
 	ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX;
 
-	public static void main(String[] args) {
-		for (NeighborPosition position : NeighborPosition.values()) {
-			System.out.println(position + ": " + position.ordinal());
-		}
+	public int value() {
+		return this.ordinal();
 	}
 }

@@ -71,9 +71,10 @@ public class AxialClockwiseTessellation {
 	 * +1 ring = +1 EDGE HEXAGON
 	 */
 
-	/* Corner Hexagons - used to find Edge Hexagons (based on nthRing) 
+	/*
+	 * Corner Hexagons - used to find Edge Hexagons (based on nthRing)
 	 * - nthRing should equals any cornerHexagonList.size()
-	*/
+	 */
 	private List<Hexagon> c1Hexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c2Hexagons = new ArrayList<Hexagon>(100);
 	private List<Hexagon> c3Hexagons = new ArrayList<Hexagon>(100);
@@ -210,31 +211,46 @@ public class AxialClockwiseTessellation {
 				: String.format("neighborHexagons size must equals 7, currently: ",
 						neighborHexagons.size());
 
-		/* Get neighbors 1 - 6 
+		/*
+		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition 
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
-		 * we will skip index 0 of Neighbors' hexagons list.
-		 * 
-		 * We use NeighborPosition enum ordinals to get hexagons in Neighbors 
-		 * based on its position. 
-		*/
-		final Hexagon NEIGHBOR_1 = neighborHexagons.get(NeighborPosition.ONE.ordinal());
-		final Hexagon NEIGHBOR_2 = neighborHexagons.get(NeighborPosition.TWO.ordinal());
-		final Hexagon NEIGHBOR_3 = neighborHexagons.get(NeighborPosition.THREE.ordinal());
-		final Hexagon NEIGHBOR_4 = neighborHexagons.get(NeighborPosition.FOUR.ordinal());
-		final Hexagon NEIGHBOR_5 = neighborHexagons.get(NeighborPosition.FIVE.ordinal());
-		final Hexagon NEIGHBOR_6 = neighborHexagons.get(NeighborPosition.SIX.ordinal());
+		 * we will skip position 0 of Neighbors' hexagons list.
+		 */
+		for (Hexagon hexagon : neighborHexagons) {
+			NeighborPosition position = hexagon.getPosition();
 
-		/* Populate Corner Hexagon lists using Neighbors */
-		this.c1Hexagons.add(NEIGHBOR_1);
-		this.c2Hexagons.add(NEIGHBOR_2);
-		this.c3Hexagons.add(NEIGHBOR_3);
-		this.c4Hexagons.add(NEIGHBOR_4);
-		this.c5Hexagons.add(NEIGHBOR_5);
-		this.c6Hexagons.add(NEIGHBOR_6);
+			switch (position) {
+				case ZERO:
+					// Ignore position ZERO, already added rootHexagon
+					break;
+				case ONE:
+					this.c1Hexagons.add(hexagon);
+					break;
+				case TWO:
+					this.c2Hexagons.add(hexagon);
+					break;
+				case THREE:
+					this.c4Hexagons.add(hexagon);
+					break;
+				case FOUR:
+					this.c4Hexagons.add(hexagon);
+					break;
+				case FIVE:
+					this.c5Hexagons.add(hexagon);
+					break;
+				case SIX:
+					this.c6Hexagons.add(hexagon);
+					break;
+				// Handle illegal position
+				default:
+					throw new IllegalStateException("Only position 1-6 are valid, currently: "
+							+ position);
+			}
+		}
 		
-		// Populate Tessellation's hexagons
-		this.hexagons.addAll(neighborHexagons.subList(1, 7));
+		/* Populate hexagons with Neighbors 1 - 6 */
+		this.hexagons.addAll(neighborHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
 	private void populateGisRing1(Neighbors neighbors) {
@@ -416,13 +432,13 @@ public class AxialClockwiseTessellation {
 		tessellation.populateRing1(neighbors);
 		
 		System.out.println("Tessellation ring 0 + 1:");
-		tessellation.getGisHexagons().forEach((hex) -> {
+		tessellation.getHexagons().forEach((hex) -> {
 			System.out.println(hex.getCentroid());
 		});
 
 		System.out.println("\nNeighbors:");
-		neighbors.getGisHexagons().forEach((hex) -> {
-			System.out.println(hex.getIndex());
+		neighbors.getHexagons().forEach((hex) -> {
+			System.out.println(hex.getCentroid());
 		});
 	}
 }
