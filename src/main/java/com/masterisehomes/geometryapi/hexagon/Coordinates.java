@@ -49,11 +49,14 @@ public class Coordinates {
 	}
 
 	// Comparison methods
-	public boolean isEqual(Coordinates gisCoordinates) {
-		double latitude = gisCoordinates.getLatitude();
-		double longitude = gisCoordinates.getLongitude();
+	public boolean equals(Coordinates coordinates) {
+		double latitude = coordinates.getLatitude();
+		double longitude = coordinates.getLongitude();
+		double x = coordinates.getX();
+		double y = coordinates.getY();
 
-		if (this.latitude == latitude && this.longitude == longitude) {
+		if (this.latitude == latitude && this.longitude == longitude
+				&& this.x == x && this.y == y) {
 			return true;
 		} else {
 			return false;
