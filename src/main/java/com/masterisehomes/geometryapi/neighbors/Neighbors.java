@@ -134,9 +134,27 @@ public class Neighbors {
 		}
 	};
 
-	// public Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position) {
-	// 	// TODO
-	// }
+	public Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position) {
+		switch (position) {
+			case ZERO:
+				break;
+			case ONE:
+				break;
+			case TWO:
+				break;
+			case THREE:
+				break;
+			case FOUR:
+				break;
+			case FIVE:
+				break;
+			case SIX:
+				break;
+			default:
+				break;
+
+		}
+	}
 
 	// public Coordinates generateGisCentroid(Hexagon rootHexagon, NeighborPosition position) {
 
