@@ -134,24 +134,30 @@ public class Neighbors {
 		}
 	};
 
-	public Coordinates generateCentroid(Hexagon rootHexagon, NeighborPosition position) {
+	public static final Coordinates generateHexagon(Hexagon rootHexagon, NeighborPosition position) {
+		// Get rootHexagon's centroid & inradius
+		final Coordinates rootCentroid = rootHexagon.getCentroid();
+		final double rootInradius = rootHexagon.getInradius();
+
 		switch (position) {
-			case ZERO:
-				break;
 			case ONE:
-				break;
+				return generateP1Centroid(rootCentroid, rootInradius);
 			case TWO:
-				break;
+				return generateP2Centroid(rootCentroid, rootInradius);
 			case THREE:
-				break;
+				return generateP3Centroid(rootCentroid, rootInradius);
 			case FOUR:
-				break;
+				return generateP4Centroid(rootCentroid, rootInradius);
 			case FIVE:
-				break;
+				return generateP5Centroid(rootCentroid, rootInradius);
 			case SIX:
-				break;
-			default:
-				break;
+				return generateP6Centroid(rootCentroid, rootInradius);
+
+			case ZERO:
+			default: {
+				throw new IllegalArgumentException(
+						"Only accept position 1 - 6, current position: " + position);
+			}
 
 		}
 	}
@@ -441,15 +447,13 @@ public class Neighbors {
 		double inradius = hexagon.getInradius();
 		Neighbors neighbors = new Neighbors(hexagon);
 
-		System.out.println("\ngenerateCentroids():");
-
+		/* Test generatePnthCentroid */
 		List<Coordinates> getCentroids1to6 = new ArrayList<Coordinates>();
 		for (int i = 1; i < neighbors.getCentroids().size(); i++) {
 			getCentroids1to6.add(neighbors.getCentroids().get(i));
 		}
 
 		List<Coordinates> PNCentroids = new ArrayList<Coordinates>();
-		System.out.println("\ngeneratePNCentroid():");
 		PNCentroids.add(Neighbors.generateP1Centroid(centroid, inradius));
 		PNCentroids.add(Neighbors.generateP2Centroid(centroid, inradius));
 		PNCentroids.add(Neighbors.generateP3Centroid(centroid, inradius));
@@ -457,13 +461,27 @@ public class Neighbors {
 		PNCentroids.add(Neighbors.generateP5Centroid(centroid, inradius));
 		PNCentroids.add(Neighbors.generateP6Centroid(centroid, inradius));
 		
+		System.out.println("Compare centroids[1-6] to P[1-6] centroids");
 		for (int i = 0; i < 6; i++) {
 			Coordinates centroidA = getCentroids1to6.get(i);
 			Coordinates centroidB = PNCentroids.get(i);
 
 			System.out.println(
-				centroidA.equals(centroidB)
+				centroidA.toGeoJsonPosition() + " equals " + centroidB.toGeoJsonPosition()
+				+ ", " + centroidA.equals(centroidB)
 			);
+		}
+
+		/* Test generateHexagon */
+		NeighborPosition positions[] = NeighborPosition.values();
+
+		System.out.println("\nTest generateHexagon()");
+		for (NeighborPosition position : positions) {
+			if (position != NeighborPosition.ZERO) {
+				System.out.println(
+						Neighbors.generateHexagon(hexagon, position).toGeoJsonPosition());
+			}
+			
 		}
 	}
 }
