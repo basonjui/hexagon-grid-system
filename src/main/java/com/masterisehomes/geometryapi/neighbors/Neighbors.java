@@ -134,31 +134,50 @@ public class Neighbors {
 		}
 	};
 
-	public static final Coordinates generateHexagon(Hexagon rootHexagon, NeighborPosition position) {
+	public static final Hexagon generateNextHexagon(Hexagon rootHexagon, NeighborPosition position) {
 		// Get rootHexagon's centroid & inradius
 		final Coordinates rootCentroid = rootHexagon.getCentroid();
 		final double rootInradius = rootHexagon.getInradius();
+		
+		final Coordinates neighborCentroid;
+		final Hexagon neighborHexagon;
 
 		switch (position) {
 			case ONE:
-				return generateP1Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP1Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
+
 			case TWO:
-				return generateP2Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP2Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
+
 			case THREE:
-				return generateP3Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP3Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
+
 			case FOUR:
-				return generateP4Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP4Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
+
 			case FIVE:
-				return generateP5Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP5Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
+
 			case SIX:
-				return generateP6Centroid(rootCentroid, rootInradius);
+				neighborCentroid = generateP6Centroid(rootCentroid, rootInradius);
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				return neighborHexagon;
 
 			case ZERO:
 			default: {
 				throw new IllegalArgumentException(
 						"Only accept position 1 - 6, current position: " + position);
 			}
-
 		}
 	}
 
@@ -478,8 +497,12 @@ public class Neighbors {
 		System.out.println("\nTest generateHexagon()");
 		for (NeighborPosition position : positions) {
 			if (position != NeighborPosition.ZERO) {
-				System.out.println(
-						Neighbors.generateHexagon(hexagon, position).toGeoJsonPosition());
+				System.out.println("\n" + "Direction: " + position);
+				Hexagon newHex = Neighbors.generateNextHexagon(hexagon, position);
+				for (int i = 0; i < 5; i++) {
+					System.out.println("Hexagon " + i + ": " + newHex.getCCI());
+					newHex = Neighbors.generateNextHexagon(newHex, position);
+				}
 			}
 			
 		}

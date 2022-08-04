@@ -109,4 +109,9 @@ public class Coordinates {
 		List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
 		return gisCoordinates;
 	}
+
+	public List<Double> toPixel() {
+		List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
+		return pixelCoordinates;
+	}
 }
