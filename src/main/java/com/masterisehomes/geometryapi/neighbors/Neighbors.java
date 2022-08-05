@@ -145,38 +145,38 @@ public class Neighbors {
 		switch (position) {
 			case ONE:
 				neighborCentroid = generateP1Centroid(rootCentroid, rootInradius);
+
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
-				
 				return neighborHexagon;
 
 			case TWO:
 				neighborCentroid = generateP2Centroid(rootCentroid, rootInradius);
+
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
-				
 				return neighborHexagon;
 
 			case THREE:
 				neighborCentroid = generateP3Centroid(rootCentroid, rootInradius);
+
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
-				
 				return neighborHexagon;
 
 			case FOUR:
 				neighborCentroid = generateP4Centroid(rootCentroid, rootInradius);
+
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
-				
 				return neighborHexagon;
 
 			case FIVE:
 				neighborCentroid = generateP5Centroid(rootCentroid, rootInradius);
+
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
-				
 				return neighborHexagon;
 
 			case SIX:
 				neighborCentroid = generateP6Centroid(rootCentroid, rootInradius);
-				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
 				
+				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
 				return neighborHexagon;
 
 			case ZERO:
@@ -432,8 +432,7 @@ public class Neighbors {
 			 */
 			switch (i) {
 				case 0:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon, 
-							NeighborPosition.ZERO));
+					hexagons.add(this.rootHexagon);
 					break;
 				case 1:
 					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
@@ -477,8 +476,7 @@ public class Neighbors {
 			// HexagonDirection
 			switch (i) {
 				case 0:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
-							NeighborPosition.ZERO));
+					gisHexagons.add(this.rootHexagon);
 					break;
 				case 1:
 					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
@@ -520,45 +518,49 @@ public class Neighbors {
 		double inradius = hexagon.getInradius();
 		Neighbors neighbors = new Neighbors(hexagon);
 
-		/* Test generatePnthCentroid */
-		List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
-		for (int i = 1; i < neighbors.getGisCentroids().size(); i++) {
-			gisCentroids.add(neighbors.getGisCentroids().get(i));
-		}
+		// /* Test generatePnthCentroid */
+		// List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
+		// for (int i = 1; i < neighbors.getGisCentroids().size(); i++) {
+		// 	gisCentroids.add(neighbors.getGisCentroids().get(i));
+		// }
 
-		List<Coordinates> PGisCentroids = new ArrayList<Coordinates>();
-		PGisCentroids.add(Neighbors.generateP1GisCentroid(centroid, inradius));
-		PGisCentroids.add(Neighbors.generateP2GisCentroid(centroid, inradius));
-		PGisCentroids.add(Neighbors.generateP3GisCentroid(centroid, inradius));
-		PGisCentroids.add(Neighbors.generateP4GisCentroid(centroid, inradius));
-		PGisCentroids.add(Neighbors.generateP5GisCentroid(centroid, inradius));
-		PGisCentroids.add(Neighbors.generateP6GisCentroid(centroid, inradius));
+		// List<Coordinates> PGisCentroids = new ArrayList<Coordinates>();
+		// PGisCentroids.add(Neighbors.generateP1GisCentroid(centroid, inradius));
+		// PGisCentroids.add(Neighbors.generateP2GisCentroid(centroid, inradius));
+		// PGisCentroids.add(Neighbors.generateP3GisCentroid(centroid, inradius));
+		// PGisCentroids.add(Neighbors.generateP4GisCentroid(centroid, inradius));
+		// PGisCentroids.add(Neighbors.generateP5GisCentroid(centroid, inradius));
+		// PGisCentroids.add(Neighbors.generateP6GisCentroid(centroid, inradius));
 		
-		System.out.println("Compare centroids[1-6] to P[1-6] centroids");
-		for (int i = 0; i < 6; i++) {
-			Coordinates centroidA = gisCentroids.get(i);
-			Coordinates centroidB = PGisCentroids.get(i);
+		// System.out.println("Compare centroids[1-6] to P[1-6] centroids");
+		// for (int i = 0; i < 6; i++) {
+		// 	Coordinates centroidA = gisCentroids.get(i);
+		// 	Coordinates centroidB = PGisCentroids.get(i);
 
-			System.out.println(
-				centroidA.toGeoJsonPosition() + " equals " + centroidB.toGeoJsonPosition()
-				+ ", " + centroidA.equals(centroidB)
-			);
-		}
+		// 	System.out.println(
+		// 		centroidA.toGeoJsonPosition() + " equals " + centroidB.toGeoJsonPosition()
+		// 		+ ", " + centroidA.equals(centroidB)
+		// 	);
+		// }
 
-		/* Test generateHexagon */
-		NeighborPosition positions[] = NeighborPosition.values();
+		// /* Test generateHexagon */
+		// NeighborPosition positions[] = NeighborPosition.values();
 
-		System.out.println("\nTest generateHexagon()");
-		for (NeighborPosition position : positions) {
-			if (position != NeighborPosition.ZERO) {
-				System.out.println("\n" + "Direction: " + position);
-				Hexagon newHex = Neighbors.generateNextHexagon(hexagon, position);
-				for (int i = 0; i < 5; i++) {
-					System.out.println("Hexagon " + i + ": " + newHex.getCentroid().toGeoJsonPosition());
-					newHex = Neighbors.generateNextHexagon(newHex, position);
-				}
-			}
+		// System.out.println("\nTest generateHexagon()");
+		// for (NeighborPosition position : positions) {
+		// 	if (position != NeighborPosition.ZERO) {
+		// 		System.out.println("\n" + "Direction: " + position);
+		// 		Hexagon newHex = Neighbors.generateNextHexagon(hexagon, position);
+		// 		for (int i = 0; i < 5; i++) {
+		// 			System.out.println("Hexagon " + i + ": " + newHex.getCentroid().toGeoJsonPosition());
+		// 			newHex = Neighbors.generateNextHexagon(newHex, position);
+		// 		}
+		// 	}
 			
+		// }
+
+		for (Hexagon hex : neighbors.getGisHexagons()) {
+			System.out.println(hex.getCentroid());
 		}
 	}
 }

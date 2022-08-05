@@ -26,6 +26,7 @@ public class Hexagon {
 	private final CubeCoordinateIndex previousCCI;
 	private final CubeCoordinateIndex CCI;
 
+	/* Constructors */
 	public Hexagon(Coordinates centroid, double circumradius) {
 		this.centroid = centroid;
 		this.circumradius = circumradius;
@@ -49,8 +50,16 @@ public class Hexagon {
 		this.gisVertices = generateGisVertices(centroid);
 
 		assert position != null : "Position cannot be null.";
-		this.position = position;
-		this.previousCCI = rootHexagon.getCCI();
+		switch (position) {
+			case ZERO:
+				this.position = position;
+				this.previousCCI = null;
+				break;
+			default:
+				this.position = position;
+				this.previousCCI = rootHexagon.getCCI();
+				break;
+		}
 
 		this.CCI = new CubeCoordinateIndex(this.previousCCI, position);
 	}
@@ -93,18 +102,11 @@ public class Hexagon {
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(this.inradius);
 
 		/*
-		 * Use SphericalMetricConversion algorithm
-		 * 	double circumradiusInLongitude = SphericalMetricConversion.meterToLongitude(this.circumradius, latitude);
-		 * 	double inradiusInLatitude = SphericalMetricConversion.meterToLatitude(this.inradius);
-		 */
-
-		List<Coordinates> gisCoordinates = new ArrayList<Coordinates>();
-		
-		/*
 		 * GeoJSON specification:
 		 * - The first and last positions are equivalent, and they MUST contain
 		 * identical values; their representation SHOULD also be identical.
 		 */
+		List<Coordinates> gisCoordinates = new ArrayList<Coordinates>();
 		gisCoordinates.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat - inradiusLat));
 		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat - inradiusLat));
 		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng, centroidLat));

@@ -22,8 +22,8 @@ import lombok.ToString;
 public class Coordinates {
 	private final double x;
 	private final double y;
-	private final double latitude;
 	private final double longitude;
+	private final double latitude;
 
 	/* Constructors */
 	public Coordinates(double longitude, double latitude) {
