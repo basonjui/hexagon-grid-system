@@ -146,31 +146,37 @@ public class Neighbors {
 			case ONE:
 				neighborCentroid = generateP1Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case TWO:
 				neighborCentroid = generateP2Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case THREE:
 				neighborCentroid = generateP3Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case FOUR:
 				neighborCentroid = generateP4Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case FIVE:
 				neighborCentroid = generateP5Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case SIX:
 				neighborCentroid = generateP6Centroid(rootCentroid, rootInradius);
 				neighborHexagon = new Hexagon(neighborCentroid, rootHexagon, position);
+				
 				return neighborHexagon;
 
 			case ZERO:
@@ -192,7 +198,7 @@ public class Neighbors {
 
 		return new Coordinates(
 				centroidX,
-				centroidY - 2 * inradius);
+				centroidY - (inradius * 2));
 	}
 
 	private static final Coordinates generateP2Centroid(Coordinates centroid, double inradius) {
@@ -200,7 +206,7 @@ public class Neighbors {
 		final double centroidY = centroid.getY();
 
 		return new Coordinates(
-				centroidX + ((inradius * 2) * COS_30_DEG), 
+				centroidX + (inradius * 2 * COS_30_DEG), 
 				centroidY - inradius);
 	}
 
@@ -209,7 +215,7 @@ public class Neighbors {
 		final double centroidY = centroid.getY();
 
 		return new Coordinates(
-				centroidX + ((inradius * 2) * COS_30_DEG),
+				centroidX + (inradius * 2 * COS_30_DEG),
 				centroidY + inradius);
 	}
 
@@ -227,7 +233,7 @@ public class Neighbors {
 		final double centroidY = centroid.getY();
 
 		return new Coordinates(
-				centroidX - ((inradius * 2) * COS_30_DEG),
+				centroidX - (inradius * 2 * COS_30_DEG),
 				centroidY + inradius);
 	}
 
@@ -236,34 +242,82 @@ public class Neighbors {
 		final double centroidY = centroid.getY();
 
 		return new Coordinates(
-				centroidX - ((inradius * 2) * COS_30_DEG),
+				centroidX - (inradius * 2 * COS_30_DEG),
 				centroidY - inradius);
 	}
 
 	/* Generate GIS Centroid in NeighborPosition */
-	// private Coordinates generateP1GisCentroid(Coordinates centroid, double inradius) {
+	private static final Coordinates generateP1GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
 
-	// }
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
-	// private Coordinates generateP2GisCentroid(Coordinates centroid, double inradius) {
+		return new Coordinates(
+				centroidLng,
+				centroidLat - (inradiusLat * 2));
+	}
 
-	// }
+	private static final Coordinates generateP2GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
+		
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
-	// private Coordinates generateP3GisCentroid(Coordinates centroid, double inradius) {
+		return new Coordinates(
+				centroidLng + (inradiusLng * 2 * COS_30_DEG),
+				centroidLat - inradiusLat);
+	}
 
-	// }
+	private static final Coordinates generateP3GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
 
-	// private Coordinates generateP4GisCentroid(Coordinates centroid, double inradius) {
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
-	// }
+		return new Coordinates(
+				centroidLng + (inradiusLng * 2 * COS_30_DEG),
+				centroidLat + inradiusLat);
+	}
 
-	// private Coordinates generateP5GisCentroid(Coordinates centroid, double inradius) {
+	private static final Coordinates generateP4GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
 
-	// }
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
-	// private Coordinates generateP6GisCentroid(Coordinates centroid, double inradius) {
+		return new Coordinates(
+				centroidLng,
+				centroidLat + (inradiusLat * 2));
+	}
 
-	// }
+	private static final Coordinates generateP5GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
+
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
+
+		return new Coordinates(
+				centroidLng - (inradiusLng * 2 * COS_30_DEG),
+				centroidLat + inradiusLat);
+	}
+
+	private static final Coordinates generateP6GisCentroid(Coordinates centroid, double inradius) {
+		final double centroidLng = centroid.getLongitude();
+		final double centroidLat = centroid.getLatitude();
+
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
+
+		return new Coordinates(
+				centroidLng - (inradiusLng * 2 * COS_30_DEG),
+				centroidLat - inradiusLat);
+	}
 
 	/* Generate Centroids */
 	private List<Coordinates> generateCentroids(Hexagon rootHexagon) {
@@ -330,12 +384,12 @@ public class Neighbors {
 		final double centroidLat = rootHexagon.getCentroid().getLatitude();
 		final double inradius = rootHexagon.getInradius();
 
-		// Convert inradius (which is currently in Meter unit) to Degrees unit
+		/* Convert inradius (which is currently in Meter unit) to Degrees unit */
 		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius); // x
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
 
+		/* Generate gisCentroids 0 - 6 and add to List */
 		List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
-
 		// Root hexagon
 		gisCentroids.add(0, rootHexagon.getCentroid());
 
@@ -467,23 +521,23 @@ public class Neighbors {
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		/* Test generatePnthCentroid */
-		List<Coordinates> getCentroids1to6 = new ArrayList<Coordinates>();
-		for (int i = 1; i < neighbors.getCentroids().size(); i++) {
-			getCentroids1to6.add(neighbors.getCentroids().get(i));
+		List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
+		for (int i = 1; i < neighbors.getGisCentroids().size(); i++) {
+			gisCentroids.add(neighbors.getGisCentroids().get(i));
 		}
 
-		List<Coordinates> PNCentroids = new ArrayList<Coordinates>();
-		PNCentroids.add(Neighbors.generateP1Centroid(centroid, inradius));
-		PNCentroids.add(Neighbors.generateP2Centroid(centroid, inradius));
-		PNCentroids.add(Neighbors.generateP3Centroid(centroid, inradius));
-		PNCentroids.add(Neighbors.generateP4Centroid(centroid, inradius));
-		PNCentroids.add(Neighbors.generateP5Centroid(centroid, inradius));
-		PNCentroids.add(Neighbors.generateP6Centroid(centroid, inradius));
+		List<Coordinates> PGisCentroids = new ArrayList<Coordinates>();
+		PGisCentroids.add(Neighbors.generateP1GisCentroid(centroid, inradius));
+		PGisCentroids.add(Neighbors.generateP2GisCentroid(centroid, inradius));
+		PGisCentroids.add(Neighbors.generateP3GisCentroid(centroid, inradius));
+		PGisCentroids.add(Neighbors.generateP4GisCentroid(centroid, inradius));
+		PGisCentroids.add(Neighbors.generateP5GisCentroid(centroid, inradius));
+		PGisCentroids.add(Neighbors.generateP6GisCentroid(centroid, inradius));
 		
 		System.out.println("Compare centroids[1-6] to P[1-6] centroids");
 		for (int i = 0; i < 6; i++) {
-			Coordinates centroidA = getCentroids1to6.get(i);
-			Coordinates centroidB = PNCentroids.get(i);
+			Coordinates centroidA = gisCentroids.get(i);
+			Coordinates centroidB = PGisCentroids.get(i);
 
 			System.out.println(
 				centroidA.toGeoJsonPosition() + " equals " + centroidB.toGeoJsonPosition()
@@ -500,7 +554,7 @@ public class Neighbors {
 				System.out.println("\n" + "Direction: " + position);
 				Hexagon newHex = Neighbors.generateNextHexagon(hexagon, position);
 				for (int i = 0; i < 5; i++) {
-					System.out.println("Hexagon " + i + ": " + newHex.getCCI());
+					System.out.println("Hexagon " + i + ": " + newHex.getCentroid().toGeoJsonPosition());
 					newHex = Neighbors.generateNextHexagon(newHex, position);
 				}
 			}
