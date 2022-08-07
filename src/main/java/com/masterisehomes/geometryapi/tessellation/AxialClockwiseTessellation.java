@@ -242,6 +242,7 @@ public class AxialClockwiseTessellation {
 				case SIX:
 					this.c6Hexagons.add(hexagon);
 					break;
+
 				// Handle illegal position
 				default:
 					throw new IllegalStateException("Only position 1-6 are valid, currently: "
@@ -250,7 +251,7 @@ public class AxialClockwiseTessellation {
 		}
 		
 		/* Populate hexagons with Neighbors 1 - 6 */
-		this.hexagons.addAll(neighborHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
+		this.hexagons.addAll(neighborHexagons.subList(1, 7)); // 7 is exclusive. Why? ask Java :)
 	}
 
 	private void populateGisRing1(Neighbors neighbors) {
@@ -292,6 +293,7 @@ public class AxialClockwiseTessellation {
 				case SIX:
 					this.c6GisHexagons.add(gisHexagon);
 					break;
+
 				// Handle illegal position
 				default:
 					throw new IllegalStateException("Only position 1-6 are valid, currently: "
@@ -303,13 +305,87 @@ public class AxialClockwiseTessellation {
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
-	private void populateRingNth() {
+	private void populateRingNth(int requiredEdgeHexagons) {
 
 	}
 
-	private void populateGisRingNth() {
+	private void populateGisRingNth(int requiredEdgeHexagons) {
+		/* Populate next Corner Hexagons (1 - 6) */
+		Hexagon latestGisHexagon;
+		Hexagon nextGisHexagon;
 
+		for (NeighborPosition position : NeighborPosition.values()) {
+			switch (position) {
+				case ZERO:
+					// Skipping position ZERO, since that is just root...
+					// TODO: We might need to get rid of ZERO :-s
+					break;
+
+				case ONE:
+					// Get the latestHexagon in Corner List
+					latestGisHexagon = c1GisHexagons.get(c1GisHexagons.size() - 1);
+
+					// Generate and add nextHexagon to Corner List
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
+					c1GisHexagons.add(nextGisHexagon);
+
+					// Add nextGisHexagon to gisHexagons
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				case TWO:
+					latestGisHexagon = c2GisHexagons.get(c2GisHexagons.size() - 1);
+
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);					
+					c2GisHexagons.add(nextGisHexagon);
+
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				case THREE:
+					latestGisHexagon = c3GisHexagons.get(c3GisHexagons.size() - 1);
+
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
+					c3GisHexagons.add(nextGisHexagon);
+
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				case FOUR:
+					latestGisHexagon = c4GisHexagons.get(c4GisHexagons.size() - 1);
+
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
+					c4GisHexagons.add(nextGisHexagon);
+
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				case FIVE:
+					latestGisHexagon = c5GisHexagons.get(c5GisHexagons.size() - 1);
+
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
+					c5GisHexagons.add(nextGisHexagon);
+
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				case SIX:
+					latestGisHexagon = c6GisHexagons.get(c6GisHexagons.size() - 1);
+
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
+					c6GisHexagons.add(nextGisHexagon);
+
+					gisHexagons.add(nextGisHexagon);
+					break;
+
+				default:
+					throw new IllegalStateException(
+							"Should never reach this code, current position: " + position);
+			}
+		}
 	}
+
+
 
 	/* Corner hexagons population */
 	
@@ -407,7 +483,7 @@ public class AxialClockwiseTessellation {
 		 * - maxAxialHexagons is the maximum amount of hexagons that can stack up (from
 		 * edges) in those 3 axes to cover the grid map largest diameter.
 		 */
-		int maxAxialHexagons = (int) Math.ceil(maxBoundaryDistance / hexagonDistance);
+		int maxAxialHexagons = (int) Math.ceil(maxBoundaryDistance / hexagonDistance); // round up
 
 		/*
 		 * We then arrive at 2 cases: odd vs even maxAxialHexagons
