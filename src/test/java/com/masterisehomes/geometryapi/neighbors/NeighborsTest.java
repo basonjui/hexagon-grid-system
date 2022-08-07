@@ -29,11 +29,10 @@ public class NeighborsTest {
 
         @Test
         public void COS_30_DEG__EQUALS__SQRT3_DIVIDE_2() {
-                final double COS_30_DEG = Math.cos(Math.toRadians(30));
-                final double SQRT3_DIVIDE_2 = Math.sqrt(3);
-
                 final double THRESHOLD = 0.000001;
-                final double difference = COS_30_DEG - SQRT3_DIVIDE_2;
+
+                final double difference = Math.abs(
+                        Math.cos(Math.toRadians(30)) - (Math.abs(Math.sqrt(3) / 2)));
 
                 assertTrue(difference < THRESHOLD);
         }

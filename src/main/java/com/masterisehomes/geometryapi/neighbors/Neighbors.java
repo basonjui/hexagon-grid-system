@@ -251,7 +251,6 @@ public class Neighbors {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
-		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
 		return new Coordinates(
@@ -287,7 +286,6 @@ public class Neighbors {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
-		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);
 
 		return new Coordinates(
