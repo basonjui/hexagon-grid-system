@@ -247,7 +247,7 @@ public class Neighbors {
 	}
 
 	/* Generate GIS Centroid in NeighborPosition */
-	private static final Coordinates generateP1GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP1GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
@@ -259,7 +259,7 @@ public class Neighbors {
 				centroidLat - (inradiusLat * 2));
 	}
 
-	private static final Coordinates generateP2GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP2GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 		
@@ -271,7 +271,7 @@ public class Neighbors {
 				centroidLat - inradiusLat);
 	}
 
-	private static final Coordinates generateP3GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP3GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
@@ -283,7 +283,7 @@ public class Neighbors {
 				centroidLat + inradiusLat);
 	}
 
-	private static final Coordinates generateP4GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP4GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
@@ -295,7 +295,7 @@ public class Neighbors {
 				centroidLat + (inradiusLat * 2));
 	}
 
-	private static final Coordinates generateP5GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP5GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 
@@ -307,7 +307,7 @@ public class Neighbors {
 				centroidLat + inradiusLat);
 	}
 
-	private static final Coordinates generateP6GisCentroid(Coordinates centroid, double inradius) {
+	public static final Coordinates generateP6GisCentroid(Coordinates centroid, double inradius) {
 		final double centroidLng = centroid.getLongitude();
 		final double centroidLat = centroid.getLatitude();
 

@@ -50,13 +50,16 @@ public class Coordinates {
 
 	// Comparison methods
 	public boolean equals(Coordinates coordinates) {
-		double latitude = coordinates.getLatitude();
-		double longitude = coordinates.getLongitude();
-		double x = coordinates.getX();
-		double y = coordinates.getY();
+		final double longitude = coordinates.getLongitude();
+		final double latitude = coordinates.getLatitude();
 
-		if (this.latitude == latitude && this.longitude == longitude
-				&& this.x == x && this.y == y) {
+		final double x = coordinates.getX();
+		final double y = coordinates.getY();
+
+		if (equals_under_threshold(this.longitude, longitude)
+				&& equals_under_threshold(this.latitude, latitude)
+				&& equals_under_threshold(this.x, x)
+				&& equals_under_threshold(this.y, y)) {
 			return true;
 		} else {
 			return false;
@@ -114,4 +117,16 @@ public class Coordinates {
 		List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
 		return pixelCoordinates;
 	}
-}
+
+	/* Internal methods */
+	private boolean equals_under_threshold(double numA, double numB) {
+		final double THRESHOLD = 0.000001;
+
+		double difference = Math.abs(numA - numB);
+		if (difference < THRESHOLD) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}	
