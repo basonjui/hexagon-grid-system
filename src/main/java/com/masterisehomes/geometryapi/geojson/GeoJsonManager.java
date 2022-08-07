@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
+import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
 
 @ToString
 public class GeoJsonManager {
@@ -28,6 +29,25 @@ public class GeoJsonManager {
 
 	public GeoJsonManager(Neighbors neighbors) {
 		List<Hexagon> gisHexagons = neighbors.getGisHexagons();
+
+		for (int i = 0; i < gisHexagons.size(); i++) {
+			Hexagon hexagon = gisHexagons.get(i);
+
+			this.geometry = new PolygonGeometry(hexagon);
+			this.feature = new Feature(this.geometry);
+
+			this.feature.addProperty("id", i);
+			this.feature.addProperty("ccid", hexagon.getCCI());
+			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
+			this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+			this.feature.addProperty("circumradius", hexagon.getCircumradius());
+
+			this.featureCollection.addFeature(this.feature);
+		};
+	}
+
+	public GeoJsonManager(AxialClockwiseTessellation tessellation) {
+		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 
 		for (int i = 0; i < gisHexagons.size(); i++) {
 			Hexagon hexagon = gisHexagons.get(i);

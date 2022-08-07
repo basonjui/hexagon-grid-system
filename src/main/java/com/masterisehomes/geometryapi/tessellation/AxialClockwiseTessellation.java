@@ -18,6 +18,7 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
+import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 
 @ToString
 public class AxialClockwiseTessellation {
@@ -173,6 +174,9 @@ public class AxialClockwiseTessellation {
 					// Calculate requiredEdgeCentroids
 					requiredEdgeHexagons = this.nthRing - 1;
 
+					// Populate GIS Rings
+					populateGisRingNth(requiredEdgeHexagons);
+
 					/*
 					 * Axial Clock-wise Tessellation algorithm steps
 					 * 
@@ -282,7 +286,7 @@ public class AxialClockwiseTessellation {
 					this.c2GisHexagons.add(gisHexagon);
 					break;
 				case THREE:
-					this.c4GisHexagons.add(gisHexagon);
+					this.c3GisHexagons.add(gisHexagon);
 					break;
 				case FOUR:
 					this.c4GisHexagons.add(gisHexagon);
@@ -512,16 +516,19 @@ public class AxialClockwiseTessellation {
 	}
 
 	public static void main(String[] args) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().create();
 
-		Coordinates origin = new Coordinates(10, 10);
+		Coordinates origin = new Coordinates(106.7018186, 10.7781382);
 
-		Hexagon hexagon = new Hexagon(origin, 5000);
+		Hexagon hexagon = new Hexagon(origin,100);
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		Boundary boundary = new Boundary(Arrays.asList(10.0, 10.0, 10.5, 10.5));
+		Boundary boundary = new Boundary(
+				Arrays.asList(10.7827, 106.6959,
+						10.7744, 106.7063));
+
 		int maxRings = tessellation.calculateMaxRings(boundary);
 
 		// Test harversine
@@ -529,8 +536,8 @@ public class AxialClockwiseTessellation {
 				boundary.getMaxLatitude(), boundary.getMaxLongitude());
 
 		// Call tessellation population methods here
-		tessellation.populateRing0(hexagon);
-		tessellation.populateRing1(neighbors);
+		// tessellation.populateRing0(hexagon);
+		// tessellation.populateRing1(neighbors);
 
 		tessellation.populateGisRing0(hexagon);
 		tessellation.populateGisRing1(neighbors);
@@ -541,14 +548,9 @@ public class AxialClockwiseTessellation {
 		System.out.println("Max rings: " + maxRings);
 		System.out.println("Current ring: " + tessellation.nthRing + "\n");
 		
-		System.out.println("Tessellation:");
-		tessellation.getGisHexagons().forEach((hex) -> {
-			System.out.println(hex.getCentroid().toGeoJsonPosition());
-		});
-
-		System.out.println("\nNeighbors:");
-		neighbors.getGisHexagons().forEach((hex) -> {
-			System.out.println(hex.getCentroid().toGeoJsonPosition());
-		});
+		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
+		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
+		System.out.println(
+			gson.toJson(tessellationManager.getFeatureCollection()));
 	}
 }

@@ -29,14 +29,12 @@ public class GeometryApi {
 				// GeoJsonManager handles all GeoJSON operations
 				GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
 				FeatureCollection collection = manager.getFeatureCollection();
-
-				// Return GeoJSON response
 				return collection;
-			}
 
-			catch (Exception e) {
+			} catch (Exception e) {
 				return "Invalid JSON data provided: " + e;
 			}
+
 		}, new JsonTransformer());
 
 		post("/api/neighbors", "application/json", (request, response) -> {
@@ -49,13 +47,27 @@ public class GeometryApi {
 
 				GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
 				FeatureCollection collection = manager.getFeatureCollection();
-
 				return collection;
-			}
 
-			catch (Exception e) {
+			} catch (Exception e) {
 				return "Invalid JSON data provided: " + e;
 			}
+
 		}, new JsonTransformer());
+
+		// post("/api/tessellation", "application/json", (request, response) -> {
+		// 	try {
+		// 		// Parse request payload to a JSONObject with Gson
+		// 		JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
+
+		// 		GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
+		// 		FeatureCollection collection = manager.getFeatureCollection();
+		// 		return collection;
+
+		// 	} catch (Exception e) {
+		// 		return "Invalid JSON data provided: " + e;
+		// 	}
+
+		// }, new JsonTransformer());
 	}
 }
