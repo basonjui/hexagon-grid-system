@@ -110,7 +110,7 @@ public class AxialClockwiseTessellation {
 	@Getter
 	private int totalRings = 0; // keep track of hexagon rings generated
 	/* The below updaters are used internally only */
-	private int maxRings = 0; // maximum layers of hexagons in a ring required to tessellate
+	private int minimumRings = 0; // maximum layers of hexagons in a ring required to tessellate
 	private int nthRing = 0; // the latest nth rings that tessellate generated
 
 	/* Constructors */
@@ -148,13 +148,13 @@ public class AxialClockwiseTessellation {
 		this.resetRings();
 
 		/* Set the maximum amount of tessellation rings */
-		this.maxRings = calculateMaxRings(boundary);
+		this.minimumRings = calculateMinimumRings(boundary);
 
 		/* Initialize EDGE centroids counter */
 		int requiredEdgeHexagons = 0;
 
 		/* Loop tessellation logic until nthRing == maxRing */
-		while (this.nthRing <= this.maxRings) {
+		while (this.nthRing <= this.minimumRings) {
 			switch (this.nthRing) {
 				/* Handle special cases: nthRing == 0 -> 1 */
 				case 0:
@@ -168,9 +168,9 @@ public class AxialClockwiseTessellation {
 					// TODO: not implemented
 					populateGisRing1(neighbors);
 					break;
-				
+
 				/* nthRing >= 2 */
-				default: 
+				default:
 					// Calculate requiredEdgeCentroids
 					requiredEdgeHexagons = this.nthRing - 1;
 
@@ -216,7 +216,7 @@ public class AxialClockwiseTessellation {
 						neighborHexagons.size());
 
 		/*
-		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition 
+		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
 		 * we will skip position 0 of Neighbors' hexagons list.
@@ -253,7 +253,7 @@ public class AxialClockwiseTessellation {
 							+ position);
 			}
 		}
-		
+
 		/* Populate hexagons with Neighbors 1 - 6 */
 		this.hexagons.addAll(neighborHexagons.subList(1, 7)); // 7 is exclusive. Why? ask Java :)
 	}
@@ -267,7 +267,7 @@ public class AxialClockwiseTessellation {
 						neighborGisHexagons.size());
 
 		/*
-		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition 
+		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition
 		 * 
 		 * Since we populated rootHexagon already (from populateRing0 method),
 		 * we will skip position 0 of Neighbors' hexagons list.
@@ -304,7 +304,7 @@ public class AxialClockwiseTessellation {
 							+ position);
 			}
 		}
-		
+
 		/* Populate hexagons with Neighbors 1 - 6 */
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
@@ -340,7 +340,7 @@ public class AxialClockwiseTessellation {
 				case TWO:
 					latestGisHexagon = c2GisHexagons.get(c2GisHexagons.size() - 1);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);					
+					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
 					c2GisHexagons.add(nextGisHexagon);
 
 					gisHexagons.add(nextGisHexagon);
@@ -389,10 +389,7 @@ public class AxialClockwiseTessellation {
 		}
 	}
 
-
-
 	/* Corner hexagons population */
-	
 
 	/* TESSELLATE */
 	private void tessellate() {
@@ -402,31 +399,31 @@ public class AxialClockwiseTessellation {
 		 * 2. generate hexagon 1 - 6 for each nthRing (with CCI)
 		 * 
 		 * Given maxRings:
-		 * 	While nthRing <= maxRings:
-		 * 		Case nthRing == 0:
-		 * 			1. Add rootHexagon to hexagons[]
+		 * While nthRing <= maxRings:
+		 * Case nthRing == 0:
+		 * 1. Add rootHexagon to hexagons[]
 		 * 
-		 * 		Case nthRing == 1:
-		 * 			1. Generate neighbors from rootHexagon
-		 * 			2. Add Neighbors' hexagons 1 - 6 to hexagons[]
+		 * Case nthRing == 1:
+		 * 1. Generate neighbors from rootHexagon
+		 * 2. Add Neighbors' hexagons 1 - 6 to hexagons[]
 		 * 
-		 * 		Case nthRing >= 2:
-		 * 			For each nthRing (until maxRings):
-		 * 				1. For each direction (1 - 6):
-		 * 					a. Calculate c,r,s displacement (dpm == 1 * nthRing)
-		 * 					b. Generate CORNER centroid
-		 * 					c. Generate CORNER Hexagon (centroid, rootHexagon, direction, displacement)
+		 * Case nthRing >= 2:
+		 * For each nthRing (until maxRings):
+		 * 1. For each direction (1 - 6):
+		 * a. Calculate c,r,s displacement (dpm == 1 * nthRing)
+		 * b. Generate CORNER centroid
+		 * c. Generate CORNER Hexagon (centroid, rootHexagon, direction, displacement)
 		 * 
-		 * 				2. For requiredEdgeHexagons:
-		 * 					a. Generate EDGE centroid
-		 * 					b. Generate EDGE hexagon
+		 * 2. For requiredEdgeHexagons:
+		 * a. Generate EDGE centroid
+		 * b. Generate EDGE hexagon
 		 */
 	}
 
 	/* Reset data */
 	private void resetRings() {
 		this.totalRings = 0;
-		this.maxRings = 0;
+		this.minimumRings = 0;
 		this.nthRing = 0;
 	}
 
@@ -459,60 +456,63 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Calculations */
-	private int calculateMaxRings(Boundary boundary) {
+	private int calculateMinimumRings(Boundary boundary) {
 		// Get boundary coordinates
-		double minLat = boundary.getMinLatitude();
-		double minLng = boundary.getMinLongitude();
-		double maxLat = boundary.getMaxLatitude();
-		double maxLng = boundary.getMaxLongitude();
-
-		// Calculate the Great-circle Distance between the MIN and MAX coordinates
-		double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
+		double startLat = boundary.getMinLatitude();
+		double startLng = boundary.getMinLongitude();
+		double endLat = boundary.getMaxLatitude();
+		double endLng = boundary.getMaxLongitude();
 
 		/*
-		 * Hexagon's height - distance between hexagon neighbors is:
-		 * = inradius * 2
+		 * Calculate the Great-circle Distance between the START and END boundary
+		 * coordinates
+		 */
+		double maxBoundaryDistance = Harversine.distance(startLat, startLng, endLat, endLng);
+
+		/*
+		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
+		 * neighborDistance = inradius * 2
 		 * 
 		 * Given maxDistance,
 		 * the maximum number of hexagons stack up in any axial direction is:
-		 * = maxDistance / inradius * 2
+		 * = maxDistance / neighborDistance
 		 * 
 		 * However, we need to use Math.ceil() to round it up to nearest int
 		 */
-		double hexagonDistance = this.inradius * 2;
+		double neighborDistance = this.inradius * 2;
 
 		/*
 		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
 		 * directions):
-		 * - maxAxialHexagons is the maximum amount of hexagons that can stack up (from
-		 * edges) in those 3 axes to cover the grid map largest diameter.
+		 * - minAxialHexagons is the minimum amount of hexagons that required to stack
+		 * up (from edges) in those 3 axes to cover the grid map largest diameter.
 		 */
-		int maxAxialHexagons = (int) Math.ceil(maxBoundaryDistance / hexagonDistance); // round up
+		int minAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
 
 		/*
-		 * We then arrive at 2 cases: odd vs even maxAxialHexagons
+		 * We then arrive at 2 cases: odd vs even minAxialHexagons
 		 * 
-		 * But to form a regular Hexagon Grids, the maxAxialHexagons must always be odd
+		 * But to form a regular Hexagon Grids, the minAxialHexagons must always be odd
 		 * in order to divide to an even amount of Hexagons on each side of the axis
 		 * -> because it has to subtract rootHexagon from the axis:
 		 * 
-		 * 	maxAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
+		 * minAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
 		 */
-		int maximumRings;
-		if (maxAxialHexagons % 2 == 0) {
+		int minRings;
+		if (minAxialHexagons % 2 == 0) {
 			/*
 			 * If even: we can think of it as the rootHexagon is already subtracted
 			 * 
 			 * Then, because each ring of hexagons consist of 2 hexagons (1 on each side
 			 * of the axis), we divide by 2 to get the number of hexagon rings.
 			 */
-			maximumRings = maxAxialHexagons / 2;
+			minRings = minAxialHexagons / 2;
 		} else {
-			/* If odd: subtract rootHexagon from maxAxialHexagons and divide by 2 */
-			maximumRings = (maxAxialHexagons - 1) / 2;
+			/* If odd: subtract rootHexagon from minAxialHexagons and divide by 2 */
+			minRings = (minAxialHexagons - 1) / 2;
 		}
 
-		return maximumRings;
+		return minRings;
 	}
 
 	public static void main(String[] args) {
@@ -520,7 +520,7 @@ public class AxialClockwiseTessellation {
 
 		Coordinates origin = new Coordinates(106.7018186, 10.7781382);
 
-		Hexagon hexagon = new Hexagon(origin,100);
+		Hexagon hexagon = new Hexagon(origin, 100);
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
@@ -529,7 +529,7 @@ public class AxialClockwiseTessellation {
 				Arrays.asList(10.7827, 106.6959,
 						10.7744, 106.7063));
 
-		int maxRings = tessellation.calculateMaxRings(boundary);
+		int maxRings = tessellation.calculateMinimumRings(boundary);
 
 		// Test harversine
 		double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
@@ -547,10 +547,10 @@ public class AxialClockwiseTessellation {
 		System.out.println("Great-circle distance: " + greatCircleDistance);
 		System.out.println("Max rings: " + maxRings);
 		System.out.println("Current ring: " + tessellation.nthRing + "\n");
-		
+
 		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		System.out.println(
-			gson.toJson(tessellationManager.getFeatureCollection()));
+				gson.toJson(tessellationManager.getFeatureCollection()));
 	}
 }
