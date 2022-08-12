@@ -490,27 +490,24 @@ public class AxialClockwiseTessellation {
 		int minAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
 
 		/*
-		 * We then arrive at 2 cases: odd vs even minAxialHexagons
+		 * Calculate the Minimum Required Rings
 		 * 
-		 * But to form a regular Hexagon Grids, the minAxialHexagons must always be odd
-		 * in order to divide to an even amount of Hexagons on each side of the axis
-		 * -> because it has to subtract rootHexagon from the axis:
+		 * In a normal case, where Centroid is always in the exact middle of the
+		 * Boundary, we would calculate the Minimum Required Rings by:
+		 * 	minAxialHexagons / 2 - n (where n = 0 or 1 depends on ODD or EVEN case)
 		 * 
-		 * minAxialHexagons = side_1_hexagons + rootHexagon + side_2_hexagons
+		 * However, we need to ensure that this works even in the Worst case scenario,
+		 * where the Centroid could be place at the Start or End coordinates of the
+		 * Boundary.
+		 * 
+		 * We can do this by setting the Minimum Required Rings to be EQUAL to
+		 * minAxialHexagons - which allow the Centroid to cover the minAxialHexagons
+		 * in all 6 neighborly directions:
+		 * 	- Cons: Increase the amount of generated hexagons up to ~84% (quick guess)
+		 * more than True Required Hexagons.
+		 * 	- Pros: To never miss any required coverage
 		 */
-		int minRings;
-		if (minAxialHexagons % 2 == 0) {
-			/*
-			 * If even: we can think of it as the rootHexagon is already subtracted
-			 * 
-			 * Then, because each ring of hexagons consist of 2 hexagons (1 on each side
-			 * of the axis), we divide by 2 to get the number of hexagon rings.
-			 */
-			minRings = minAxialHexagons / 2;
-		} else {
-			/* If odd: subtract rootHexagon from minAxialHexagons and divide by 2 */
-			minRings = (minAxialHexagons - 1) / 2;
-		}
+		int minRings = minAxialHexagons;
 
 		return minRings;
 	}
@@ -518,7 +515,7 @@ public class AxialClockwiseTessellation {
 	public static void main(String[] args) {
 		Gson gson = new GsonBuilder().create();
 
-		Coordinates origin = new Coordinates(106.7018186, 10.7781382);
+		Coordinates origin = new Coordinates(106.7064, 10.7744);
 
 		Hexagon hexagon = new Hexagon(origin, 100);
 		Neighbors neighbors = new Neighbors(hexagon);
