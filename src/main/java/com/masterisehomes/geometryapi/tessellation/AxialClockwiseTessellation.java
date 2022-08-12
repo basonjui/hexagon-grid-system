@@ -158,7 +158,7 @@ public class AxialClockwiseTessellation {
 			switch (this.nthRing) {
 				/* Handle special cases: nthRing == 0 -> 1 */
 				case 0:
-					// Ring 0 is just the rootHexagon (hence "Centroid")
+					// Ring 0 is just the rootHexagon
 					populateGisRing0(this.rootHexagon);
 					break;
 
@@ -175,7 +175,7 @@ public class AxialClockwiseTessellation {
 					requiredEdgeHexagons = this.nthRing - 1;
 
 					// Populate GIS Rings
-					populateGisRingNth(requiredEdgeHexagons);
+					populateGisRingN(requiredEdgeHexagons);
 
 					/*
 					 * Axial Clock-wise Tessellation algorithm steps
@@ -309,11 +309,15 @@ public class AxialClockwiseTessellation {
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
-	private void populateRingNth(int requiredEdgeHexagons) {
+	private void populateNthRing(int requiredEdgeHexagons) {
 
 	}
 
-	private void populateGisRingNth(int requiredEdgeHexagons) {
+	private void populateGisRingN(int requiredEdgeHexagons) {
+		populateNextGisCorners();
+	}
+
+	private void populateNextGisCorners() {
 		/* Populate next Corner Hexagons (1 - 6) */
 		Hexagon latestGisHexagon;
 		Hexagon nextGisHexagon;
@@ -321,8 +325,10 @@ public class AxialClockwiseTessellation {
 		for (NeighborPosition position : NeighborPosition.values()) {
 			switch (position) {
 				case ZERO:
-					// Skipping position ZERO, since that is just root...
-					// TODO: We might need to get rid of ZERO :-s
+					/*
+					 * Skipping position ZERO, since that is just root...
+					 * TODO: We might need to get rid of ZERO :-s
+					 */
 					break;
 
 				case ONE:
@@ -526,7 +532,7 @@ public class AxialClockwiseTessellation {
 				Arrays.asList(10.7827, 106.6959,
 						10.7744, 106.7063));
 
-		int maxRings = tessellation.calculateMinimumRings(boundary);
+		int minRings = tessellation.calculateMinimumRings(boundary);
 
 		// Test harversine
 		double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
@@ -542,8 +548,10 @@ public class AxialClockwiseTessellation {
 		tessellation.populateGisHexagons(boundary);
 
 		System.out.println("Great-circle distance: " + greatCircleDistance);
-		System.out.println("Max rings: " + maxRings);
-		System.out.println("Current ring: " + tessellation.nthRing + "\n");
+
+		System.out.println("Total rings: " + tessellation.totalRings);
+		System.out.println("Minimum required rings: " + tessellation.minimumRings);
+		System.out.println("Current nthRing: " + tessellation.nthRing + "\n");
 
 		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
