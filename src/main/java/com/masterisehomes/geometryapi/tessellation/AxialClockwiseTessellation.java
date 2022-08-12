@@ -301,24 +301,29 @@ public class AxialClockwiseTessellation {
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
-	private void populateRingN(int nthRing) {
+	private void populateRingN() {
 
 	}
 
 	private void populateGisRingN(int nthRing) {
-		/* Make sure nthRing > 1 */
+		/* Validate nthRing */
 		assert nthRing > 1 : "nthRing must be > 1, current nthRing: " + nthRing;
+		assert nthRing < this.minimumRings : String.format("nthRing must be < %s, current nthRing: %s", this.minimumRings, nthRing);
 
-		/* Begin by populating next corners (1 - 6) for each ring */
-		populateNextGisCorners();
-	}
+		/* Calculate latestGisHexagonListIndex and requiredEdgeHexagons */
+		int latestGisHexagonListIndex = nthRing - 2; // -1 for Ring 1 and -1 due to List index start at 0
+		int requiredEdgeHexagons = nthRing - 1;
 
-	private void populateNextGisCorners() {
-		/* Populate next Corner Hexagons (1 - 6) */
-		Hexagon latestGisHexagon;
-		Hexagon nextGisHexagon;
+		/* Begin by populating corners (1 - 6) for current ring */
+		Hexagon latestCornerGisHexagon;
+		Hexagon nextCornerGisHexagon;
+
+		NeighborPosition edgePosition;
+		Hexagon previousEdgeHexagon;
 
 		for (NeighborPosition position : NeighborPosition.values()) {
+			List<Hexagon> edgeHexagons = new ArrayList<Hexagon>();
+
 			switch (position) {
 				case ZERO:
 					/*
@@ -329,59 +334,119 @@ public class AxialClockwiseTessellation {
 
 				case ONE:
 					// Get the latestHexagon in Corner List
-					latestGisHexagon = c1GisHexagons.get(c1GisHexagons.size() - 1);
+					latestCornerGisHexagon = c1GisHexagons.get(latestGisHexagonListIndex); 
 
-					// Generate and add nextHexagon to Corner List
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c1GisHexagons.add(nextGisHexagon);
+					// Generate and add nextCornerGisHexagon
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c1GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					// Add nextGisHexagon to gisHexagons
-					gisHexagons.add(nextGisHexagon);
+					// Generate EDGE hexagons from nextCornerGisHexagon
+					edgePosition = NeighborPosition.THREE;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case TWO:
-					latestGisHexagon = c2GisHexagons.get(c2GisHexagons.size() - 1);
+					latestCornerGisHexagon = c2GisHexagons.get(latestGisHexagonListIndex);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c2GisHexagons.add(nextGisHexagon);
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c2GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					gisHexagons.add(nextGisHexagon);
+					edgePosition = NeighborPosition.FOUR;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case THREE:
-					latestGisHexagon = c3GisHexagons.get(c3GisHexagons.size() - 1);
+					latestCornerGisHexagon = c3GisHexagons.get(latestGisHexagonListIndex);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c3GisHexagons.add(nextGisHexagon);
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c3GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					gisHexagons.add(nextGisHexagon);
+					edgePosition = NeighborPosition.FIVE;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FOUR:
-					latestGisHexagon = c4GisHexagons.get(c4GisHexagons.size() - 1);
+					latestCornerGisHexagon = c4GisHexagons.get(latestGisHexagonListIndex);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c4GisHexagons.add(nextGisHexagon);
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c4GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					gisHexagons.add(nextGisHexagon);
+					edgePosition = NeighborPosition.SIX;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FIVE:
-					latestGisHexagon = c5GisHexagons.get(c5GisHexagons.size() - 1);
+					latestCornerGisHexagon = c5GisHexagons.get(latestGisHexagonListIndex);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c5GisHexagons.add(nextGisHexagon);
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c5GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					gisHexagons.add(nextGisHexagon);
+					edgePosition = NeighborPosition.ONE;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case SIX:
-					latestGisHexagon = c6GisHexagons.get(c6GisHexagons.size() - 1);
+					latestCornerGisHexagon = c6GisHexagons.get(latestGisHexagonListIndex);
 
-					nextGisHexagon = Neighbors.generateNextGisHexagon(latestGisHexagon, position);
-					c6GisHexagons.add(nextGisHexagon);
+					nextCornerGisHexagon = Neighbors.generateNextGisHexagon(latestCornerGisHexagon, position);
+					c6GisHexagons.add(nextCornerGisHexagon);
+					gisHexagons.add(nextCornerGisHexagon);
 
-					gisHexagons.add(nextGisHexagon);
+					edgePosition = NeighborPosition.TWO;
+					for (int i = 1; i <= requiredEdgeHexagons; i++) {
+						if (i == 1) {
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(nextCornerGisHexagon, edgePosition));
+						} else {
+							previousEdgeHexagon = edgeHexagons.get(edgeHexagons.size() - 1);
+							edgeHexagons.add(Neighbors.generateNextGisHexagon(previousEdgeHexagon, edgePosition));
+						}
+					}
+					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				default:
@@ -389,9 +454,8 @@ public class AxialClockwiseTessellation {
 							"Should never reach this code, current position: " + position);
 			}
 		}
-	}
 
-	/* Corner hexagons population */
+	}
 
 	/* TESSELLATE */
 	private void tessellate() {
@@ -519,7 +583,7 @@ public class AxialClockwiseTessellation {
 
 		Coordinates origin = new Coordinates(106.7064, 10.7744);
 
-		Hexagon hexagon = new Hexagon(origin, 100);
+		Hexagon hexagon = new Hexagon(origin, 200);
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
