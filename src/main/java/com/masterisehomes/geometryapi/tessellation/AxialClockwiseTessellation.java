@@ -2,10 +2,8 @@ package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -150,9 +148,6 @@ public class AxialClockwiseTessellation {
 		/* Set the maximum amount of tessellation rings */
 		this.minimumRings = calculateMinimumRings(boundary);
 
-		/* Initialize EDGE centroids counter */
-		int requiredEdgeHexagons = 0;
-
 		/* Loop tessellation logic until nthRing == maxRing */
 		while (this.nthRing <= this.minimumRings) {
 			switch (this.nthRing) {
@@ -171,11 +166,8 @@ public class AxialClockwiseTessellation {
 
 				/* nthRing >= 2 */
 				default:
-					// Calculate requiredEdgeCentroids
-					requiredEdgeHexagons = this.nthRing - 1;
-
 					// Populate GIS Rings
-					populateGisRingN(requiredEdgeHexagons);
+					populateGisRingN(this.nthRing);
 
 					/*
 					 * Axial Clock-wise Tessellation algorithm steps
@@ -309,11 +301,15 @@ public class AxialClockwiseTessellation {
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
-	private void populateNthRing(int requiredEdgeHexagons) {
+	private void populateRingN(int nthRing) {
 
 	}
 
-	private void populateGisRingN(int requiredEdgeHexagons) {
+	private void populateGisRingN(int nthRing) {
+		/* Make sure nthRing > 1 */
+		assert nthRing > 1 : "nthRing must be > 1, current nthRing: " + nthRing;
+
+		/* Begin by populating next corners (1 - 6) for each ring */
 		populateNextGisCorners();
 	}
 
