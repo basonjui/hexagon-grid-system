@@ -12,8 +12,7 @@ import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto
 import com.masterisehomes.geometryapi.utils.JsonTransformer;
 
 public class GeometryApi {
-	public final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	// public final static Gson gson = new Gson();
+	public final static Gson gson = new Gson();
 
 	public static void main(String[] args) {
 		before((request, response) -> response.type("application/json"));
