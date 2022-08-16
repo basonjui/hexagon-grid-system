@@ -13,13 +13,13 @@ import com.google.gson.JsonObject;
 @ToString
 public class NeighborsDto {
 	@Getter
-	private double rootLatitude, rootLongitude, circumradius;
+	private final double rootLatitude, rootLongitude, circumradius;
 	@Getter
-	private Coordinates rootCentroid;
+	private final Coordinates rootCentroid;
 	@Getter
-	private Hexagon rootHexagon;
+	private final Hexagon rootHexagon;
 	@Getter
-	private Neighbors neighbors;
+	private final Neighbors neighbors;
 
 	final static private Gson gson = new Gson();
 

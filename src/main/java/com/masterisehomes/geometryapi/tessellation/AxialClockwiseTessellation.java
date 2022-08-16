@@ -148,15 +148,16 @@ public class AxialClockwiseTessellation {
 		this.requiredRings = calculateRequiredRings(boundary);
 
 		/* Populate hexagons */
-		while (this.nthRing <= this.requiredRings) {
+		while (this.nthRing < this.requiredRings) {
 			// GIS Hexagons
 			populateGisHexagons(this.nthRing);
 
 			// Pixel Hexagons
 			// TODO: not yet implemented
 
-			// Update nthRing
+			// Update rings
 			this.nthRing++;
+			this.totalRings++;
 		}
 	}
 
@@ -411,7 +412,6 @@ public class AxialClockwiseTessellation {
 							"Should never reach this code, current corner position: " + cornerPosition);
 			}
 		}
-
 	}
 
 	/* Corner - Edge hexagons population */
@@ -457,17 +457,30 @@ public class AxialClockwiseTessellation {
 
 	/* Calculate RequiredRings */
 	private int calculateRequiredRings(Boundary boundary) {
-		// Get boundary coordinates
-		double startLat = boundary.getMinLatitude();
-		double startLng = boundary.getMinLongitude();
-		double endLat = boundary.getMaxLatitude();
-		double endLng = boundary.getMaxLongitude();
+		/*
+		 * ARBITRARY RING ADJUSTMENT CONSTANT
+		 * 
+		 * Geometrically, at the outer most ring, 1/6 the area of each hexagon can be
+		 * missed. 
+		 * 
+		 * This adjustment constant serves as a safe method to ensure that no POI in a 
+		 * given Boundary, even when accurately calculated, is missed due to the
+		 * geometric property of AxialClockwiseTessellation.
+		 * 
+		 */
+		final int RING_ADJUSTMENT_CONSTANT = 1;
+
+		/* Coordinates */
+		final double minLat = boundary.getMinLatitude();
+		final double minLng = boundary.getMinLongitude();
+		final double maxLat = boundary.getMaxLatitude();
+		final double maxLng = boundary.getMaxLongitude();
 
 		/*
 		 * Calculate the Great-circle Distance between the START and END boundary
 		 * coordinates
 		 */
-		double maxBoundaryDistance = Harversine.distance(startLat, startLng, endLat, endLng);
+		double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
 
 		/*
 		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
@@ -507,7 +520,7 @@ public class AxialClockwiseTessellation {
 		 * more than True Required Hexagons.
 		 * 	- Pros: To never miss any required coverage
 		 */
-		int requiredRings = requiredAxialHexagons;
+		int requiredRings = requiredAxialHexagons + RING_ADJUSTMENT_CONSTANT;
 
 		return requiredRings;
 	}
