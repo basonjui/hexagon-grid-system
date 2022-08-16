@@ -102,6 +102,8 @@ public class AxialClockwiseTessellation {
 	private final List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
 	@Getter
 	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+	@Getter
+	private int totalHexagons = 0;
 
 	/* Updaters */
 	@Getter
@@ -156,8 +158,21 @@ public class AxialClockwiseTessellation {
 			// TODO: not yet implemented
 
 			// Update rings
-			this.nthRing++;
 			this.totalRings++;
+			this.nthRing++;
+		}
+
+		/* Calculate results */
+		if (this.hexagons.isEmpty()) {
+			this.totalHexagons = this.gisHexagons.size();
+		} else if (this.gisHexagons.isEmpty()) {
+			this.totalHexagons = this.hexagons.size();
+		} else {
+			int hexSize = this.hexagons.size();
+			int gisHexSize = this.gisHexagons.size();
+
+			assert hexSize == gisHexSize;
+			this.totalHexagons = (hexSize + gisHexSize) / 2;
 		}
 	}
 
@@ -592,7 +607,8 @@ public class AxialClockwiseTessellation {
 		System.out.println("Great-circle distance: " + greatCircleDistance);
 		System.out.println("Total rings: " + tessellation.totalRings);
 		System.out.println("Minimum required rings: " + tessellation.requiredRings);
-		System.out.println("Current nthRing: " + tessellation.nthRing + "\n");
+		System.out.println("Current nthRing: " + tessellation.nthRing);
+		System.out.println("Total hexagons: " + tessellation.totalHexagons + "\n");
 
 		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		System.out.println(
