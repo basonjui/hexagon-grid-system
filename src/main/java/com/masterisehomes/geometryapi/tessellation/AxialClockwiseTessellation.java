@@ -483,7 +483,9 @@ public class AxialClockwiseTessellation {
 		 * geometric property of AxialClockwiseTessellation.
 		 * 
 		 */
-		final int RING_ADJUSTMENT_CONSTANT = 1;
+		final int RING_ERROR_MARGIN_FOR_GRID = 1;
+		final int RING_ERROR_MARGIN_FOR_CENTROID = 1;
+		final int RING_ADJUSTMENT_CONSTANT = RING_ERROR_MARGIN_FOR_GRID + RING_ERROR_MARGIN_FOR_CENTROID;
 
 		/* Coordinates */
 		final double minLat = boundary.getMinLat();
