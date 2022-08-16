@@ -1,7 +1,6 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -560,8 +559,8 @@ public class AxialClockwiseTessellation {
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
 		Boundary boundary = new Boundary(
-				Arrays.asList(10.7827, 106.6959,
-						10.7744, 106.7063));
+				new Coordinates(106.6959, 10.7826),
+						new Coordinates(106.7064, 10.7743));
 
 		// Test harversine
 		double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
@@ -574,13 +573,14 @@ public class AxialClockwiseTessellation {
 		tessellation.populateGisRing0(hexagon);
 		tessellation.populateGisRing1(neighbors);
 
+		tessellation.tessellate(boundary);
+		tessellation.tessellate(boundary);
+
 		System.out.println("Great-circle distance: " + greatCircleDistance);
 		System.out.println("Total rings: " + tessellation.totalRings);
 		System.out.println("Minimum required rings: " + tessellation.requiredRings);
 		System.out.println("Current nthRing: " + tessellation.nthRing + "\n");
 
-		tessellation.tessellate(boundary);
-		tessellation.tessellate(boundary);
 		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		System.out.println(
 				gson.toJson(tessellationManager.getFeatureCollection()));

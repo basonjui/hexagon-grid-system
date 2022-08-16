@@ -1,7 +1,5 @@
 package com.masterisehomes.geometryapi.tessellation;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.ToString;
 
@@ -36,12 +34,11 @@ public class Boundary {
 	}
 
 	// WGS84 Coordinates Boundary
-	public Boundary(List<Double> boundary) {
-		// ArrayList (minLatitude, minLongitude, maxLatitude, maxLongitude)
-		this.minLatitude = boundary.get(0);
-		this.minLongitude = boundary.get(1);
-		this.maxLatitude = boundary.get(2);
-		this.maxLongitude = boundary.get(3);
+	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
+		this.minLatitude = minCoordinates.getLatitude();
+		this.minLongitude = minCoordinates.getLongitude();
+		this.maxLatitude = maxCoordinates.getLatitude();
+		this.maxLongitude = maxCoordinates.getLongitude();
 	}
 
 	// Comparison methods
