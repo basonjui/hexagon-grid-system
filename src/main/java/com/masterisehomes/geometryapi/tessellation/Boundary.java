@@ -22,8 +22,8 @@ public class Boundary {
 	private Coordinates start, end;
 
 	// WGS84 Coordinates attributes
-	private double minLatitude, minLongitude;
-	private double maxLatitude, maxLongitude;
+	private double minLat, minLng;
+	private double maxLat, maxLng;
 
 	// Builder pattern to take in dimension ,
 	public Boundary(float x, float y, int width, int height) {
@@ -35,10 +35,10 @@ public class Boundary {
 
 	// WGS84 Coordinates Boundary
 	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
-		this.minLatitude = minCoordinates.getLatitude();
-		this.minLongitude = minCoordinates.getLongitude();
-		this.maxLatitude = maxCoordinates.getLatitude();
-		this.maxLongitude = maxCoordinates.getLongitude();
+		this.minLat = minCoordinates.getLatitude();
+		this.minLng = minCoordinates.getLongitude();
+		this.maxLat = maxCoordinates.getLatitude();
+		this.maxLng = maxCoordinates.getLongitude();
 	}
 
 	// Comparison methods
@@ -55,7 +55,7 @@ public class Boundary {
 
 	// Internal methods
 	private boolean containsLat(double lat) {
-		if (lat >= this.minLatitude && lat <= this.maxLatitude) {
+		if (lat >= this.minLat && lat <= this.maxLat) {
 			return true;
 		} else {
 			return false;
@@ -63,7 +63,7 @@ public class Boundary {
 	}
 
 	private boolean containsLng(double lng) {
-		if (lng >= this.minLongitude && lng <= this.maxLongitude) {
+		if (lng >= this.minLng && lng <= this.maxLng) {
 			return true;
 		} else {
 			return false;

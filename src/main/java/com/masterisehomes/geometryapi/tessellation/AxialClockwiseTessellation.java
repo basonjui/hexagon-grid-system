@@ -486,10 +486,10 @@ public class AxialClockwiseTessellation {
 		final int RING_ADJUSTMENT_CONSTANT = 1;
 
 		/* Coordinates */
-		final double minLat = boundary.getMinLatitude();
-		final double minLng = boundary.getMinLongitude();
-		final double maxLat = boundary.getMaxLatitude();
-		final double maxLng = boundary.getMaxLongitude();
+		final double minLat = boundary.getMinLat();
+		final double minLng = boundary.getMinLng();
+		final double maxLat = boundary.getMaxLat();
+		final double maxLng = boundary.getMaxLng();
 
 		/*
 		 * Calculate the Great-circle Distance between the START and END boundary
@@ -591,15 +591,8 @@ public class AxialClockwiseTessellation {
 						new Coordinates(106.7064, 10.7743));
 
 		// Test harversine
-		double greatCircleDistance = Harversine.distance(boundary.getMinLatitude(), boundary.getMinLongitude(),
-				boundary.getMaxLatitude(), boundary.getMaxLongitude());
-
-		// Call tessellation population methods here
-		// tessellation.populateRing0(hexagon);
-		// tessellation.populateRing1(neighbors);
-
-		tessellation.populateGisRing0(hexagon);
-		tessellation.populateGisRing1(neighbors);
+		double greatCircleDistance = Harversine.distance(boundary.getMinLat(), boundary.getMinLng(),
+				boundary.getMaxLat(), boundary.getMaxLng());
 
 		tessellation.tessellate(boundary);
 		tessellation.tessellate(boundary);
@@ -608,7 +601,8 @@ public class AxialClockwiseTessellation {
 		System.out.println("Total rings: " + tessellation.totalRings);
 		System.out.println("Minimum required rings: " + tessellation.requiredRings);
 		System.out.println("Current nthRing: " + tessellation.nthRing);
-		System.out.println("Total hexagons: " + tessellation.totalHexagons + "\n");
+		System.out.println("Total hexagons: " + tessellation.totalHexagons);
+		System.out.println("Boundary: " + tessellation.boundary + "\n");
 
 		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		System.out.println(

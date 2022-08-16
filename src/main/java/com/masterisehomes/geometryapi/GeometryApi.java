@@ -8,6 +8,7 @@ import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.*;
 import com.masterisehomes.geometryapi.neighbors.*;
+import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto;
 import com.masterisehomes.geometryapi.utils.JsonTransformer;
 
 public class GeometryApi {
@@ -55,19 +56,21 @@ public class GeometryApi {
 
 		}, new JsonTransformer());
 
-		// post("/api/tessellation", "application/json", (request, response) -> {
-		// 	try {
-		// 		// Parse request payload to a JSONObject with Gson
-		// 		JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
+		post("/api/tessellation", "application/json", (request, response) -> {
+			try {
+				// Parse request payload to a JSONObject with Gson
+				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
-		// 		GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
-		// 		FeatureCollection collection = manager.getFeatureCollection();
-		// 		return collection;
+				AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(payload);
 
-		// 	} catch (Exception e) {
-		// 		return "Invalid JSON data provided: " + e;
-		// 	}
+				GeoJsonManager manager = new GeoJsonManager(dto.getTessellation());
+				FeatureCollection collection = manager.getFeatureCollection();
+				return collection;
 
-		// }, new JsonTransformer());
+			} catch (Exception e) {
+				return "Invalid JSON data provided: " + e;
+			}
+
+		}, new JsonTransformer());
 	}
 }
