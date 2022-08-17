@@ -29,7 +29,7 @@ class Feature {
 	}
 
 	// key:value getters
-	Object getPropertyByKey(String key) {
+	Object getProperty(String key) {
 		return this.properties.get(key);
 	}
 

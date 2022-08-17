@@ -65,7 +65,7 @@ public class GeoJsonManager {
 		};
 	}
 
-	// Utility methods
+	/* Utility methods */
 	public int getHashCode() {
 		return this.featureCollection.hashCode();
 	}

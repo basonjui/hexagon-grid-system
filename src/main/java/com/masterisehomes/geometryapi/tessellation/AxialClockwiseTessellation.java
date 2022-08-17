@@ -19,7 +19,7 @@ import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 
 @ToString
 public class AxialClockwiseTessellation {
-	// Initialization data
+	/* Initialization data */
 	@Getter
 	private final Hexagon rootHexagon;
 	@Getter
@@ -30,7 +30,7 @@ public class AxialClockwiseTessellation {
 	private Boundary boundary;
 
 	/*
-	 * CORNER HEXAGONS & EDGE HEXAGONS
+	 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
 	 * ---
 	 * 
 	 * From a Central Hexagon, you can find 6 immediate Neighbor Hexagons that
@@ -70,6 +70,24 @@ public class AxialClockwiseTessellation {
 	 */
 
 	/*
+	 * Centroids & Hexagons
+	 *
+	 * Notes: ArrayList needs to be assigned initialCapacity for better performance,
+	 * it cuts the cycle to expand the Array when it is full
+	 * (default initialCapacity = 10)
+	 */
+	@Getter
+	private final List<Coordinates> centroids = new ArrayList<Coordinates>(100);
+	@Getter
+	private final List<Coordinates> gisCentroids = new ArrayList<Coordinates>(100);
+	@Getter
+	private final List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
+	@Getter
+	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+	@Getter
+	private int totalHexagons = 0;
+
+	/*
 	 * Corner Hexagons - used to find Edge Hexagons (based on nthRing)
 	 * - nthRing should equals any cornerHexagonList.size()
 	 */
@@ -87,24 +105,6 @@ public class AxialClockwiseTessellation {
 	private final List<Hexagon> c5GisHexagons = new ArrayList<Hexagon>(100);
 	private final List<Hexagon> c6GisHexagons = new ArrayList<Hexagon>(100);
 
-	/*
-	 * Output data
-	 *
-	 * Notes: ArrayList needs to be assigned initialCapacity for better performance,
-	 * it cuts the cycle to expand the Array when it is full
-	 * (default initialCapacity = 10)
-	 */
-	@Getter
-	private final List<Coordinates> centroids = new ArrayList<Coordinates>(100);
-	@Getter
-	private final List<Coordinates> gisCentroids = new ArrayList<Coordinates>(100);
-	@Getter
-	private final List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
-	@Getter
-	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
-	@Getter
-	private int totalHexagons = 0;
-
 	/* Updaters */
 	@Getter
 	private int totalRings = 0; // keep track of hexagon rings generated
@@ -119,28 +119,23 @@ public class AxialClockwiseTessellation {
 		this.inradius = rootHexagon.getInradius();
 	}
 
-	/* Tessellation */
+	/*
+	 * Tessellation
+	 * 
+	 * tessellate(boundary) is re-runnable, it deletes all previous states of
+	 * AxialClockwiseTessellation before tessellate.
+	 */
 	public final void tessellate(Boundary boundary) {
-		/*
-		* tessellate method is re-runnable
-		* 
-		* Every time this method is run, it does the following actions:
-		* 1. takes in a new Boundary as parameter
-		* 2. clears all the generated centroids & hexagons ArrayList
-		* 3. reset updaters (totalRings, nthRing)
-		* 3. populate new centroids & hexagons with new Boundary
-		*/
-
-		// Set boundary to instance
+		/* Set boundary to instance */
 		this.boundary = boundary;
 
 		/*
-		* Clear all tessellation data (in case already generated):
-		* - corner hexagons
-		* - hexagons
-		* - centroids
-		* - tesselllation rings
-		*/
+		 * Clear all tessellation data (in case already generated):
+		 * - corner hexagons
+		 * - hexagons
+		 * - centroids
+		 * - tesselllation rings
+		 */
 		this.clearCornerHexagons();
 		this.clearHexagons();
 		this.clearCentroids();
@@ -317,14 +312,13 @@ public class AxialClockwiseTessellation {
 	private final void populateGisRingN(int nthRing) {
 		/* Validate nthRing */
 		assert nthRing > 1 : "nthRing must be > 1, current nthRing: " + nthRing;
-		assert nthRing < this.requiredRings : String.format("nthRing must be < %s, current nthRing: %s", this.requiredRings, nthRing);
+		assert nthRing < this.requiredRings
+				: String.format("nthRing must be < requiredRings (%s), current nthRing: %s",
+						this.requiredRings, nthRing);
 
 		/* Calculate latestGisHexagonListIndex and requiredEdgeHexagons */
 		final int latestCornerHexagonIndex = nthRing - 2; // -1 for Ring 1 and -1 due to List index start at 0
 		final int requiredEdgeHexagons = nthRing - 1;
-
-		/* Begin by populating corners (1 - 6) for current ring */
-
 
 		/*
 		 * Generate Corner Hexagons (1:6),
@@ -471,21 +465,20 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Calculate RequiredRings */
-	private int calculateRequiredRings(Boundary boundary) {
+	private final int calculateRequiredRings(Boundary boundary) {
 		/*
 		 * ARBITRARY RING ADJUSTMENT CONSTANT
 		 * 
 		 * Geometrically, at the outer most ring, 1/6 the area of each hexagon can be
-		 * missed. 
+		 * missed.
 		 * 
-		 * This adjustment constant serves as a safe method to ensure that no POI in a 
+		 * This adjustment constant serves as a safe method to ensure that no POI in a
 		 * given Boundary, even when accurately calculated, is missed due to the
 		 * geometric property of AxialClockwiseTessellation.
-		 * 
 		 */
-		final int RING_ERROR_MARGIN_FOR_GRID = 1;
-		final int RING_ERROR_MARGIN_FOR_CENTROID = 1;
-		final int RING_ADJUSTMENT_CONSTANT = RING_ERROR_MARGIN_FOR_GRID + RING_ERROR_MARGIN_FOR_CENTROID;
+		final int GRID_GEOMETRIC_ERROR_MARGIN = 1;
+		final int CENTROID_PLACEMENT_ERROR_MARGIN = 1;
+		final int RING_ERROR_MARGIN = GRID_GEOMETRIC_ERROR_MARGIN + CENTROID_PLACEMENT_ERROR_MARGIN;
 
 		/* Coordinates */
 		final double minLat = boundary.getMinLat();
@@ -497,7 +490,7 @@ public class AxialClockwiseTessellation {
 		 * Calculate the Great-circle Distance between the START and END boundary
 		 * coordinates
 		 */
-		double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
+		final double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
 
 		/*
 		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
@@ -509,7 +502,7 @@ public class AxialClockwiseTessellation {
 		 * 
 		 * However, we need to use Math.ceil() to round it up to nearest int
 		 */
-		double neighborDistance = this.inradius * 2;
+		final double neighborDistance = this.inradius * 2;
 
 		/*
 		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
@@ -517,7 +510,7 @@ public class AxialClockwiseTessellation {
 		 * - minAxialHexagons is the minimum amount of hexagons that required to stack
 		 * up (from edges) in those 3 axes to cover the grid map largest diameter.
 		 */
-		int requiredAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
+		final int requiredAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
 
 		/*
 		 * Calculate the Minimum Required Rings
@@ -537,19 +530,19 @@ public class AxialClockwiseTessellation {
 		 * more than True Required Hexagons.
 		 * 	- Pros: To never miss any required coverage
 		 */
-		int requiredRings = requiredAxialHexagons + RING_ADJUSTMENT_CONSTANT;
+		final int requiredRings = requiredAxialHexagons + RING_ERROR_MARGIN;
 
 		return requiredRings;
 	}
 
 	/* Reset data */
-	private void resetRings() {
+	private final void resetRings() {
 		this.totalRings = 0;
 		this.requiredRings = 0;
 		this.nthRing = 0;
 	}
 
-	private void clearCornerHexagons() {
+	private final void clearCornerHexagons() {
 		// Corner hexagons
 		this.c1Hexagons.clear();
 		this.c2Hexagons.clear();
@@ -567,12 +560,12 @@ public class AxialClockwiseTessellation {
 		this.c6GisHexagons.clear();
 	}
 
-	private void clearCentroids() {
+	private final void clearCentroids() {
 		this.centroids.clear();
 		this.gisCentroids.clear();
 	}
 
-	private void clearHexagons() {
+	private final void clearHexagons() {
 		this.hexagons.clear();
 		this.gisHexagons.clear();
 	}
