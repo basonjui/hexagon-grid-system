@@ -17,6 +17,45 @@ import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 
+/*
+* TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
+* ---
+* 
+* From a Central Hexagon, you can find 6 immediate Neighbor Hexagons that
+* fit to the central hexagon on its EDGES - given a centroid & inradius.
+* 
+* If you keep extending these 6 Neighbors using their centroids and the same
+* inradius (distance), you will be able to extend the hexagons infinitely in
+* 6 diagonal directions (or 3 axes).
+* 
+* However, the more you extend, the more hexagons you will miss in between the
+* diagonal directions, in a systematic way.
+* 
+* This gap can be perfectly filled with the right number of hexagons (same
+* size) to form a Hexagonal Grid Map.
+* -
+* https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
+* geometric-hexagon-pattern
+* 
+* When you look at a complete Hexagon Grid Map, you will see that the grid map
+* itself form a large Hexagon (in different orientation), that is tiled by
+* smaller hexagons perfectly without gaps - this concept is Tessellation.
+* 
+* What interesting is, these direct Neighbors from the Central Hexagon, when
+* extended,
+* - always become the CORNERS of the Hexagon Grid Map (see the website
+* above).
+* - and the hexagons that fill the gaps between these Corner Hexagons, always
+* become the EDGES of the Grid Map.
+* 
+* It is much easier to see this when you look at Hexagon Grid Maps as rings
+* of hexagons around the Central Hexagons.
+* The more rings wrap around the Central Hexagons, the more EDGE HEXAGONS
+* exist between the CORNER HEXAGONS in a special 1:1 ratio.
+* 
+* From the 2nd ring onward, the geometric property is:
+* +1 ring = +1 EDGE HEXAGON
+*/
 @ToString
 public class AxialClockwiseTessellation {
 	/* Initialization data */
@@ -28,47 +67,7 @@ public class AxialClockwiseTessellation {
 	private final double inradius;
 	@Getter
 	private Boundary boundary;
-
-	/*
-	 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
-	 * ---
-	 * 
-	 * From a Central Hexagon, you can find 6 immediate Neighbor Hexagons that
-	 * fit to the central hexagon on its EDGES - given a centroid & inradius.
-	 * 
-	 * If you keep extending these 6 Neighbors using their centroids and the same
-	 * inradius (distance), you will be able to extend the hexagons infinitely in
-	 * 6 diagonal directions (or 3 axes).
-	 * 
-	 * However, the more you extend, the more hexagons you will miss in between the
-	 * diagonal directions, in a systematic way.
-	 * 
-	 * This gap can be perfectly filled with the right number of hexagons (same
-	 * size) to form a Hexagonal Grid Map.
-	 * -
-	 * https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
-	 * geometric-hexagon-pattern
-	 * 
-	 * When you look at a complete Hexagon Grid Map, you will see that the grid map
-	 * itself form a large Hexagon (in different orientation), that is tiled by
-	 * smaller hexagons perfectly without gaps - this concept is Tessellation.
-	 * 
-	 * What interesting is, these direct Neighbors from the Central Hexagon, when
-	 * extended,
-	 * - always become the CORNERS of the Hexagon Grid Map (see the website
-	 * above).
-	 * - and the hexagons that fill the gaps between these Corner Hexagons, always
-	 * become the EDGES of the Grid Map.
-	 * 
-	 * It is much easier to see this when you look at Hexagon Grid Maps as rings
-	 * of hexagons around the Central Hexagons.
-	 * The more rings wrap around the Central Hexagons, the more EDGE HEXAGONS
-	 * exist between the CORNER HEXAGONS in a special 1:1 ratio.
-	 * 
-	 * From the 2nd ring onward, the geometric property is:
-	 * +1 ring = +1 EDGE HEXAGON
-	 */
-
+	
 	/*
 	 * Centroids & Hexagons
 	 *
@@ -208,7 +207,7 @@ public class AxialClockwiseTessellation {
 
 		/* Validate neighbors */
 		assert neighborHexagons.size() == 7
-				: String.format("neighborHexagons size must equals 7, currently: ",
+				: String.format("neighborHexagons size must equals 7, current size: ",
 						neighborHexagons.size());
 
 		/*
@@ -245,7 +244,7 @@ public class AxialClockwiseTessellation {
 
 				// Handle illegal position
 				default:
-					throw new IllegalStateException("Only position 1-6 are valid, currently: "
+					throw new IllegalStateException("Only position 1-6 are valid, current position: "
 							+ position);
 			}
 		}
@@ -329,8 +328,6 @@ public class AxialClockwiseTessellation {
 			// Declare local variables for Corner and Edge hexagons
 			Hexagon latestGisCornerHexagon;
 			Hexagon nextGisCornerHexagon;
-	
-			NeighborPosition edgePosition;
 			List<Hexagon> edgeHexagons;
 
 			switch (cornerPosition) {
@@ -351,8 +348,7 @@ public class AxialClockwiseTessellation {
 					gisHexagons.add(nextGisCornerHexagon);
 
 					// Set Edge Hexagon Position, then generateGisEdgeHexagonsd, and add to gisHexagons.
-					edgePosition = NeighborPosition.THREE;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -363,8 +359,7 @@ public class AxialClockwiseTessellation {
 					c2GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					edgePosition = NeighborPosition.FOUR;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -375,8 +370,7 @@ public class AxialClockwiseTessellation {
 					c3GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					edgePosition = NeighborPosition.FIVE;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -387,8 +381,7 @@ public class AxialClockwiseTessellation {
 					c4GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					edgePosition = NeighborPosition.SIX;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -399,8 +392,7 @@ public class AxialClockwiseTessellation {
 					c5GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					edgePosition = NeighborPosition.ONE;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -411,8 +403,7 @@ public class AxialClockwiseTessellation {
 					c6GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					edgePosition = NeighborPosition.TWO;
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, edgePosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
@@ -424,7 +415,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Corner - Edge hexagons population */
-	private final List<Hexagon> generateGisEdgeHexagons(Hexagon gisCornerHexagon, NeighborPosition edgePosition, int quantity) {
+	private final List<Hexagon> generateGisEdgeHexagons(Hexagon gisCornerHexagon, NeighborPosition cornerPosition, int quantity) {
 		assert quantity >= 1:
 			"(int) quantity must be larger than 1, currently: " + quantity;
 
@@ -432,6 +423,37 @@ public class AxialClockwiseTessellation {
 		assert gisEdgeHexagons.isEmpty():
 			"gisEdgeHexagons List must be empty when initialized, current size: " + gisEdgeHexagons.size();
 
+		/* Determine edgePosition base on cornerPosition */
+		NeighborPosition edgePosition;
+		switch(cornerPosition) {
+			case ONE:
+				edgePosition = NeighborPosition.THREE;
+				break;
+			case TWO:
+				edgePosition = NeighborPosition.FOUR;
+				break;
+			case THREE:
+				edgePosition = NeighborPosition.FIVE;
+				break;
+			case FOUR:
+				edgePosition = NeighborPosition.SIX;
+				break;
+			case FIVE:
+				edgePosition = NeighborPosition.ONE;
+				break;
+			case SIX:
+				edgePosition = NeighborPosition.TWO;
+				break;
+
+			case ZERO:
+			default: {
+				throw new IllegalStateException(
+					"Should never reach this corner, current corner: "
+					+ cornerPosition);
+			}
+		}
+
+		/* Handle generation logic for different quantities */
 		switch (quantity) {
 			case 1:
 				gisEdgeHexagons.add(
