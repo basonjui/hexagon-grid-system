@@ -83,6 +83,8 @@ public class AxialClockwiseTessellation {
 	private final List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
 	@Getter
 	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+
+	/* Basic stats here */
 	@Getter
 	private int totalHexagons = 0;
 
@@ -320,7 +322,7 @@ public class AxialClockwiseTessellation {
 		final int requiredEdgeHexagons = nthRing - 1;
 
 		/*
-		 * Generate Corner Hexagons (1:6),
+		 * Generate Corner Hexagons (1-6),
 		 * 	then for each Corner, 
 		 * 		generate n of Edge Hexagons (where n = requiredEdgeHexagons) 
 		 */
@@ -347,7 +349,7 @@ public class AxialClockwiseTessellation {
 					c1GisHexagons.add(nextGisCornerHexagon);
 					gisHexagons.add(nextGisCornerHexagon);
 
-					// Set Edge Hexagon Position, then generateGisEdgeHexagonsd, and add to gisHexagons.
+					// Generate gisEdgeHexagons from Corner Hexagon, Corner Position & requiredEdgeHexagons
 					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
