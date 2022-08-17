@@ -164,8 +164,8 @@ public class AxialClockwiseTessellation {
 		} else if (this.gisHexagons.isEmpty()) {
 			this.totalHexagons = this.hexagons.size();
 		} else {
-			int hexSize = this.hexagons.size();
-			int gisHexSize = this.gisHexagons.size();
+			final int hexSize = this.hexagons.size();
+			final int gisHexSize = this.gisHexagons.size();
 
 			assert hexSize == gisHexSize;
 			this.totalHexagons = (hexSize + gisHexSize) / 2;
@@ -183,7 +183,7 @@ public class AxialClockwiseTessellation {
 
 			case 1:
 				// Ring 1 is basically Neighbors without rootHexagon
-				Neighbors neighbors = new Neighbors(this.rootHexagon);
+				final Neighbors neighbors = new Neighbors(this.rootHexagon);
 				populateGisRing1(neighbors);
 				break;
 
@@ -205,7 +205,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	private final void populateRing1(Neighbors neighbors) {
-		List<Hexagon> neighborHexagons = neighbors.getHexagons();
+		final List<Hexagon> neighborHexagons = neighbors.getHexagons();
 
 		/* Validate neighbors */
 		assert neighborHexagons.size() == 7
@@ -256,7 +256,7 @@ public class AxialClockwiseTessellation {
 	}
 
 	private final void populateGisRing1(Neighbors neighbors) {
-		List<Hexagon> neighborGisHexagons = neighbors.getGisHexagons();
+		final List<Hexagon> neighborGisHexagons = neighbors.getGisHexagons();
 
 		/* Validate neighbors */
 		assert neighborGisHexagons.size() == 7
@@ -421,12 +421,12 @@ public class AxialClockwiseTessellation {
 		assert quantity >= 1:
 			"(int) quantity must be larger than 1, currently: " + quantity;
 
-		List<Hexagon> gisEdgeHexagons = new ArrayList<Hexagon>(100);
+		final List<Hexagon> gisEdgeHexagons = new ArrayList<Hexagon>(100);
 		assert gisEdgeHexagons.isEmpty():
 			"gisEdgeHexagons List must be empty when initialized, current size: " + gisEdgeHexagons.size();
 
 		/* Determine edgePosition base on cornerPosition */
-		NeighborPosition edgePosition;
+		final NeighborPosition edgePosition;
 		switch(cornerPosition) {
 			case ONE:
 				edgePosition = NeighborPosition.THREE;
