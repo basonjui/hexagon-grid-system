@@ -3,6 +3,7 @@ package com.masterisehomes.geometryapi.tessellation;
 import lombok.Getter;
 import lombok.ToString;
 
+import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
 /* Similar to setup() in Processing
@@ -15,14 +16,15 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
  */
 
 @ToString
-@Getter
 public class Boundary {
 	// Processing attributes
 	private int width, height;
 	private Coordinates start, end;
 
 	// WGS84 Coordinates attributes
+	@Getter
 	private double minLat, minLng;
+	@Getter
 	private double maxLat, maxLng;
 
 	// Builder pattern to take in dimension ,
@@ -41,7 +43,16 @@ public class Boundary {
 		this.maxLng = maxCoordinates.getLongitude();
 	}
 
-	// Comparison methods
+	/* Calculate Great-circle distance */
+	public double distance() {
+		double distance = Harversine.distance(
+			minLat, minLng,
+			maxLat, maxLng);
+
+		return distance;
+	}
+
+	/* Comparison methods */
 	public boolean contains(Coordinates centroid) {
 		double centroidLat = centroid.getLatitude();
 		double centroidLng = centroid.getLongitude();

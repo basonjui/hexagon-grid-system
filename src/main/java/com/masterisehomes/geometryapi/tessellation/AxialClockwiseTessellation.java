@@ -598,22 +598,21 @@ public class AxialClockwiseTessellation {
 	public static void main(String[] args) {
 		Gson gson = new GsonBuilder().create();
 
-		Coordinates origin = new Coordinates(106.7064, 10.7744);
+		Coordinates origin = new Coordinates(105.8121224, 21.0358791);
 
-		Hexagon hexagon = new Hexagon(origin, 200);
+		Hexagon hexagon = new Hexagon(origin, 500);
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
 		Boundary boundary = new Boundary(
-				new Coordinates(106.6959, 10.7826),
-						new Coordinates(106.7064, 10.7743));
+				new Coordinates(105, 21),
+						new Coordinates(109.466667, 23.383333));
 
 		// Test harversine
 		double greatCircleDistance = Harversine.distance(boundary.getMinLat(), boundary.getMinLng(),
 				boundary.getMaxLat(), boundary.getMaxLng());
 
-		tessellation.tessellate(boundary);
 		tessellation.tessellate(boundary);
 
 		System.out.println("Great-circle distance: " + greatCircleDistance);
@@ -623,8 +622,8 @@ public class AxialClockwiseTessellation {
 		System.out.println("Total hexagons: " + tessellation.totalHexagons);
 		System.out.println("Boundary: " + tessellation.boundary + "\n");
 
-		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
-		System.out.println(
-				gson.toJson(tessellationManager.getFeatureCollection()));
+		// GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
+		// System.out.println(
+		// 		gson.toJson(tessellationManager.getFeatureCollection()));
 	}
 }
