@@ -44,12 +44,12 @@ public class Boundary {
 	}
 
 	/* Calculate Great-circle distance */
-	public double distance() {
-		double distance = Harversine.distance(
+	public double greatCircleDistance() {
+		double greatCircleDistance = Harversine.distance(
 			minLat, minLng,
 			maxLat, maxLng);
 
-		return distance;
+		return greatCircleDistance;
 	}
 
 	/* Comparison methods */

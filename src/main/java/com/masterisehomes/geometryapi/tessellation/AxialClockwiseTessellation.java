@@ -504,17 +504,10 @@ public class AxialClockwiseTessellation {
 		final int CENTROID_PLACEMENT_ERROR_MARGIN = 1;
 		final int RING_ERROR_MARGIN = GRID_GEOMETRIC_ERROR_MARGIN + CENTROID_PLACEMENT_ERROR_MARGIN;
 
-		/* Coordinates */
-		final double minLat = boundary.getMinLat();
-		final double minLng = boundary.getMinLng();
-		final double maxLat = boundary.getMaxLat();
-		final double maxLng = boundary.getMaxLng();
-
 		/*
-		 * Calculate the Great-circle Distance between the START and END boundary
-		 * coordinates
+		 * Calculate the Great-circle Distance from boundary by Harversine formula
 		 */
-		final double maxBoundaryDistance = Harversine.distance(minLat, minLng, maxLat, maxLng);
+		final double maxBoundaryDistance = boundary.greatCircleDistance();
 
 		/*
 		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
