@@ -3,6 +3,9 @@ package com.masterisehomes.geometryapi.tessellation;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
@@ -79,5 +82,10 @@ public class Boundary {
 		} else {
 			return false;
 		}
+	}
+
+	/* Getters */
+	public String gisBoundary() {
+		return String.format("GisBoundary(minLat=%s, minLng=%s, maxLat=%s, maxLng=%s)", minLat, minLng, maxLat, maxLng);
 	}
 }

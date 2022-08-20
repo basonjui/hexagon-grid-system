@@ -491,7 +491,7 @@ public class AxialClockwiseTessellation {
 	/* Calculate RequiredRings */
 	private final int calculateRequiredRings(Boundary boundary) {
 		/*
-		 * ARBITRARY RING ADJUSTMENT CONSTANT
+		 * ERROR MARGINS - TODO: needs to update descriptions
 		 * 
 		 * Geometrically, at the outer most ring, 1/6 the area of each hexagon can be
 		 * missed.
@@ -524,7 +524,7 @@ public class AxialClockwiseTessellation {
 		/*
 		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
 		 * directions):
-		 * - minAxialHexagons is the minimum amount of hexagons that required to stack
+		 * - requiredAxialHexagons is the minimum amount of hexagons that required to stack
 		 * up (from edges) in those 3 axes to cover the grid map largest diameter.
 		 */
 		final int requiredAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
@@ -608,12 +608,11 @@ public class AxialClockwiseTessellation {
 
 		tessellation.tessellate(boundary);
 
+		System.out.println("\n------------Tessellation stats------------");
+		System.out.println("Boundary: " + tessellation.boundary.gisBoundary());
 		System.out.println("Great-circle distance: " + greatCircleDistance);
-		System.out.println("Total rings: " + tessellation.totalRings);
 		System.out.println("Minimum required rings: " + tessellation.requiredRings);
-		System.out.println("Current nthRing: " + tessellation.nthRing);
 		System.out.println("Total hexagons: " + tessellation.totalHexagons);
-		System.out.println("Boundary: " + tessellation.boundary + "\n");
 
 		// GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		// System.out.println(
