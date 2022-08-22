@@ -3,6 +3,7 @@ package com.masterisehomes.geometryapi.tessellation;
 import lombok.Getter;
 import lombok.ToString;
 
+import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
 /* Similar to setup() in Processing
@@ -15,33 +16,53 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
  */
 
 @ToString
-@Getter
 public class Boundary {
+	@Getter
+	private final Coordinates minCoordinates, maxCoordinates;
+
 	// Processing attributes
 	private int width, height;
-	private Coordinates start, end;
 
 	// WGS84 Coordinates attributes
-	private double minLat, minLng;
-	private double maxLat, maxLng;
+	@Getter
+	private final double minLat, minLng;
+	@Getter
+	private final double maxLat, maxLng;
 
 	// Builder pattern to take in dimension ,
 	public Boundary(float x, float y, int width, int height) {
-		this.start = new Coordinates(x, y);
+		this.minCoordinates = new Coordinates(x, y);
 		this.width = width;
 		this.height = height;
-		this.end = new Coordinates(x + width, y + height);
-	}
+		this.maxCoordinates = new Coordinates(x + width, y + height);
 
-	// WGS84 Coordinates Boundary
-	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
 		this.minLat = minCoordinates.getLatitude();
 		this.minLng = minCoordinates.getLongitude();
 		this.maxLat = maxCoordinates.getLatitude();
 		this.maxLng = maxCoordinates.getLongitude();
 	}
 
-	// Comparison methods
+	// WGS84 Coordinates Boundary
+	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
+		this.minCoordinates = minCoordinates;
+		this.maxCoordinates = maxCoordinates;
+
+		this.minLat = minCoordinates.getLatitude();
+		this.minLng = minCoordinates.getLongitude();
+		this.maxLat = maxCoordinates.getLatitude();
+		this.maxLng = maxCoordinates.getLongitude();
+	}
+
+	/* Calculate Great-circle distance */
+	public double greatCircleDistance() {
+		double greatCircleDistance = Harversine.distance(
+			minLat, minLng,
+			maxLat, maxLng);
+
+		return greatCircleDistance;
+	}
+
+	/* Comparison methods */
 	public boolean contains(Coordinates centroid) {
 		double centroidLat = centroid.getLatitude();
 		double centroidLng = centroid.getLongitude();
@@ -68,5 +89,10 @@ public class Boundary {
 		} else {
 			return false;
 		}
+	}
+
+	/* Getters */
+	public String gisBoundary() {
+		return String.format("GisBoundary(minLat=%s, minLng=%s, maxLat=%s, maxLng=%s)", minLat, minLng, maxLat, maxLng);
 	}
 }
