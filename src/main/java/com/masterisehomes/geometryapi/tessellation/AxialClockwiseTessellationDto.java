@@ -6,6 +6,11 @@ import lombok.ToString;
 import lombok.Getter;
 import com.google.gson.JsonObject;
 
+import com.google.gson.Gson;
+import com.masterisehomes.geometryapi.neighbors.Neighbors;
+import com.masterisehomes.geometryapi.geodesy.Harversine;
+import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
+
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 
@@ -92,5 +97,36 @@ public class AxialClockwiseTessellationDto {
 
                 this.totalRings = this.tessellation.getTotalRings();
                 this.totalHexagons = this.tessellation.getTotalHexagons();
+	}
+
+
+	public static void main(String[] args) {
+		Gson gson = new Gson();
+
+		Coordinates origin = new Coordinates(107, 23);
+
+		Hexagon hexagon = new Hexagon(origin, 250);
+		Neighbors neighbors = new Neighbors(hexagon);
+
+		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+
+		Boundary boundary = new Boundary(
+				new Coordinates(106, 20),
+						new Coordinates(109.466667, 23.383333));
+
+		// Test harversine
+		double greatCircleDistance = Harversine.distance(boundary.getMinLat(), boundary.getMinLng(),
+				boundary.getMaxLat(), boundary.getMaxLng());
+
+		tessellation.tessellate(boundary);
+
+                AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
+
+		System.out.println("Great-circle distance: " + greatCircleDistance);
+		System.out.println("Total rings: " + dto.getTessellation().getTotalRings());
+		System.out.println("Total hexagons: " + dto.getTessellation().getTotalHexagons());
+		System.out.println("Boundary: " + dto.getTessellation().getBoundary() + "\n");
+
+		GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 	}
 }
