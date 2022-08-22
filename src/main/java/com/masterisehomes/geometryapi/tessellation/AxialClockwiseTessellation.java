@@ -524,8 +524,6 @@ public class AxialClockwiseTessellation {
 		final double maxCoordinatesDistance = Harversine.distance(maxCoordinates, centroidCoordinates);
 
 		// Determine requiredTessellationDistance: the larger distance == the requiredTessellationDistance
-		final double boundaryDistance = boundary.greatCircleDistance();
-
 		final double requiredTessellationDistance;
 		if (minCoordinatesDistance >= maxCoordinatesDistance) {
 			requiredTessellationDistance = minCoordinatesDistance;
@@ -552,8 +550,7 @@ public class AxialClockwiseTessellation {
 		 * - requiredAxialHexagons is the minimum amount of hexagons that required to stack
 		 * up (from edges) in those 3 axes to cover the boundary largest diameter.
 		 */
-		// final int requiredAxialHexagons = (int) Math.ceil(requiredTessellationDistance / neighborDistance); // round up
-		final int requiredAxialHexagons = (int) Math.ceil(boundaryDistance / neighborDistance); // round up
+		final int requiredAxialHexagons = (int) Math.ceil(requiredTessellationDistance / neighborDistance); // round up
 
 		/*
 		 * Calculate the Minimum Required Rings
