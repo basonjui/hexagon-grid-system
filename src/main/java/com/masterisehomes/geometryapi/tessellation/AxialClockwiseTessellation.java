@@ -1,6 +1,8 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -87,6 +89,8 @@ public class AxialClockwiseTessellation {
 	/* Basic stats here */
 	@Getter
 	private int totalHexagons = 0;
+	@Getter
+	private double tessellationDistance = 0;
 
 	/*
 	 * Corner Hexagons - used to find Edge Hexagons (based on nthRing)
@@ -505,9 +509,30 @@ public class AxialClockwiseTessellation {
 		final int RING_ERROR_MARGIN = GRID_GEOMETRIC_ERROR_MARGIN + CENTROID_PLACEMENT_ERROR_MARGIN;
 
 		/*
-		 * Calculate the Great-circle Distance from boundary by Harversine formula
+		 * Calculate the requiredTessellationDistance from boundary by Harversine formula
+		 * 
+		 * is the minimum distance required to generate Grid Map that can cover boundary
+		 * fully - this distance can grow up to maxBoundaryDistance, depending where the
+		 * rootHexagon is placed within Boundary.
 		 */
-		final double maxBoundaryDistance = boundary.greatCircleDistance();
+		final Coordinates minCoordinates = boundary.getMinCoordinates();
+		final Coordinates maxCoordinates = boundary.getMaxCoordinates();
+		final Coordinates centroidCoordinates = rootHexagon.getCentroid();
+
+		// Calculate distance between Boundary's minCoordinates/maxCoordinates to rootCentroid
+		final double minCoordinatesDistance = Harversine.distance(minCoordinates, centroidCoordinates);
+		final double maxCoordinatesDistance = Harversine.distance(maxCoordinates, centroidCoordinates);
+
+		// Determine requiredTessellationDistance: the larger distance == the requiredTessellationDistance
+		final double boundaryDistance = boundary.greatCircleDistance();
+
+		final double requiredTessellationDistance;
+		if (minCoordinatesDistance >= maxCoordinatesDistance) {
+			requiredTessellationDistance = minCoordinatesDistance;
+		} else {
+			requiredTessellationDistance = maxCoordinatesDistance;
+		}
+		this.tessellationDistance = requiredTessellationDistance;
 
 		/*
 		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
@@ -525,9 +550,10 @@ public class AxialClockwiseTessellation {
 		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
 		 * directions):
 		 * - requiredAxialHexagons is the minimum amount of hexagons that required to stack
-		 * up (from edges) in those 3 axes to cover the grid map largest diameter.
+		 * up (from edges) in those 3 axes to cover the boundary largest diameter.
 		 */
-		final int requiredAxialHexagons = (int) Math.ceil(maxBoundaryDistance / neighborDistance); // round up
+		// final int requiredAxialHexagons = (int) Math.ceil(requiredTessellationDistance / neighborDistance); // round up
+		final int requiredAxialHexagons = (int) Math.ceil(boundaryDistance / neighborDistance); // round up
 
 		/*
 		 * Calculate the Minimum Required Rings
@@ -592,6 +618,7 @@ public class AxialClockwiseTessellation {
 		Gson gson = new GsonBuilder().create();
 
 		Coordinates origin = new Coordinates(105.8121224, 21.0358791);
+		// Coordinates origin = new Coordinates(109.466667, 23.383333);
 
 		Hexagon hexagon = new Hexagon(origin, 500);
 		Neighbors neighbors = new Neighbors(hexagon);
@@ -608,11 +635,36 @@ public class AxialClockwiseTessellation {
 
 		tessellation.tessellate(boundary);
 
-		System.out.println("\n------------Tessellation stats------------");
+		// Set rounding format
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);
+
+		final double oldCoverageDistance = 531312.330953638;
+		final int oldRequiredRings = 616;
+		final int oldTotalHexagons = 1136521;
+
+		final String newCoverageDistanceDiffPct = df.format(
+			(tessellation.tessellationDistance / oldCoverageDistance - 1) * 100);
+		final String newRingsDiffPct = df.format(
+			(tessellation.requiredRings / (double) oldRequiredRings - 1) * 100);
+		final String newTotalHexagonsDiffPct = df.format(
+			(tessellation.totalHexagons / (double) oldTotalHexagons - 1) * 100);
+
+		System.out.println("\n------------ Tessellation optimization stats ------------");
 		System.out.println("Boundary: " + tessellation.boundary.gisBoundary());
-		System.out.println("Great-circle distance: " + greatCircleDistance);
-		System.out.println("Minimum required rings: " + tessellation.requiredRings);
-		System.out.println("Total hexagons: " + tessellation.totalHexagons);
+		System.out.println("Hexagon's circumradius: " + hexagon.getCircumradius());
+
+		System.out.println("\nOld coverage Distance: " + oldCoverageDistance);
+		System.out.println("New Coverage Distance: " + tessellation.tessellationDistance);
+		System.out.println("*Difference percentage: " + newCoverageDistanceDiffPct + "%");
+
+		System.out.println("\nOld minimum required Rings: " + oldRequiredRings);
+		System.out.println("New minimum required Rings: " + tessellation.requiredRings);
+		System.out.println("*Difference percentage: " + newRingsDiffPct + "%");
+
+		System.out.println("\nOld total Hexagons: " + oldTotalHexagons);
+		System.out.println("New total hexagons: " + tessellation.totalHexagons);
+		System.out.println("*Difference percentage: " + newTotalHexagonsDiffPct + "%");
 
 		// GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
 		// System.out.println(

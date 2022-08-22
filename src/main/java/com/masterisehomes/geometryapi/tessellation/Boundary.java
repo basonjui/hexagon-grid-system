@@ -3,9 +3,6 @@ package com.masterisehomes.geometryapi.tessellation;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
@@ -20,26 +17,36 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
 @ToString
 public class Boundary {
+	@Getter
+	private final Coordinates minCoordinates, maxCoordinates;
+
 	// Processing attributes
 	private int width, height;
-	private Coordinates start, end;
 
 	// WGS84 Coordinates attributes
 	@Getter
-	private double minLat, minLng;
+	private final double minLat, minLng;
 	@Getter
-	private double maxLat, maxLng;
+	private final double maxLat, maxLng;
 
 	// Builder pattern to take in dimension ,
 	public Boundary(float x, float y, int width, int height) {
-		this.start = new Coordinates(x, y);
+		this.minCoordinates = new Coordinates(x, y);
 		this.width = width;
 		this.height = height;
-		this.end = new Coordinates(x + width, y + height);
+		this.maxCoordinates = new Coordinates(x + width, y + height);
+
+		this.minLat = minCoordinates.getLatitude();
+		this.minLng = minCoordinates.getLongitude();
+		this.maxLat = maxCoordinates.getLatitude();
+		this.maxLng = maxCoordinates.getLongitude();
 	}
 
 	// WGS84 Coordinates Boundary
 	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
+		this.minCoordinates = minCoordinates;
+		this.maxCoordinates = maxCoordinates;
+
 		this.minLat = minCoordinates.getLatitude();
 		this.minLng = minCoordinates.getLongitude();
 		this.maxLat = maxCoordinates.getLatitude();
