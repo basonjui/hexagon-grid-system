@@ -14,16 +14,16 @@ public class GeoJsonManager {
 	@Getter
 	private final FeatureCollection featureCollection = new FeatureCollection();
 	private Feature feature;
-	private Geometry geometry;
 
 	public GeoJsonManager(Hexagon hexagon) {
-		this.geometry = new PolygonGeometry(hexagon);
-		this.feature = new Feature(this.geometry);
+		this.feature = new Feature(new PolygonGeometry(hexagon));
+
 		this.feature.addProperty("id", 0);
 		this.feature.addProperty("ccid", hexagon.getCCI());
 		this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
 		this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
 		this.feature.addProperty("circumradius", hexagon.getCircumradius());
+
 		this.featureCollection.addFeature(this.feature);
 	}
 
@@ -33,9 +33,7 @@ public class GeoJsonManager {
 		for (int i = 0; i < gisHexagons.size(); i++) {
 			Hexagon hexagon = gisHexagons.get(i);
 
-			this.geometry = new PolygonGeometry(hexagon);
-			this.feature = new Feature(this.geometry);
-
+			this.feature = new Feature(new PolygonGeometry(hexagon));
 			this.feature.addProperty("id", i);
 			this.feature.addProperty("ccid", hexagon.getCCI());
 			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
@@ -52,9 +50,7 @@ public class GeoJsonManager {
 		for (int i = 0; i < gisHexagons.size(); i++) {
 			Hexagon hexagon = gisHexagons.get(i);
 
-			this.geometry = new PolygonGeometry(hexagon);
-			this.feature = new Feature(this.geometry);
-
+			this.feature = new Feature(new PolygonGeometry(hexagon));
 			this.feature.addProperty("id", i);
 			this.feature.addProperty("ccid", hexagon.getCCI());
 			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());

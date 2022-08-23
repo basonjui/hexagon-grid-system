@@ -3,14 +3,12 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @ToString
 abstract class Geometry {
-	@Setter
-	protected String type;
+	final protected String type;
 	protected List<?> coordinates;
 
 	Geometry(String type) {

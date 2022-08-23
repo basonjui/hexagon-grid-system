@@ -84,7 +84,7 @@ public class AxialClockwiseTessellation {
 	@Getter
 	private final List<Hexagon> hexagons = new ArrayList<Hexagon>(100);
 	@Getter
-	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100);
+	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100000);
 
 	/* Basic stats here */
 	@Getter
@@ -103,12 +103,12 @@ public class AxialClockwiseTessellation {
 	private final List<Hexagon> c5Hexagons = new ArrayList<Hexagon>(100);
 	private final List<Hexagon> c6Hexagons = new ArrayList<Hexagon>(100);
 
-	private final List<Hexagon> c1GisHexagons = new ArrayList<Hexagon>(100);
-	private final List<Hexagon> c2GisHexagons = new ArrayList<Hexagon>(100);
-	private final List<Hexagon> c3GisHexagons = new ArrayList<Hexagon>(100);
-	private final List<Hexagon> c4GisHexagons = new ArrayList<Hexagon>(100);
-	private final List<Hexagon> c5GisHexagons = new ArrayList<Hexagon>(100);
-	private final List<Hexagon> c6GisHexagons = new ArrayList<Hexagon>(100);
+	private final List<Hexagon> c1GisHexagons = new ArrayList<Hexagon>(100000);
+	private final List<Hexagon> c2GisHexagons = new ArrayList<Hexagon>(100000);
+	private final List<Hexagon> c3GisHexagons = new ArrayList<Hexagon>(100000);
+	private final List<Hexagon> c4GisHexagons = new ArrayList<Hexagon>(100000);
+	private final List<Hexagon> c5GisHexagons = new ArrayList<Hexagon>(100000);
+	private final List<Hexagon> c6GisHexagons = new ArrayList<Hexagon>(100000);
 
 	/* Updaters */
 	@Getter
@@ -274,7 +274,7 @@ public class AxialClockwiseTessellation {
 		 * we will skip position 0 of Neighbors' hexagons list.
 		 */
 		for (Hexagon gisHexagon : neighborGisHexagons) {
-			NeighborPosition position = gisHexagon.getPosition();
+			final NeighborPosition position = gisHexagon.getPosition();
 
 			switch (position) {
 				case ZERO:
@@ -298,7 +298,6 @@ public class AxialClockwiseTessellation {
 				case SIX:
 					this.c6GisHexagons.add(gisHexagon);
 					break;
-
 				// Handle illegal position
 				default:
 					throw new IllegalStateException("Only position 1-6 are valid, currently: "
@@ -357,7 +356,7 @@ public class AxialClockwiseTessellation {
 					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
-
+					
 				case TWO:
 					latestGisCornerHexagon = c2GisHexagons.get(latestCornerHexagonIndex);
 

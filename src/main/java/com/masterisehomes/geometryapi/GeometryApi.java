@@ -24,7 +24,6 @@ public class GeometryApi {
 
 				// Initialize a HexagonDto with payload to get all required data
 				HexagonDto dto = new HexagonDto(payload);
-				// From dto, you can get lat, long, centroid, radius, hexagon
 
 				// GeoJsonManager handles all GeoJSON operations
 				GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
