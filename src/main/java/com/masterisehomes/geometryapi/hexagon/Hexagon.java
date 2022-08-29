@@ -14,12 +14,12 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 @ToString
 @Getter
 public class Hexagon {
-	private Coordinates centroid;
-	private double circumradius;
-	private double inradius;
+	private final Coordinates centroid;
+	private final double circumradius;
+	private final double inradius;
 
-	private List<Coordinates> vertices;
-	private List<Coordinates> gisVertices;
+	// private List<Coordinates> vertices;
+	private final List<Coordinates> gisVertices;
 
 	// Cube Coordinates Indexing
 	private final NeighborPosition position;
@@ -32,7 +32,7 @@ public class Hexagon {
 		this.circumradius = circumradius;
 		this.inradius = circumradius * Math.sqrt(3) / 2;
 
-		this.vertices = generateVertices(centroid);
+		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
 		this.position = NeighborPosition.ZERO;
@@ -46,7 +46,7 @@ public class Hexagon {
 		this.circumradius = rootHexagon.getCircumradius();
 		this.inradius = this.circumradius * Math.sqrt(3) / 2;
 
-		this.vertices = generateVertices(centroid);
+		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
 		assert position != null : "Position cannot be null.";

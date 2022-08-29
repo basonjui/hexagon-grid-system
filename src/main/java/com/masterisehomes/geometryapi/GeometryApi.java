@@ -61,7 +61,7 @@ public class GeometryApi {
 
 				AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(payload);
 
-				GeoJsonManager manager = new GeoJsonManager(dto.getTessellation());
+				GeoJsonManager manager = new GeoJsonManager(dto.getGisHexagons());
 				FeatureCollection collection = manager.getFeatureCollection();
 				return collection;
 

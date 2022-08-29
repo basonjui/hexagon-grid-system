@@ -162,6 +162,9 @@ public class AxialClockwiseTessellation {
 			this.nthRing++;
 		}
 
+		// Memory management..
+		this.clearCornerHexagons();
+
 		/* Calculate results */
 		if (this.hexagons.isEmpty()) {
 			this.totalHexagons = this.gisHexagons.size();
@@ -616,13 +619,13 @@ public class AxialClockwiseTessellation {
 		Coordinates origin = new Coordinates(105.8121224, 21.0358791);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
 
-		Hexagon hexagon = new Hexagon(origin, 500);
+		Hexagon hexagon = new Hexagon(origin, 950);
 		Neighbors neighbors = new Neighbors(hexagon);
 
 		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
 		Boundary boundary = new Boundary(
-				new Coordinates(105, 21),
+				new Coordinates(102.133333, 8.033333),
 						new Coordinates(109.466667, 23.383333));
 
 		// Test harversine
@@ -630,6 +633,8 @@ public class AxialClockwiseTessellation {
 				boundary.getMaxLat(), boundary.getMaxLng());
 
 		tessellation.tessellate(boundary);
+
+		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 
 		// Set rounding format
 		DecimalFormat df = new DecimalFormat("#.##");
@@ -662,8 +667,9 @@ public class AxialClockwiseTessellation {
 		System.out.println("New total hexagons: " + tessellation.totalHexagons);
 		System.out.println("*Difference percentage: " + newTotalHexagonsDiffPct + "%");
 
-		// GeoJsonManager tessellationManager = new GeoJsonManager(tessellation);
-		// System.out.println(
-		// 		gson.toJson(tessellationManager.getFeatureCollection()));
+		AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
+		GeoJsonManager manager = new GeoJsonManager(dto.getGisHexagons());
+
+		System.out.println(manager.getFeatureCollection().size());
 	}
 }

@@ -10,26 +10,26 @@ import lombok.ToString;
 @Getter
 public class FeatureCollection {
 	private final String type = "FeatureCollection";
-	private final List<Feature> features = new ArrayList<Feature>();
+	private final List<Feature> features = new ArrayList<Feature>(100000);
 
 	FeatureCollection() {
 	}
 
 	/* Methods */
-	public void addFeature(Feature feature) {
+	public final void addFeature(Feature feature) {
 		this.features.add(feature);
 	}
 
-	public Feature getFeature(int index) {
+	public final Feature getFeature(int index) {
 		return this.features.get(index);
 	}
 
 	/* Utility */
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
 		return this.features.isEmpty();
 	}
 
-	public int size() {
+	public final int size() {
 		return this.features.size();
 	}
 }

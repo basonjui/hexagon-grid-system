@@ -13,18 +13,17 @@ import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
 public class GeoJsonManager {
 	@Getter
 	private final FeatureCollection featureCollection = new FeatureCollection();
-	private Feature feature;
 
 	public GeoJsonManager(Hexagon hexagon) {
-		this.feature = new Feature(new PolygonGeometry(hexagon));
+		Feature feature = new Feature(new PolygonGeometry(hexagon));
 
-		this.feature.addProperty("id", 0);
-		this.feature.addProperty("ccid", hexagon.getCCI());
-		this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-		this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
-		this.feature.addProperty("circumradius", hexagon.getCircumradius());
+		feature.addProperty("id", 0);
+		feature.addProperty("ccid", hexagon.getCCI());
+		feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
+		feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+		feature.addProperty("circumradius", hexagon.getCircumradius());
 
-		this.featureCollection.addFeature(this.feature);
+		this.featureCollection.addFeature(feature);
 	}
 
 	public GeoJsonManager(Neighbors neighbors) {
@@ -33,31 +32,29 @@ public class GeoJsonManager {
 		for (int i = 0; i < gisHexagons.size(); i++) {
 			Hexagon hexagon = gisHexagons.get(i);
 
-			this.feature = new Feature(new PolygonGeometry(hexagon));
-			this.feature.addProperty("id", i);
-			this.feature.addProperty("ccid", hexagon.getCCI());
-			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-			this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
-			this.feature.addProperty("circumradius", hexagon.getCircumradius());
+			Feature feature = new Feature(new PolygonGeometry(hexagon));
+			feature.addProperty("id", i);
+			feature.addProperty("ccid", hexagon.getCCI());
+			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
+			feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+			feature.addProperty("circumradius", hexagon.getCircumradius());
 
-			this.featureCollection.addFeature(this.feature);
+			this.featureCollection.addFeature(feature);
 		};
 	}
 
-	public GeoJsonManager(AxialClockwiseTessellation tessellation) {
-		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
-
+	public GeoJsonManager(List<Hexagon> gisHexagons) {
 		for (int i = 0; i < gisHexagons.size(); i++) {
 			Hexagon hexagon = gisHexagons.get(i);
 
-			this.feature = new Feature(new PolygonGeometry(hexagon));
-			this.feature.addProperty("id", i);
-			this.feature.addProperty("ccid", hexagon.getCCI());
-			this.feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-			this.feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
-			this.feature.addProperty("circumradius", hexagon.getCircumradius());
+			Feature feature = new Feature(new PolygonGeometry(hexagon));
+			feature.addProperty("id", i);
+			feature.addProperty("ccid", hexagon.getCCI());
+			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
+			feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+			// this.feature.addProperty("circumradius", hexagon.getCircumradius());
 
-			this.featureCollection.addFeature(this.feature);
+			this.featureCollection.addFeature(feature);
 		};
 	}
 
