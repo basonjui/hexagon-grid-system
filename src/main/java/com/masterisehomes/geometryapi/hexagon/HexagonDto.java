@@ -37,9 +37,9 @@ public class HexagonDto {
 		 */
 
 		// Get body contents as String & convert to a JsonObject (to get inner keys)
-		String eventBodyJson = lambdaEvent.get("body").toString(); // lambdaEvent.get("body") returns a
+		final String eventBodyJson = lambdaEvent.get("body").toString(); // lambdaEvent.get("body") returns a
 										// JsonPrimitive
-		JsonObject eventBody = gson.fromJson(eventBodyJson, JsonObject.class);
+		final JsonObject eventBody = gson.fromJson(eventBodyJson, JsonObject.class);
 
 		// Get latitude, longitude, and radius data (JsonPrimitive) from eventBody
 		this.latitude = eventBody.get("latitude").getAsDouble();

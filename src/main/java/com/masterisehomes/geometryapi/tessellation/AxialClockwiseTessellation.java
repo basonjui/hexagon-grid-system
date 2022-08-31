@@ -17,10 +17,6 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 
-import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoder;
-
 /*
 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
 * ---
@@ -617,9 +613,7 @@ public class AxialClockwiseTessellation {
 
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-
-		final Hexagon hexagon = new Hexagon(origin, 250);
-		final Neighbors neighbors = new Neighbors(hexagon);
+		final Hexagon hexagon = new Hexagon(origin, 2500);
 
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
@@ -629,32 +623,31 @@ public class AxialClockwiseTessellation {
 
 		tessellation.tessellate(boundary);
 
-		System.out.println("\n------------ Tessellation stats ------------");
-		System.out.println("Centroid: " + tessellation.rootHexagon.getCentroid());
-		System.out.println("Boundary: " + tessellation.boundary.gisBoundary());
-		System.out.println("Hexagon's circumradius: " + hexagon.getCircumradius());
-
-		System.out.println("Tessellation Distance: " + tessellation.tessellationDistance);
-		System.out.println("Tessellation requiredRings: " + tessellation.requiredRings);
-		System.out.println("Total hexagons: " + tessellation.totalHexagons);
-
 		final AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
-		final List<Hexagon> gisHexagons = dto.getGisHexagons();
 
 		// GeoJsonManager manager = new GeoJsonManager(dto);
 
 		// FeatureCollection collection = manager.getFeatureCollection();
-		
+
 		final int megabyte = 1024 * 1024;
 		final long usedMemory  = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / megabyte;
 		final long freeMemory  =  Runtime.getRuntime().freeMemory() / megabyte;
 		final long totalMemory =  Runtime.getRuntime().totalMemory() / megabyte;
 		final long maxMemory   =  Runtime.getRuntime().maxMemory() / megabyte;
 
-		System.out.println("\n------------ JVM Memory ------------");
-		System.out.println("Used Memory   : " + usedMemory  + " MB");
-                System.out.println("Free Memory   : " + freeMemory  + " MB");
-                System.out.println("Total Memory  : " + totalMemory + " MB");
-                System.out.println("Max Memory    : " + maxMemory   + " MB");    
+		System.out.println("\n------------------------ Tessellation ------------------------");
+		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
+		System.out.println("Boundary       : " + tessellation.boundary.gisBoundary());
+		System.out.println("Circumradius   : " + hexagon.getCircumradius());
+
+		System.out.println("Distance       : " + tessellation.tessellationDistance);
+		System.out.println("Required rings : " + tessellation.requiredRings);
+		System.out.println("Total hexagons : " + tessellation.totalHexagons);
+
+		System.out.println("\n------------------------ JVM Memory ------------------------");
+		System.out.println("Used Memory    : " + usedMemory  + " MB");
+                System.out.println("Free Memory    : " + freeMemory  + " MB");
+                System.out.println("Total Memory   : " + totalMemory + " MB");
+                System.out.println("Max Memory     : " + maxMemory   + " MB");    
 	}
 }

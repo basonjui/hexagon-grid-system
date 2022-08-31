@@ -23,7 +23,7 @@
                         "request": "launch",
                         "mainClass": "com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation",
                         "projectName": "geometryapi",
-                        "vmArgs": "-Xms13G -Xmx13G"
+                        "vmArgs": "-Xms1G -Xmx13G"
                 }
         ]
 }
