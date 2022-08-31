@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
+import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto;
 
 @ToString
 public class GeoJsonManager {
@@ -43,16 +43,20 @@ public class GeoJsonManager {
 		};
 	}
 
-	public GeoJsonManager(List<Hexagon> gisHexagons) {
-		for (int i = 0; i < gisHexagons.size(); i++) {
-			Hexagon hexagon = gisHexagons.get(i);
+	public GeoJsonManager(AxialClockwiseTessellationDto dto) {
+		final List<Hexagon> gisHexagons = dto.getGisHexagons();
 
-			Feature feature = new Feature(new PolygonGeometry(hexagon));
+		Hexagon hexagon;
+		Feature feature;
+		for (int i = 0; i < gisHexagons.size(); i++) {
+			hexagon = gisHexagons.get(i);
+
+			feature = new Feature(new PolygonGeometry(hexagon));
 			feature.addProperty("id", i);
 			feature.addProperty("ccid", hexagon.getCCI());
 			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
 			feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
-			// this.feature.addProperty("circumradius", hexagon.getCircumradius());
+			feature.addProperty("circumradius", hexagon.getCircumradius());
 
 			this.featureCollection.addFeature(feature);
 		};

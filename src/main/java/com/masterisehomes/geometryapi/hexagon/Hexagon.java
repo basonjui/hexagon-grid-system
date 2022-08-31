@@ -18,7 +18,7 @@ public class Hexagon {
 	private final double circumradius;
 	private final double inradius;
 
-	// private List<Coordinates> vertices;
+	private List<Coordinates> vertices;
 	private final List<Coordinates> gisVertices;
 
 	// Cube Coordinates Indexing

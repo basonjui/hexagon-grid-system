@@ -57,12 +57,11 @@ public class GeometryApi {
 		post("/api/tessellation", "application/json", (request, response) -> {
 			try {
 				// Parse request payload to a JSONObject with Gson
-				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
+				JsonObject tessellationPayload = gson.fromJson(request.body(), JsonObject.class);
 
-				AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(payload);
+				AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellationPayload);
 
-				GeoJsonManager manager = new GeoJsonManager(dto.getGisHexagons());
-				FeatureCollection collection = manager.getFeatureCollection();
+				FeatureCollection collection = new GeoJsonManager(dto).getFeatureCollection();
 				return collection;
 
 			} catch (Exception e) {

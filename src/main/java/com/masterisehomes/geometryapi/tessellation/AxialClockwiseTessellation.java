@@ -1,8 +1,7 @@
 package com.masterisehomes.geometryapi.tessellation;
 
+
 import java.lang.Math;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -17,7 +16,10 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
-import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
+
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoder;
 
 /*
 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
@@ -161,9 +163,6 @@ public class AxialClockwiseTessellation {
 			this.totalRings++;
 			this.nthRing++;
 		}
-
-		// Memory management..
-		this.clearCornerHexagons();
 
 		/* Calculate results */
 		if (this.hexagons.isEmpty()) {
@@ -616,60 +615,46 @@ public class AxialClockwiseTessellation {
 	public static void main(String[] args) {
 		Gson gson = new GsonBuilder().create();
 
-		Coordinates origin = new Coordinates(105.8121224, 21.0358791);
+		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
 
-		Hexagon hexagon = new Hexagon(origin, 950);
-		Neighbors neighbors = new Neighbors(hexagon);
+		final Hexagon hexagon = new Hexagon(origin, 250);
+		final Neighbors neighbors = new Neighbors(hexagon);
 
-		AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		Boundary boundary = new Boundary(
+		final Boundary boundary = new Boundary(
 				new Coordinates(102.133333, 8.033333),
 						new Coordinates(109.466667, 23.383333));
 
-		// Test harversine
-		double greatCircleDistance = Harversine.distance(boundary.getMinLat(), boundary.getMinLng(),
-				boundary.getMaxLat(), boundary.getMaxLng());
-
 		tessellation.tessellate(boundary);
 
-		List<Hexagon> gisHexagons = tessellation.getGisHexagons();
-
-		// Set rounding format
-		DecimalFormat df = new DecimalFormat("#.##");
-		df.setRoundingMode(RoundingMode.CEILING);
-
-		final double oldCoverageDistance = 531312.330953638;
-		final int oldRequiredRings = 616;
-		final int oldTotalHexagons = 1136521;
-
-		final String newCoverageDistanceDiffPct = df.format(
-			(tessellation.tessellationDistance / oldCoverageDistance - 1) * 100);
-		final String newRingsDiffPct = df.format(
-			(tessellation.requiredRings / (double) oldRequiredRings - 1) * 100);
-		final String newTotalHexagonsDiffPct = df.format(
-			(tessellation.totalHexagons / (double) oldTotalHexagons - 1) * 100);
-
-		System.out.println("\n------------ Tessellation optimization stats ------------");
+		System.out.println("\n------------ Tessellation stats ------------");
+		System.out.println("Centroid: " + tessellation.rootHexagon.getCentroid());
 		System.out.println("Boundary: " + tessellation.boundary.gisBoundary());
 		System.out.println("Hexagon's circumradius: " + hexagon.getCircumradius());
 
-		System.out.println("\nOld coverage Distance: " + oldCoverageDistance);
-		System.out.println("New Coverage Distance: " + tessellation.tessellationDistance);
-		System.out.println("*Difference percentage: " + newCoverageDistanceDiffPct + "%");
+		System.out.println("Tessellation Distance: " + tessellation.tessellationDistance);
+		System.out.println("Tessellation requiredRings: " + tessellation.requiredRings);
+		System.out.println("Total hexagons: " + tessellation.totalHexagons);
 
-		System.out.println("\nOld minimum required Rings: " + oldRequiredRings);
-		System.out.println("New minimum required Rings: " + tessellation.requiredRings);
-		System.out.println("*Difference percentage: " + newRingsDiffPct + "%");
+		final AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
+		final List<Hexagon> gisHexagons = dto.getGisHexagons();
 
-		System.out.println("\nOld total Hexagons: " + oldTotalHexagons);
-		System.out.println("New total hexagons: " + tessellation.totalHexagons);
-		System.out.println("*Difference percentage: " + newTotalHexagonsDiffPct + "%");
+		// GeoJsonManager manager = new GeoJsonManager(dto);
 
-		AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
-		GeoJsonManager manager = new GeoJsonManager(dto.getGisHexagons());
+		// FeatureCollection collection = manager.getFeatureCollection();
+		
+		final int megabyte = 1024 * 1024;
+		final long usedMemory  = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / megabyte;
+		final long freeMemory  =  Runtime.getRuntime().freeMemory() / megabyte;
+		final long totalMemory =  Runtime.getRuntime().totalMemory() / megabyte;
+		final long maxMemory   =  Runtime.getRuntime().maxMemory() / megabyte;
 
-		System.out.println(manager.getFeatureCollection().size());
+		System.out.println("\n------------ JVM Memory ------------");
+		System.out.println("Used Memory   : " + usedMemory  + " MB");
+                System.out.println("Free Memory   : " + freeMemory  + " MB");
+                System.out.println("Total Memory  : " + totalMemory + " MB");
+                System.out.println("Max Memory    : " + maxMemory   + " MB");    
 	}
 }

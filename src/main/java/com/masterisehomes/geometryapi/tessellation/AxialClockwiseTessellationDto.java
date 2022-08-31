@@ -6,11 +6,6 @@ import lombok.ToString;
 import lombok.Getter;
 import com.google.gson.JsonObject;
 
-import com.google.gson.Gson;
-import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.masterisehomes.geometryapi.geodesy.Harversine;
-import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
-
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 
@@ -53,37 +48,29 @@ public class AxialClockwiseTessellationDto {
         }
 
         public AxialClockwiseTessellationDto(JsonObject payload) {
-                /* Get data from payload */
+                /* Parse centroid data from payload */
                 final double rootLatitude = payload.get("latitude").getAsDouble();
 		final double rootLongitude = payload.get("longitude").getAsDouble();
-		this.rootCentroid = new Coordinates(rootLongitude, rootLatitude);
 
+		this.rootCentroid = new Coordinates(rootLongitude, rootLatitude);
 		this.circumradius = payload.get("radius").getAsDouble();
 		this.rootHexagon = new Hexagon(this.rootCentroid, this.circumradius);
                 this.inradius = this.rootHexagon.getInradius();
 
-                final double minLat = payload.get("boundary")
-                                .getAsJsonObject()
-                                .get("min_latitude")
-                                .getAsDouble();
-                final double minLng = payload.get("boundary")
-                                .getAsJsonObject()
-                                .get("min_longitude")
-                                .getAsDouble();
-                final double maxLat = payload.get("boundary")
-                                .getAsJsonObject()
-                                .get("max_latitude")
-                                .getAsDouble();
-                final double maxLng = payload.get("boundary")
-                                .getAsJsonObject()
-                                .get("max_longitude")
-                                .getAsDouble();
+                /* Parse boundary data from payload */
+                final JsonObject boundaryObj = payload.get("boundary").getAsJsonObject();
+
+                final double minLat = boundaryObj.get("min_latitude").getAsDouble();
+                final double minLng = boundaryObj.get("min_longitude").getAsDouble();
+                final double maxLat = boundaryObj.get("max_latitude").getAsDouble();
+                final double maxLng = boundaryObj.get("max_longitude").getAsDouble();
+
                 final Coordinates minCoordinates = new Coordinates(minLng, minLat);
                 final Coordinates maxCoordinates = new Coordinates(maxLng, maxLat);
                 this.boundary = new Boundary(minCoordinates, maxCoordinates);
 
                 /* Tessellate */
-                AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(rootHexagon);
+                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(rootHexagon);
                 tessellation.tessellate(this.boundary);
 
                 this.hexagons = tessellation.getHexagons();
