@@ -6,6 +6,13 @@
         "configurations": [
                 {
                         "type": "java",
+                        "name": "Launch SparkApplication",
+                        "request": "launch",
+                        "mainClass": "com.masterisehomes.geometryapi.spark.SparkApplication",
+                        "projectName": "geometryapi"
+                },
+                {
+                        "type": "java",
                         "name": "Launch Current File",
                         "request": "launch",
                         "mainClass": "${file}"
