@@ -1,20 +1,21 @@
 package com.masterisehomes.geometryapi.index;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-public class CubeCoordinateIndex {
-	@Getter
-	private final int q;
-	@Getter
-	private final int r;
-	@Getter
-	private final int s;
+@Getter
+@Setter
+public class CubeCoordinateIndex implements Serializable {
+	private int q;
+	private int r;
+	private int s;
 	
 	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, NeighborPosition direction) {
 		/*

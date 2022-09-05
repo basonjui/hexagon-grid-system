@@ -46,12 +46,10 @@ public class GeoJsonManager {
 	public GeoJsonManager(AxialClockwiseTessellationDto dto) {
 		final List<Hexagon> gisHexagons = dto.getGisHexagons();
 
-		Hexagon hexagon;
-		Feature feature;
 		for (int i = 0; i < gisHexagons.size(); i++) {
-			hexagon = gisHexagons.get(i);
+			Hexagon hexagon = gisHexagons.get(i);
 
-			feature = new Feature(new PolygonGeometry(hexagon));
+			Feature feature = new Feature(new PolygonGeometry(hexagon));
 			feature.addProperty("id", i);
 			feature.addProperty("ccid", hexagon.getCCI());
 			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());

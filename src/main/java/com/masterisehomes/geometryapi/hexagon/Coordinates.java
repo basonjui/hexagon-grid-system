@@ -1,9 +1,11 @@
 package com.masterisehomes.geometryapi.hexagon;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /* So why the Vertex class instead of using the predefined Point class?
@@ -17,13 +19,14 @@ import lombok.ToString;
  * So here we are. 
  */
 
-@Getter
 @ToString
-public class Coordinates {
-	private final double x;
-	private final double y;
-	private final double longitude;
-	private final double latitude;
+@Getter
+@Setter
+public class Coordinates implements Serializable {
+	private double x;
+	private double y;
+	private double longitude;
+	private double latitude;
 
 	/* Constructors */
 	public Coordinates(double longitude, double latitude) {

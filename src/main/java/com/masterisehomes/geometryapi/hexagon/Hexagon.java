@@ -2,9 +2,11 @@ package com.masterisehomes.geometryapi.hexagon;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.Serializable;
 import java.lang.Math;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
@@ -13,18 +15,19 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
 @ToString
 @Getter
-public class Hexagon {
-	private final Coordinates centroid;
-	private final double circumradius;
-	private final double inradius;
+@Setter
+public class Hexagon implements Serializable {
+	private Coordinates centroid;
+	private double circumradius;
+	private double inradius;
 
 	private List<Coordinates> vertices;
-	private final List<Coordinates> gisVertices;
+	private List<Coordinates> gisVertices;
 
 	// Cube Coordinates Indexing
-	private final NeighborPosition position;
-	private final CubeCoordinateIndex previousCCI;
-	private final CubeCoordinateIndex CCI;
+	private NeighborPosition position;
+	private CubeCoordinateIndex previousCCI;
+	private CubeCoordinateIndex CCI;
 
 	/* Constructors */
 	public Hexagon(Coordinates centroid, double circumradius) {

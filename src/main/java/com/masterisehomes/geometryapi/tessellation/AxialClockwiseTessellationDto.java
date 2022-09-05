@@ -1,37 +1,33 @@
 package com.masterisehomes.geometryapi.tessellation;
 
 import java.util.List;
+import java.io.Serializable;
 
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
+
 import com.google.gson.JsonObject;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 
 @ToString
-public class AxialClockwiseTessellationDto {
-        @Getter
-        private final Coordinates rootCentroid;
-	@Getter
-	private final double circumradius;
-        @Getter
-	private final double inradius;
+@Getter
+@Setter
+public class AxialClockwiseTessellationDto implements Serializable {
+        private Coordinates rootCentroid;
+	private double circumradius;
+	private double inradius;
 
-        @Getter
-	private final Hexagon rootHexagon;
-	@Getter
-	private final Boundary boundary;
+	private Hexagon rootHexagon;
+	private Boundary boundary;
 
-        @Getter
-        private final List<Hexagon> hexagons;
-        @Getter
-        private final List<Hexagon> gisHexagons;
+        private List<Hexagon> hexagons;
+        private List<Hexagon> gisHexagons;
 
-        @Getter
-        private final int totalRings;
-        @Getter
-        private final int totalHexagons;
+        private int totalRings;
+        private int totalHexagons;
 
         public AxialClockwiseTessellationDto(AxialClockwiseTessellation tessellation) {
                 this.rootHexagon = tessellation.getRootHexagon();
@@ -54,6 +50,7 @@ public class AxialClockwiseTessellationDto {
 
 		this.rootCentroid = new Coordinates(rootLongitude, rootLatitude);
 		this.circumradius = payload.get("radius").getAsDouble();
+
 		this.rootHexagon = new Hexagon(this.rootCentroid, this.circumradius);
                 this.inradius = this.rootHexagon.getInradius();
 
@@ -69,7 +66,7 @@ public class AxialClockwiseTessellationDto {
                 final Coordinates maxCoordinates = new Coordinates(maxLng, maxLat);
                 this.boundary = new Boundary(minCoordinates, maxCoordinates);
 
-                /* Tessellate */
+                /* Tessellation */
                 final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(rootHexagon);
                 tessellation.tessellate(this.boundary);
 

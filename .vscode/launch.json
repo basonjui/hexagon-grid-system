@@ -6,13 +6,6 @@
         "configurations": [
                 {
                         "type": "java",
-                        "name": "Launch SparkApplication",
-                        "request": "launch",
-                        "mainClass": "com.masterisehomes.geometryapi.spark.SparkApplication",
-                        "projectName": "geometryapi"
-                },
-                {
-                        "type": "java",
                         "name": "Launch Current File",
                         "request": "launch",
                         "mainClass": "${file}"
@@ -31,6 +24,14 @@
                         "mainClass": "com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation",
                         "projectName": "geometryapi",
                         "vmArgs": "-Xms1G -Xmx13G"
+                },
+                {
+                        "type": "java",
+                        "name": "Launch SparkApplication",
+                        "request": "launch",
+                        "mainClass": "com.masterisehomes.geometryapi.spark.SparkApplication",
+                        "projectName": "geometryapi",
+                        "vmArgs": "--add-exports java.base/sun.nio.ch=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true"
                 }
         ]
 }
