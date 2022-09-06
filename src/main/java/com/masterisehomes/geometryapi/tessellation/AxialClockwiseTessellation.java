@@ -17,6 +17,8 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 
+import com.masterisehomes.geometryapi.utils.JVMUtils;
+
 /*
 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
 * ---
@@ -613,7 +615,7 @@ public class AxialClockwiseTessellation {
 
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 2500);
+		final Hexagon hexagon = new Hexagon(origin, 250);
 
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
@@ -629,12 +631,6 @@ public class AxialClockwiseTessellation {
 
 		// FeatureCollection collection = manager.getFeatureCollection();
 
-		final int megabyte = 1024 * 1024;
-		final long usedMemory  = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / megabyte;
-		final long freeMemory  =  Runtime.getRuntime().freeMemory() / megabyte;
-		final long totalMemory =  Runtime.getRuntime().totalMemory() / megabyte;
-		final long maxMemory   =  Runtime.getRuntime().maxMemory() / megabyte;
-
 		System.out.println("\n------------------------ Tessellation ------------------------");
 		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
 		System.out.println("Boundary       : " + tessellation.boundary.gisBoundary());
@@ -644,10 +640,6 @@ public class AxialClockwiseTessellation {
 		System.out.println("Required rings : " + tessellation.requiredRings);
 		System.out.println("Total hexagons : " + tessellation.totalHexagons);
 
-		System.out.println("\n------------------------ JVM Memory ------------------------");
-		System.out.println("Used Memory    : " + usedMemory  + " MB");
-                System.out.println("Free Memory    : " + freeMemory  + " MB");
-                System.out.println("Total Memory   : " + totalMemory + " MB");
-                System.out.println("Max Memory     : " + maxMemory   + " MB");    
+		JVMUtils.printMemories("MB");
 	}
 }

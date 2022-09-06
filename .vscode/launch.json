@@ -31,7 +31,7 @@
                         "request": "launch",
                         "mainClass": "com.masterisehomes.geometryapi.spark.SparkApplication",
                         "projectName": "geometryapi",
-                        "vmArgs": "--add-exports java.base/sun.nio.ch=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true"
+                        "vmArgs": "--add-exports java.base/sun.nio.ch=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true -DXms4G -Xmx14G"
                 }
         ]
 }
