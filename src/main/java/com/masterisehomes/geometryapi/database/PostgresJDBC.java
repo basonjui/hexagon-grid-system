@@ -1,33 +1,40 @@
 package com.masterisehomes.geometryapi.database;
 
-import java.sql.*;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.Getter;
+import lombok.ToString;
 
 @ToString
 public class PostgresJDBC {
         private static final String DBMS_URL = "jdbc:postgresql:";
         private String pgjdbcUrl;
 
-        @Getter
-        @Setter
-        private String database;
-        @Setter
         private String host;
-        @Getter
-        @Setter
         private int port; // default == 0
-
         @Getter
-        @Setter
+        private String database;
+        
+        @Getter
+        @ToString.Exclude
         private String username;
-        @Setter
+        @ToString.Exclude
         private String password;
+
+        public PostgresJDBC(Builder builder) {
+                this.host = builder.host;
+                this.port = builder.port;
+                this.database = builder.database;
+                this.username = builder.username;
+                this.password = builder.password;
+                this.pgjdbcUrl = generateJDBCUrl();
+        }
 
         private final String generateJDBCUrl() {
                 final StringBuilder urlBuilder = new StringBuilder().append(DBMS_URL);
@@ -81,9 +88,9 @@ public class PostgresJDBC {
                 Connection conn = null;
                 try {
                         conn = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
-                        System.out.println("Connected to the PostgreSQL server successfully!");
-                        System.out.println("- Driver: " + conn.getMetaData().getDriverName());
-                        System.out.println("- Username: " + conn.getMetaData().getUserName());
+                        System.out.println("Connected to the PostgreSQL server with username: " 
+                                        + conn.getMetaData().getUserName()
+                                        + "\n");
                 } catch (SQLException e) {
                         System.out.println(e.getMessage());
                 }
@@ -91,11 +98,6 @@ public class PostgresJDBC {
                 return conn;
         }
 
-        /**
-         * Get actors count
-         * 
-         * @return
-         */
         public final void printRowsFromTable(String table, int rowsCount) {
                 final String RAW_SQL = new StringBuilder()
                                 .append("SELECT * FROM %s\n")
@@ -103,25 +105,66 @@ public class PostgresJDBC {
                                 .toString();
                 final String SQL = String.format(RAW_SQL, table, rowsCount);
 
-                try (Connection conn = getConnection();
-                                Statement stmt = conn.createStatement();
-                                ResultSet rs = stmt.executeQuery(SQL)) {
+                try (final Connection conn = getConnection();
+                                final Statement stmt = conn.createStatement();
+                                final ResultSet rs = stmt.executeQuery(SQL)) {
 
-                        ResultSetMetaData rsmd = rs.getMetaData();
-                        int columnsNumber = rsmd.getColumnCount();
-
+                        final ResultSetMetaData rsmd = rs.getMetaData();
+                        final int columnsCount = rsmd.getColumnCount();
+                        
                         // Iterate through the data in the result set and display it.
                         while (rs.next()) {
                                 // Print one row
-                                for (int i = 1; i <= columnsNumber; i++) {
+                                for (int i = 1; i <= columnsCount; i++) {
                                         System.out.print(rsmd.getColumnName(i) + ": ");
-                                        System.out.print(rs.getString(i) + "  ||  ");
+                                        System.out.println(rs.getString(i));
                                 }
 
-                                System.out.println("\n---");// Move to the next line to print the next row.
+                                System.out.println("---");// Move to the next line to print the next row.
                         }
                 } catch (SQLException ex) {
                         System.out.println(ex.getMessage());
+                }
+        }
+
+        public static class Builder {
+                private String host;
+                private int port;
+                private String database;
+       
+                private String username;
+                private String password;
+
+                private final Dotenv dotenv = Dotenv.configure()
+                                .directory(System.getProperty("user.dir"))
+                                .filename(".env")
+                                .load();
+
+                public Builder() {}
+
+                public Builder host(String host) {
+                        this.host = host;
+                        return this;
+                }
+
+                public Builder port(int port) {
+                        this.port = port;
+                        return this;
+                }
+
+                public Builder database(String database) {
+                        this.database = database;
+                        return this;
+                }
+
+                public Builder authentication(String usernameKey, String passwordKey) {
+                        this.username = dotenv.get(usernameKey);
+                        this.password = dotenv.get(passwordKey);
+                        return this;
+                }
+                
+                public PostgresJDBC build() {
+                        return new PostgresJDBC(this);
                 }
         }
 
@@ -132,16 +175,14 @@ public class PostgresJDBC {
                                 .filename(".env")
                                 .load();
 
-                PostgresJDBC pg = new PostgresJDBC();
-                pg.setHost(dotenv.get(
-                                "POSTGRES_DWH_HOST"));
-                pg.setPort(Integer.parseInt(dotenv.get(
-                                "POSTGRES_DWH_PORT")));
-                pg.setDatabase("spatial_db");
-                pg.setUsername(dotenv.get(
-                                "POSTGRES_DWH_USERNAME"));
-                pg.setPassword(dotenv.get(
-                                "POSTGRES_DWH_PASSWORD"));
+                PostgresJDBC pg = new PostgresJDBC.Builder()
+                                .host("10.10.12.197")
+                                .port(5432)
+                                .database("spatial_db")
+                                .authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
+                                .build();
+
+                System.out.println(pg);
 
                 pg.getConnection();
 
