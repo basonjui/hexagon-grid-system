@@ -14,18 +14,19 @@ import lombok.ToString;
 @ToString
 public class PostgresJDBC {
         private static final String DBMS_URL = "jdbc:postgresql:";
-        private String pgjdbcUrl;
+        private final String pgjdbcUrl;
 
-        private String host;
-        private int port; // default == 0
         @Getter
-        private String database;
+        private final String host;
+        @Getter
+        private final int port;
+        @Getter
+        private final String database;
         
-        @Getter
         @ToString.Exclude
-        private String username;
+        private final String username;
         @ToString.Exclude
-        private String password;
+        private final String password;
 
         public PostgresJDBC(Builder builder) {
                 this.host = builder.host;
@@ -80,15 +81,10 @@ public class PostgresJDBC {
         }
 
         public final Connection getConnection() {
-                // Check if pgjdbcUrl is ready
-                if (this.pgjdbcUrl == null) {
-                        this.pgjdbcUrl = generateJDBCUrl();
-                }
-
                 Connection conn = null;
                 try {
                         conn = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
-                        System.out.println("Connected to the PostgreSQL server with username: " 
+                        System.out.println("Connected to the PostgreSQL server: " 
                                         + conn.getMetaData().getUserName()
                                         + "\n");
                 } catch (SQLException e) {
@@ -98,12 +94,12 @@ public class PostgresJDBC {
                 return conn;
         }
 
-        public final void printRowsFromTable(String table, int rowsCount) {
+        public final void testQuery(String table, int rowsLimit) {
                 final String RAW_SQL = new StringBuilder()
                                 .append("SELECT * FROM %s\n")
                                 .append("LIMIT %s")
                                 .toString();
-                final String SQL = String.format(RAW_SQL, table, rowsCount);
+                final String SQL = String.format(RAW_SQL, table, rowsLimit);
 
                 try (final Connection conn = getConnection();
                                 final Statement stmt = conn.createStatement();
@@ -169,12 +165,6 @@ public class PostgresJDBC {
         }
 
         public static void main(String[] args) {
-                String rootDirectory = System.getProperty("user.dir");
-                Dotenv dotenv = Dotenv.configure()
-                                .directory(rootDirectory)
-                                .filename(".env")
-                                .load();
-
                 PostgresJDBC pg = new PostgresJDBC.Builder()
                                 .host("10.10.12.197")
                                 .port(5432)
@@ -182,10 +172,9 @@ public class PostgresJDBC {
                                 .authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
                                 .build();
 
-                System.out.println(pg);
-
-                pg.getConnection();
-
-                pg.printRowsFromTable("chanmay_1km_vietnam", 10);
+                System.out.println("\n---");
+                System.out.println(pg.pgjdbcUrl);
+                System.out.println("---\n");
+                pg.testQuery("chanmay_1km_vietnam", 5);
         }
 }
