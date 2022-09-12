@@ -1,13 +1,11 @@
 package com.masterisehomes.geometryapi.database;
 
-import java.util.Map;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -67,7 +65,7 @@ public class PostgresJDBC {
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
 			final int columnsCount = rsmd.getColumnCount();
-			
+
 			System.out.println("--- Query results ---");
 			// Iterate through the data in the result set and display it.
 			while (rs.next()) {
@@ -177,24 +175,23 @@ public class PostgresJDBC {
 		}
 	}
 
-	public void createTable(String tableName, Map<String,String> columns) {
+	public void createGeometryTable(String tableName) {
 		String createTableSQL = new StringBuilder()
-				.append("CREATE TABLE IF NOT EXISTS table_name (")
-				.append("	column1 datatype(length) column_contraint,")
-				.append("	column2 datatype(length) column_contraint,")
-				.append("	column3 datatype(length) column_contraint,")
-				.append("	table_constraints			  ")
-				.append(");                                               ")
+				.append("CREATE TABLE IF NOT EXISTS " + tableName + " ("		+ "\n")
+				.append("	ccid_q		integer 		NOT NULL," 	+ "\n")
+				.append("	ccid_r		integer 		NOT NULL," 	+ "\n")
+				.append("	ccid_s		integer 		NOT NULL," 	+ "\n")
+				.append("	circumradius 	float8 			NOT NULL," 	+ "\n")
+				.append("	geom_centroid	geometry(POINT,4326)    NOT NULL," 	+ "\n")
+				.append("	geom_polygon  	geometry(POLYGON,4326) 	NOT NULL," 	+ "\n")
+				.append("	PRIMARY KEY(ccid_q, ccid_r, ccid_s)" 			+ "\n")
+				.append(");" + " ")
 				.toString();
 
-		try (Connection conn = getConnection();
-				PreparedStatement createTablePstm = conn.prepareStatement(createTableSQL)) {
-			conn.setAutoCommit(false);
-			createTablePstm.setInt(1, 69);
-			createTablePstm.setString(2, "some string");
-			createTablePstm.setString(3, "some string");
-			createTablePstm.executeUpdate();
-			conn.commit();
+		try (Connection conn = getConnection(); Statement createTableStm = conn.createStatement()) {
+			createTableStm.executeUpdate(createTableSQL);
+			System.out.println("Creating geometry table successfully with query:");
+			System.out.println("---\n" + createTableSQL);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -209,6 +206,8 @@ public class PostgresJDBC {
 				.authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
 				.build();
 
-		pg.testQuery("chanmay_1km_vietnam", 5);
+		// pg.testQuery("chanmay_1km_vietnam", 5);
+
+		pg.createGeometryTable("test_geometry");
 	}
 }
