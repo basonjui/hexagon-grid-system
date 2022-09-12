@@ -67,16 +67,24 @@ public class PostgresJDBC {
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
 			final int columnsCount = rsmd.getColumnCount();
-
+			
+			System.out.println("--- Query results ---");
 			// Iterate through the data in the result set and display it.
 			while (rs.next()) {
 				// Print one row
 				for (int i = 1; i <= columnsCount; i++) {
-					System.out.print(rsmd.getColumnName(i) + ": ");
-					System.out.println(rs.getString(i));
-				}
+					String tabs;
+					if (rsmd.getColumnName(i).length() < 8) {
+						tabs = "\t\t\t";
+					} else {
+						tabs = "\t\t";
+					}
 
-				System.out.println("---");// Move to the next line to print the next row.
+					System.out.print(String.format("(%s) ", rsmd.getColumnTypeName(i)));
+					System.out.print(rsmd.getColumnName(i) + tabs + ": ");
+					System.out.print(rs.getString(i) + "\n");
+				}
+				System.out.println("---------------------------------");
 			}
 		} catch (SQLException ex) {
 			System.out.println(ex.getMessage());
@@ -201,9 +209,6 @@ public class PostgresJDBC {
 				.authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
 				.build();
 
-		System.out.println("\n---");
-		System.out.println(pg.pgjdbcUrl);
-		System.out.println("---\n");
 		pg.testQuery("chanmay_1km_vietnam", 5);
 	}
 }
