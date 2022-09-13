@@ -24,7 +24,7 @@ public class JVMUtils {
                                 break;
                 }
                 
-                System.out.println("Used Memory *     : " + convertedMemory  + unit);
+                System.out.println("Used Memory *\t: " + convertedMemory  + unit);
         }
 
         public static final void printFreeMemory(String unit) {
@@ -42,7 +42,7 @@ public class JVMUtils {
                                 break;
                 }
 
-                System.out.println("Free Memory *     : " + convertedMemory  + unit);
+                System.out.println("Free Memory *\t: " + convertedMemory  + unit);
         }
 
         public static final void printTotalMemory(String unit) {
@@ -60,7 +60,7 @@ public class JVMUtils {
                                 break;
                 }
 
-                System.out.println("Total Memory Used : " + convertedMemory  + unit);
+                System.out.println("Total Memory\t: " + convertedMemory  + unit);
         }
 
         public static final void printMaxMemory(String unit) {
@@ -78,7 +78,7 @@ public class JVMUtils {
                                 break;
                 }
 
-                System.out.println("Max Memory        : " + convertedMemory  + unit);
+                System.out.println("Max Memory\t: " + convertedMemory  + unit);
         }
 
         public static final void printMemories(String unit) {
