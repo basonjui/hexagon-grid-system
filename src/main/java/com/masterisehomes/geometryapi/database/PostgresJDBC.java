@@ -1,11 +1,21 @@
 package com.masterisehomes.geometryapi.database;
 
+import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.masterisehomes.geometryapi.hexagon.Coordinates;
+import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
+import com.masterisehomes.geometryapi.tessellation.Boundary;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -43,8 +53,7 @@ public class PostgresJDBC {
 		try {
 			connection = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
 			System.out.println("Connected to the PostgreSQL server: "
-					+ connection.getMetaData().getUserName()
-					+ "\n");
+					+ connection.getMetaData().getUserName());
 		} catch (SQLException e) {
 			printSQLException(e);
 		}
@@ -86,6 +95,93 @@ public class PostgresJDBC {
 			}
 		} catch (SQLException e) {
 			printSQLException(e);
+		}
+	}
+
+	public final void createGeometryTable(String tableName) {
+		final String CREATE_TABLE_SQL = new StringBuilder()
+				.append("CREATE TABLE IF NOT EXISTS " + tableName + " (" + "\n")
+				.append("	ccid_q		integer 		NOT NULL," + "\n")
+				.append("	ccid_r		integer 		NOT NULL," + "\n")
+				.append("	ccid_s		integer 		NOT NULL," + "\n")
+				.append("	circumradius 	float8 			NOT NULL," + "\n")
+				.append("	centroid	geometry(POINT,4326)    NOT NULL," + "\n")
+				.append("	geometry  	geometry(POLYGON,4326) 	NOT NULL," + "\n")
+				.append("	PRIMARY KEY(ccid_q, ccid_r, ccid_s)" + "\n")
+				.append(");" + " ")
+				.toString();
+
+		try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
+			statement.executeUpdate(CREATE_TABLE_SQL);
+			System.out.println("Creating geometry table successfully with query:");
+			System.out.println("---\n" + CREATE_TABLE_SQL);
+		} catch (SQLException e) {
+			printSQLException(e);
+		}
+	}
+
+	public final void batchInsert(String tableName, AxialClockwiseTessellation tessellation) throws Exception {
+		final String INSERT_SQL = "INSERT INTO " + tableName
+				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) VALUES "
+				+ " (?, ?, ?, ?, ?);";
+
+		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
+
+			final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
+			final int TOTAL_HEXAGONS = gisHexagons.size();
+			final int MAX_BATCH_SIZE = 100;
+			final int MIN_BATCH_SIZE = 7; // Because tessellation should always produce >= 7 hexagons
+			final int MAX_VALUES_PER_INSERT = 100;
+
+			int batchSize; // hexagons per batch
+			if (TOTAL_HEXAGONS >= MAX_BATCH_SIZE) {
+				batchSize = MAX_BATCH_SIZE;
+			} else if (TOTAL_HEXAGONS >= MIN_BATCH_SIZE) {
+				batchSize = MIN_BATCH_SIZE;
+			} else {
+				throw new Exception("Tessellation size is smaller than required minimum batch size: "
+						+ TOTAL_HEXAGONS);
+			}
+
+			List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
+			System.out.println("hexagonBatches size: " + hexagonBatches.size());
+
+			// Displaying the sublists
+			// for (List<Hexagon> hexagonBatch : hexagonBatches)
+			// System.out.println(hexagonBatch);
+
+			// connection.setAutoCommit(false);
+
+			// preparedStatement.setInt(1, 20);
+			// preparedStatement.setInt(2, 20);
+			// preparedStatement.setInt(3, 20);
+			// preparedStatement.setDouble(4, 1000);
+			// preparedStatement.setString(5, "secret");
+			// preparedStatement.setString(6, "secret");
+			// preparedStatement.addBatch();
+
+			// int[] updateCounts = preparedStatement.executeBatch();
+			// System.out.println(Arrays.toString(updateCounts));
+			// connection.commit();
+			// connection.setAutoCommit(true);
+		} catch (BatchUpdateException batchUpdateException) {
+			printBatchUpdateException(batchUpdateException);
+		} catch (SQLException e) {
+			printSQLException(e);
+		}
+	}
+
+	public static void printBatchUpdateException(BatchUpdateException b) {
+		System.err.println("--- BatchUpdateException:");
+		System.err.println("SQLState: \t" + b.getSQLState());
+		System.err.println("Message: \t" + b.getMessage());
+		System.err.println("Vendor: \t" + b.getErrorCode());
+		System.err.print("Update counts: \t");
+
+		int[] updateCounts = b.getUpdateCounts();
+		for (int i = 0; i < updateCounts.length; i++) {
+			System.err.print(updateCounts[i] + "   ");
 		}
 	}
 
@@ -134,19 +230,19 @@ public class PostgresJDBC {
 	}
 
 	public static void printSQLException(SQLException exception) {
-		for (Throwable e: exception) {
-		    if (e instanceof SQLException) {
-			e.printStackTrace(System.err);
-			System.err.println(System.lineSeparator());
-			System.err.println("SQLState:\t" + ((SQLException) e).getSQLState());
-			System.err.println("Error Code:\t" + ((SQLException) e).getErrorCode());
-			System.err.println("Message:\t" + e.getMessage());
-			Throwable t = exception.getCause();
-			while (t != null) {
-			    System.out.println("Cause:\t\t" + t);
-			    t = t.getCause();
+		for (Throwable e : exception) {
+			if (e instanceof SQLException) {
+				e.printStackTrace(System.err);
+				System.err.println(System.lineSeparator());
+				System.err.println("SQLState:\t" + ((SQLException) e).getSQLState());
+				System.err.println("Error Code:\t" + ((SQLException) e).getErrorCode());
+				System.err.println("Message:\t" + e.getMessage());
+				Throwable t = exception.getCause();
+				while (t != null) {
+					System.out.println("Cause:\t\t" + t);
+					t = t.getCause();
+				}
 			}
-		    }
 		}
 	}
 
@@ -192,28 +288,6 @@ public class PostgresJDBC {
 		}
 	}
 
-	public void createGeometryTable(String tableName) {
-		String createTableSQL = new StringBuilder()
-				.append("CREATE TABLE IF NOT EXISTS " + tableName + " ("		+ "\n")
-				.append("	ccid_q		integer 		NOT NULL," 	+ "\n")
-				.append("	ccid_r		integer 		NOT NULL," 	+ "\n")
-				.append("	ccid_s		integer 		NOT NULL," 	+ "\n")
-				.append("	circumradius 	float8 			NOT NULL," 	+ "\n")
-				.append("	geom_centroid	geometry(POINT,4326)    NOT NULL," 	+ "\n")
-				.append("	geom_polygon  	geometry(POLYGON,4326) 	NOT NULL," 	+ "\n")
-				.append("	PRIMARY KEY(ccid_q, ccid_r, ccid_s)" 			+ "\n")
-				.append(");" + " ")
-				.toString();
-
-		try (Connection connection = getConnection(); Statement createTableStm = connection.createStatement()) {
-			createTableStm.executeUpdate(createTableSQL);
-			System.out.println("Creating geometry table successfully with query:");
-			System.out.println("---\n" + createTableSQL);
-		} catch (SQLException e) {
-			printSQLException(e);
-		}
-	}
-
 	/* Test */
 	public static void main(String[] args) {
 		PostgresJDBC pg = new PostgresJDBC.Builder()
@@ -223,8 +297,30 @@ public class PostgresJDBC {
 				.authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
 				.build();
 
-		// pg.testQuery("chanmay_1km_vietnam", 5);
+		pg.testQuery("chanmay_1km_vietnam", 5);
 
-		pg.createGeometryTable("quan_test_table");
+		// pg.createGeometryTable("quan_test_table");
+
+		// final Coordinates origin = new Coordinates(106, 15);
+		// // Coordinates origin = new Coordinates(109.466667, 23.383333);
+		// final Hexagon hexagon = new Hexagon(origin, 5000);
+
+		// final AxialClockwiseTessellation tessellation = new
+		// AxialClockwiseTessellation(hexagon);
+
+		// final Boundary boundary = new Boundary(
+		// new Coordinates(102.133333, 8.033333),
+		// new Coordinates(109.466667, 23.383333));
+
+		// tessellation.tessellate(boundary);
+
+		// try {
+		// pg.batchInsert("testTable", tessellation);
+		// System.out.println(
+		// "Total hexagons: "
+		// + tessellation.getTotalHexagons());
+		// } catch (Exception e) {
+		// System.out.println(e);
+		// }
 	}
 }
