@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
-import com.masterisehomes.geometryapi.index.CubeCoordinateIndex;
+import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
 @ToString
@@ -26,8 +26,8 @@ public class Hexagon implements Serializable {
 
 	// Cube Coordinates Indexing
 	private NeighborPosition position;
-	private CubeCoordinateIndex previousCCI;
-	private CubeCoordinateIndex CCI;
+	private CubeCoordinatesIndex previousCCI;
+	private CubeCoordinatesIndex CCI;
 
 	/* Constructors */
 	public Hexagon(Coordinates centroid, double circumradius) {
@@ -40,7 +40,7 @@ public class Hexagon implements Serializable {
 
 		this.position = NeighborPosition.ZERO;
 		this.previousCCI = null;
-		this.CCI = new CubeCoordinateIndex(this.previousCCI, this.position);
+		this.CCI = new CubeCoordinatesIndex(this.previousCCI, this.position);
 	}
 
 	// Construct a new Hexagon from a rootHexagon
@@ -64,7 +64,7 @@ public class Hexagon implements Serializable {
 				break;
 		}
 
-		this.CCI = new CubeCoordinateIndex(this.previousCCI, position);
+		this.CCI = new CubeCoordinatesIndex(this.previousCCI, position);
 	}
 
 	/* Methods */

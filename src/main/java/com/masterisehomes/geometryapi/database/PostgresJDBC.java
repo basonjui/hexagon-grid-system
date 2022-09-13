@@ -39,17 +39,17 @@ public class PostgresJDBC {
 
 	/* Public methods */
 	public final Connection getConnection() {
-		Connection conn = null;
+		Connection connection = null;
 		try {
-			conn = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
+			connection = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
 			System.out.println("Connected to the PostgreSQL server: "
-					+ conn.getMetaData().getUserName()
+					+ connection.getMetaData().getUserName()
 					+ "\n");
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			printSQLException(e);
 		}
 
-		return conn;
+		return connection;
 	}
 
 	public final void testQuery(String table, int rowsLimit) {
@@ -59,8 +59,8 @@ public class PostgresJDBC {
 				.toString();
 		final String SQL = String.format(RAW_SQL, table, rowsLimit);
 
-		try (final Connection conn = getConnection();
-				final Statement stmt = conn.createStatement();
+		try (final Connection connection = getConnection();
+				final Statement stmt = connection.createStatement();
 				final ResultSet rs = stmt.executeQuery(SQL)) {
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
@@ -84,8 +84,8 @@ public class PostgresJDBC {
 				}
 				System.out.println("---------------------------------");
 			}
-		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
+		} catch (SQLException e) {
+			printSQLException(e);
 		}
 	}
 
@@ -131,6 +131,23 @@ public class PostgresJDBC {
 		}
 
 		return urlBuilder.toString();
+	}
+
+	public static void printSQLException(SQLException exception) {
+		for (Throwable e: exception) {
+		    if (e instanceof SQLException) {
+			e.printStackTrace(System.err);
+			System.err.println(System.lineSeparator());
+			System.err.println("SQLState:\t" + ((SQLException) e).getSQLState());
+			System.err.println("Error Code:\t" + ((SQLException) e).getErrorCode());
+			System.err.println("Message:\t" + e.getMessage());
+			Throwable t = exception.getCause();
+			while (t != null) {
+			    System.out.println("Cause:\t\t" + t);
+			    t = t.getCause();
+			}
+		    }
+		}
 	}
 
 	/* PostgresJDBC Builder */
@@ -188,12 +205,12 @@ public class PostgresJDBC {
 				.append(");" + " ")
 				.toString();
 
-		try (Connection conn = getConnection(); Statement createTableStm = conn.createStatement()) {
+		try (Connection connection = getConnection(); Statement createTableStm = connection.createStatement()) {
 			createTableStm.executeUpdate(createTableSQL);
 			System.out.println("Creating geometry table successfully with query:");
 			System.out.println("---\n" + createTableSQL);
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			printSQLException(e);
 		}
 	}
 
@@ -208,6 +225,6 @@ public class PostgresJDBC {
 
 		// pg.testQuery("chanmay_1km_vietnam", 5);
 
-		pg.createGeometryTable("test_geometry");
+		pg.createGeometryTable("quan_test_table");
 	}
 }
