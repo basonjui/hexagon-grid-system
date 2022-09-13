@@ -12,12 +12,12 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class CubeCoordinateIndex implements Serializable {
+public class CubeCoordinatesIndex implements Serializable {
 	private final int q;
 	private final int r;
 	private final int s;
 	
-	public CubeCoordinateIndex(CubeCoordinateIndex previousCCI, NeighborPosition direction) {
+	public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, NeighborPosition direction) {
 		/*
 		 * Flat-top orientation of Hexagon
 		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
