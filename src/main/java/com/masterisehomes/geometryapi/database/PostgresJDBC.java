@@ -125,14 +125,14 @@ public class PostgresJDBC {
 				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) VALUES "
 				+ " (?, ?, ?, ?, ?);";
 
-		try (Connection connection = getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
+/* 		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) { */
 
 			final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 			final int TOTAL_HEXAGONS = gisHexagons.size();
 			final int MAX_BATCH_SIZE = 100;
-			final int MIN_BATCH_SIZE = 7; // Because tessellation should always produce >= 7 hexagons
-			final int MAX_VALUES_PER_INSERT = 100;
+			final int MIN_BATCH_SIZE = 10;
+			final int MAX_VALUES_PER_INSERT = 100; // can
 
 			int batchSize; // hexagons per batch
 			if (TOTAL_HEXAGONS >= MAX_BATCH_SIZE) {
@@ -141,15 +141,29 @@ public class PostgresJDBC {
 				batchSize = MIN_BATCH_SIZE;
 			} else {
 				throw new Exception("Tessellation size is smaller than required minimum batch size: "
-						+ TOTAL_HEXAGONS);
+						+ MIN_BATCH_SIZE);
 			}
 
 			List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
-			System.out.println("hexagonBatches size: " + hexagonBatches.size());
+			System.out.println("Total batches: " + hexagonBatches.size());
 
+			final int totalBatches = hexagonBatches.size();
 			// Displaying the sublists
-			// for (List<Hexagon> hexagonBatch : hexagonBatches)
-			// System.out.println(hexagonBatch);
+			for (int i = 0; i < totalBatches; i++) {
+				if (i % 100 == 0 && i != 0) {
+					System.out.println("Reached 100th batch, should executeBatch() now..");
+				}
+
+				System.out.println("\n--- Batch " + i + ":");
+
+				List<Hexagon> hexagonBatch = hexagonBatches.get(i);
+				for (int ii = 0; ii < hexagonBatch.size(); ii++) {
+					// Hexagon hexagon = hexagonBatch.get(ii);
+					System.out.println("Hexagon" + ii);
+				}
+			}
+
+			System.out.println("\nTotal batches: " + totalBatches);
 
 			// connection.setAutoCommit(false);
 
@@ -165,11 +179,11 @@ public class PostgresJDBC {
 			// System.out.println(Arrays.toString(updateCounts));
 			// connection.commit();
 			// connection.setAutoCommit(true);
-		} catch (BatchUpdateException batchUpdateException) {
+	/* 	} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
 			printSQLException(e);
-		}
+		} */
 	}
 
 	public static void printBatchUpdateException(BatchUpdateException b) {
@@ -297,30 +311,29 @@ public class PostgresJDBC {
 				.authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
 				.build();
 
-		pg.testQuery("chanmay_1km_vietnam", 5);
+		// pg.testQuery("chanmay_1km_vietnam", 5);
 
 		// pg.createGeometryTable("quan_test_table");
 
-		// final Coordinates origin = new Coordinates(106, 15);
-		// // Coordinates origin = new Coordinates(109.466667, 23.383333);
-		// final Hexagon hexagon = new Hexagon(origin, 5000);
+		final Coordinates origin = new Coordinates(106, 15);
+		// Coordinates origin = new Coordinates(109.466667, 23.383333);
+		final Hexagon hexagon = new Hexagon(origin, 10000);
 
-		// final AxialClockwiseTessellation tessellation = new
-		// AxialClockwiseTessellation(hexagon);
+		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		// final Boundary boundary = new Boundary(
-		// new Coordinates(102.133333, 8.033333),
-		// new Coordinates(109.466667, 23.383333));
+		final Boundary boundary = new Boundary(
+				new Coordinates(102.133333, 8.033333),
+				new Coordinates(109.466667, 23.383333));
 
-		// tessellation.tessellate(boundary);
+		tessellation.tessellate(boundary);
 
-		// try {
-		// pg.batchInsert("testTable", tessellation);
-		// System.out.println(
-		// "Total hexagons: "
-		// + tessellation.getTotalHexagons());
-		// } catch (Exception e) {
-		// System.out.println(e);
-		// }
+		try {
+			pg.batchInsert("testTable", tessellation);
+			System.out.println(
+					"Total hexagons: "
+							+ tessellation.getTotalHexagons());
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 }
