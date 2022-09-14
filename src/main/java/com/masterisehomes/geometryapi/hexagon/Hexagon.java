@@ -29,11 +29,13 @@ public class Hexagon implements Serializable {
 	private CubeCoordinatesIndex previousCCI;
 	private CubeCoordinatesIndex CCI;
 
+	private final static double SQRT_3 = Math.sqrt(3);
+
 	/* Constructors */
 	public Hexagon(Coordinates centroid, double circumradius) {
 		this.centroid = centroid;
 		this.circumradius = circumradius;
-		this.inradius = circumradius * Math.sqrt(3) / 2;
+		this.inradius = circumradius * SQRT_3 / 2;
 
 		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
@@ -47,7 +49,7 @@ public class Hexagon implements Serializable {
 	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborPosition position) {
 		this.centroid = centroid;
 		this.circumradius = rootHexagon.getCircumradius();
-		this.inradius = this.circumradius * Math.sqrt(3) / 2;
+		this.inradius = this.circumradius * SQRT_3 / 2;
 
 		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
@@ -109,7 +111,7 @@ public class Hexagon implements Serializable {
 		 * - The first and last positions are equivalent, and they MUST contain
 		 * identical values; their representation SHOULD also be identical.
 		 */
-		List<Coordinates> gisCoordinates = new ArrayList<Coordinates>();
+		final List<Coordinates> gisCoordinates = new ArrayList<Coordinates>();
 		gisCoordinates.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat - inradiusLat));
 		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat - inradiusLat));
 		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng, centroidLat));
