@@ -69,9 +69,9 @@ public class Coordinates implements Serializable {
 		}
 	}
 
-	public boolean isLarger(Coordinates gisCoordinates) {
-		double latitude = gisCoordinates.getLatitude();
-		double longitude = gisCoordinates.getLongitude();
+	public final boolean isLarger(Coordinates gisCoordinates) {
+		final double latitude = gisCoordinates.getLatitude();
+		final double longitude = gisCoordinates.getLongitude();
 
 		if (this.latitude > latitude && this.longitude > longitude) {
 			return true;
@@ -80,9 +80,9 @@ public class Coordinates implements Serializable {
 		}
 	}
 
-	public boolean isSmaller(Coordinates gisCoordinates) {
-		double latitude = gisCoordinates.getLatitude();
-		double longitude = gisCoordinates.getLongitude();
+	public final boolean isSmaller(Coordinates gisCoordinates) {
+		final double latitude = gisCoordinates.getLatitude();
+		final double longitude = gisCoordinates.getLongitude();
 
 		if (this.latitude < latitude && this.longitude < longitude) {
 			return true;
@@ -103,7 +103,7 @@ public class Coordinates implements Serializable {
 	 * GeoJSON describes an order for coordinates: they should go, in order:
 	 * [longitude, latitude, elevation]
 	 */
-	public List<Double> toGeoJsonPosition() {
+	public final List<Double> toGeoJsonPosition() {
 		/*
 		 * The order of elements must follow x, y, z order
 		 * 
@@ -112,20 +112,20 @@ public class Coordinates implements Serializable {
 		 * or longitude, latitude, altitude for coordinates in a geographic coordinate
 		 * reference system).
 		 */
-		List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
+		final List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
 		return gisCoordinates;
 	}
 
-	public List<Double> toPixel() {
-		List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
+	public final List<Double> toPixel() {
+		final List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
 		return pixelCoordinates;
 	}
 
 	/* Internal methods */
-	private boolean equals_under_threshold(double numA, double numB) {
+	private final boolean equals_under_threshold(double numA, double numB) {
 		final double THRESHOLD = 0.000001;
 
-		double difference = Math.abs(numA - numB);
+		final double difference = Math.abs(numA - numB);
 		if (difference < THRESHOLD) {
 			return true;
 		} else {
