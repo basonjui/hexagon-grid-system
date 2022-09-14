@@ -16,6 +16,7 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
+import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -151,19 +152,26 @@ public class PostgresJDBC {
 			// Displaying the sublists
 			for (int i = 0; i < totalBatches; i++) {
 				if (i % 100 == 0 && i != 0) {
-					System.out.println("Reached 100th batch, should executeBatch() now..");
+					System.out.println(
+						"\n\n--- Reached 100th batch, executeBatch() and release JVM memory ---");
 				}
 
-				System.out.println("\n--- Batch " + i + ":");
-
+				System.out.println("\n- Batch " + i + "th: ");
+				System.out.println("INSERT INTO table_name VALUES");
 				List<Hexagon> hexagonBatch = hexagonBatches.get(i);
 				for (int ii = 0; ii < hexagonBatch.size(); ii++) {
 					// Hexagon hexagon = hexagonBatch.get(ii);
-					System.out.println("Hexagon" + ii);
+					System.out.print("(hex" + ii + "), ");
+
+					if (ii == hexagonBatch.size() - 1) {
+						System.out.println("(hex" + ii + ")");
+					}
 				}
 			}
 
-			System.out.println("\nTotal batches: " + totalBatches);
+			System.out.println("---\nTotal batch INSERT (trips to Postgres): " + totalBatches);
+			System.out.println("Total hexagons per batch: " + batchSize);
+
 
 			// connection.setAutoCommit(false);
 
@@ -335,5 +343,7 @@ public class PostgresJDBC {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+
+		JVMUtils.printMemories("MB");
 	}
 }

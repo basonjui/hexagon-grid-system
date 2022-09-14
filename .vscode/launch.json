@@ -9,7 +9,8 @@
                         "name": "Launch PostgresJDBC",
                         "request": "launch",
                         "mainClass": "com.masterisehomes.geometryapi.database.PostgresJDBC",
-                        "projectName": "geometryapi"
+                        "projectName": "geometryapi",
+                        "vmArgs": "-Xms1G -Xmx13G"
                 },
                 {
                         "type": "java",
