@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Properties;
 
@@ -116,17 +117,29 @@ public class PostgresJDBC {
 
 	public final void batchInsert(String tableName, AxialClockwiseTessellation tessellation) throws Exception {
 		final String INSERT_SQL = "INSERT INTO " + tableName
-				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) VALUES "
-				+ " (?, ?, ?, ?, ?);";
+				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) "
+				+ String.format("VALUES (%s, %s, %s, %s, %s, %s);",
+						"?",
+						"?",
+						"?",
+						"?",
+						"ST_SetSRID(ST_MakePoint(?, ?), 4326)",
+						"ST_SetSRID(ST_MakePolygon(ST_MakeLine(ARRAY["
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?), "
+								+ "ST_MakePoint(?, ?)])), 4326)");
 
-/* 		try (Connection connection = getConnection();
-				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) { */
+		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
 
 			final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 			final int TOTAL_HEXAGONS = gisHexagons.size();
 			final int MAX_BATCH_SIZE = 100;
 			final int MIN_BATCH_SIZE = 10;
-			final int MAX_VALUES_PER_INSERT = 100; // can
 
 			int batchSize; // hexagons per batch
 			if (TOTAL_HEXAGONS >= MAX_BATCH_SIZE) {
@@ -138,11 +151,11 @@ public class PostgresJDBC {
 						+ MIN_BATCH_SIZE);
 			}
 
-			List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
+			final List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
 			System.out.println("Total batches: " + hexagonBatches.size());
 
-			final int totalBatches = hexagonBatches.size();
 			// Displaying the sublists
+			final int totalBatches = hexagonBatches.size();
 			int hexCount = 0;
 			for (int batchIdx = 0; batchIdx < totalBatches; batchIdx++) {
 				if (batchIdx % 100 == 0 && batchIdx != 0) {
@@ -182,11 +195,11 @@ public class PostgresJDBC {
 			// System.out.println(Arrays.toString(updateCounts));
 			// connection.commit();
 			// connection.setAutoCommit(true);
-	/* 	} catch (BatchUpdateException batchUpdateException) {
+		} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
 			printSQLException(e);
-		} */
+		}
 	}
 
 	public static void printBatchUpdateException(BatchUpdateException b) {
