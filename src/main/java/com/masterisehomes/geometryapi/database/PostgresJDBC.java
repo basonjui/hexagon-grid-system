@@ -3,20 +3,16 @@ package com.masterisehomes.geometryapi.database;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import com.google.common.collect.Lists;
-import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
-import com.masterisehomes.geometryapi.tessellation.Boundary;
-import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -35,16 +31,13 @@ public class PostgresJDBC {
 	private final String database;
 
 	@ToString.Exclude
-	private final String username;
-	@ToString.Exclude
-	private final String password;
+	private final Properties props;
 
 	public PostgresJDBC(Builder builder) {
 		this.host = builder.host;
 		this.port = builder.port;
 		this.database = builder.database;
-		this.username = builder.username;
-		this.password = builder.password;
+		this.props = builder.props;
 		this.pgjdbcUrl = generateJDBCUrl();
 	}
 
@@ -52,7 +45,7 @@ public class PostgresJDBC {
 	public final Connection getConnection() {
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection(this.pgjdbcUrl, this.username, this.password);
+			connection = DriverManager.getConnection(this.pgjdbcUrl, this.props);
 			System.out.println("Connected to the PostgreSQL server: "
 					+ connection.getMetaData().getUserName());
 		} catch (SQLException e) {
@@ -150,22 +143,24 @@ public class PostgresJDBC {
 
 			final int totalBatches = hexagonBatches.size();
 			// Displaying the sublists
-			for (int i = 0; i < totalBatches; i++) {
-				if (i % 100 == 0 && i != 0) {
+			int hexCount = 0;
+			for (int batchIdx = 0; batchIdx < totalBatches; batchIdx++) {
+				if (batchIdx % 100 == 0 && batchIdx != 0) {
 					System.out.println(
 						"\n\n--- Reached 100th batch, executeBatch() and release JVM memory ---");
 				}
 
-				System.out.println("\n- Batch " + i + "th: ");
+				System.out.println("\n- Batch " + batchIdx + "th: ");
 				System.out.println("INSERT INTO table_name VALUES");
-				List<Hexagon> hexagonBatch = hexagonBatches.get(i);
+				List<Hexagon> hexagonBatch = hexagonBatches.get(batchIdx);
 				for (int ii = 0; ii < hexagonBatch.size(); ii++) {
 					// Hexagon hexagon = hexagonBatch.get(ii);
-					System.out.print("(hex" + ii + "), ");
+					System.out.print("(hex" + hexCount + "), ");
 
 					if (ii == hexagonBatch.size() - 1) {
-						System.out.println("(hex" + ii + ")");
+						System.out.println("(hex" + hexCount + ")");
 					}
+					hexCount++;
 				}
 			}
 
@@ -273,8 +268,7 @@ public class PostgresJDBC {
 		private String host;
 		private int port;
 		private String database;
-		private String username;
-		private String password;
+		private Properties props = new Properties();
 
 		private final Dotenv dotenv = Dotenv.configure()
 				.directory(System.getProperty("user.dir"))
@@ -300,8 +294,18 @@ public class PostgresJDBC {
 		}
 
 		public final Builder authentication(String usernameKey, String passwordKey) {
-			this.username = dotenv.get(usernameKey);
-			this.password = dotenv.get(passwordKey);
+			String username = dotenv.get(usernameKey);
+			String password = dotenv.get(passwordKey);
+
+			this.props.setProperty("user", username);
+			this.props.setProperty("password", password);
+
+			return this;
+		}
+
+		public final Builder reWriteBatchedInserts(boolean isEnabled) {
+			this.props.setProperty("reWriteBatchedInserts", Boolean.toString(isEnabled));
+
 			return this;
 		}
 
@@ -317,33 +321,34 @@ public class PostgresJDBC {
 				.port(5432)
 				.database("spatial_db")
 				.authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
+				.reWriteBatchedInserts(true)
 				.build();
 
 		// pg.testQuery("chanmay_1km_vietnam", 5);
 
 		// pg.createGeometryTable("quan_test_table");
 
-		final Coordinates origin = new Coordinates(106, 15);
-		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 10000);
+		// final Coordinates origin = new Coordinates(106, 15);
+		// // Coordinates origin = new Coordinates(109.466667, 23.383333);
+		// final Hexagon hexagon = new Hexagon(origin, 10000);
 
-		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+		// final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		final Boundary boundary = new Boundary(
-				new Coordinates(102.133333, 8.033333),
-				new Coordinates(109.466667, 23.383333));
+		// final Boundary boundary = new Boundary(
+		// 		new Coordinates(102.133333, 8.033333),
+		// 		new Coordinates(109.466667, 23.383333));
 
-		tessellation.tessellate(boundary);
+		// tessellation.tessellate(boundary);
 
-		try {
-			pg.batchInsert("testTable", tessellation);
-			System.out.println(
-					"Total hexagons: "
-							+ tessellation.getTotalHexagons());
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+		// try {
+		// 	pg.batchInsert("testTable", tessellation);
+		// 	System.out.println(
+		// 			"Total hexagons: "
+		// 					+ tessellation.getTotalHexagons());
+		// } catch (Exception e) {
+		// 	System.out.println(e);
+		// }
 
-		JVMUtils.printMemories("MB");
+		// JVMUtils.printMemories("MB");
 	}
 }

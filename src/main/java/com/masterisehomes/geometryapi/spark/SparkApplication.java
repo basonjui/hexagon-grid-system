@@ -38,7 +38,7 @@ public class SparkApplication {
 		Encoder<Hexagon> encoder = Encoders.bean(Hexagon.class);
 		Dataset<Hexagon> ds = spark.createDataset(dto.getGisHexagons(), encoder);
 
-		ds.show(10);
+		ds.select("centroid").show(10, false);
 
 		JVMUtils.printMemories("MB");
 
