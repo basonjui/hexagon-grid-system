@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Properties;
 
 import com.google.common.collect.Lists;
+import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
+import com.masterisehomes.geometryapi.tessellation.Boundary;
+import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -116,6 +119,14 @@ public class PostgresJDBC {
 	}
 
 	public final void batchInsert(String tableName, AxialClockwiseTessellation tessellation) throws Exception {
+		/* Tessellation data */
+		final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
+		final int TOTAL_HEXAGONS = gisHexagons.size();
+
+		/* Batch execution configurations */
+		final int MAX_BATCH_SIZE = 100;
+		final int MIN_BATCH_SIZE = 10;
+
 		final String INSERT_SQL = "INSERT INTO " + tableName
 				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) "
 				+ String.format("VALUES (%s, %s, %s, %s, %s, %s);",
@@ -135,12 +146,6 @@ public class PostgresJDBC {
 
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
-
-			final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
-			final int TOTAL_HEXAGONS = gisHexagons.size();
-			final int MAX_BATCH_SIZE = 100;
-			final int MIN_BATCH_SIZE = 10;
-
 			int batchSize; // hexagons per batch
 			if (TOTAL_HEXAGONS >= MAX_BATCH_SIZE) {
 				batchSize = MAX_BATCH_SIZE;
@@ -151,50 +156,77 @@ public class PostgresJDBC {
 						+ MIN_BATCH_SIZE);
 			}
 
+			/* Partition Tessellation hexagons into small batches */
 			final List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
-			System.out.println("Total batches: " + hexagonBatches.size());
-
-			// Displaying the sublists
 			final int totalBatches = hexagonBatches.size();
+			System.out.println("Total batches: " + totalBatches);
+			
+			/* Batch Transaction */
+			connection.setAutoCommit(false);
+
 			int hexCount = 0;
-			for (int batchIdx = 0; batchIdx < totalBatches; batchIdx++) {
-				if (batchIdx % 100 == 0 && batchIdx != 0) {
+			/* Iterate through batch : hexagonBatches */
+			for (int nthBatch = 0; nthBatch < totalBatches; nthBatch++) {
+				if (nthBatch % 10 == 0 && nthBatch != 0) {
 					System.out.println(
-						"\n\n--- Reached 100th batch, executeBatch() and release JVM memory ---");
+						"\n\n--- Reached 100th batch, begin to executeBatch() ---");
+					try {
+						preparedStatement.executeBatch();
+						connection.commit();
+					} catch (SQLException e) {
+						connection.rollback();
+						printSQLException(e);
+					}
 				}
 
-				System.out.println("\n- Batch " + batchIdx + "th: ");
-				System.out.println("INSERT INTO table_name VALUES");
-				List<Hexagon> hexagonBatch = hexagonBatches.get(batchIdx);
-				for (int ii = 0; ii < hexagonBatch.size(); ii++) {
-					// Hexagon hexagon = hexagonBatch.get(ii);
-					System.out.print("(hex" + hexCount + "), ");
+				/* Iterate through hexagon : hexagonBatch  */
+				System.out.println("\n- Batch " + nthBatch + "th: ");
+				// System.out.println("INSERT INTO table_name VALUES");
+				List<Hexagon> hexagonBatch = hexagonBatches.get(nthBatch);
+				for (Hexagon hexagon : hexagonBatch) {
+					preparedStatement.setInt(1, hexagon.getCCI().getQ());					// ccid_q
+					preparedStatement.setInt(2, hexagon.getCCI().getR()); 					// ccid_r
+					preparedStatement.setInt(3, hexagon.getCCI().getS()); 					// ccid_s
 
-					if (ii == hexagonBatch.size() - 1) {
-						System.out.println("(hex" + hexCount + ")");
-					}
+					preparedStatement.setDouble(4, hexagon.getCircumradius());				// circumradius
+
+					preparedStatement.setDouble(5,hexagon.getCentroid().getLongitude());			// centroid : (geom) centroidX
+					preparedStatement.setDouble(6, hexagon.getCentroid().getLatitude());			// centroid : (geom) centroidY
+
+					preparedStatement.setDouble(7, hexagon.getGisVertices().get(0).getLongitude());		// geometry : (geom) gisVertices[0].X
+					preparedStatement.setDouble(8, hexagon.getGisVertices().get(0).getLatitude());		// geometry : (geom) gisVertices[0].Y
+
+					preparedStatement.setDouble(9, hexagon.getGisVertices().get(1).getLongitude());		// geometry : (geom) gisVertices[1].X
+					preparedStatement.setDouble(10, hexagon.getGisVertices().get(1).getLatitude());		// geometry : (geom) gisVertices[1].Y
+
+					preparedStatement.setDouble(11, hexagon.getGisVertices().get(2).getLongitude());	// geometry : (geom) gisVertices[2].X
+					preparedStatement.setDouble(12, hexagon.getGisVertices().get(2).getLatitude());		// geometry : (geom) gisVertices[2].Y
+
+					preparedStatement.setDouble(13, hexagon.getGisVertices().get(3).getLongitude());	// geometry : (geom) gisVertices[3].X
+					preparedStatement.setDouble(14, hexagon.getGisVertices().get(3).getLatitude());		// geometry : (geom) gisVertices[3].Y
+
+					preparedStatement.setDouble(15, hexagon.getGisVertices().get(4).getLongitude());	// geometry : (geom) gisVertices[4].X
+					preparedStatement.setDouble(16, hexagon.getGisVertices().get(4).getLatitude());		// geometry : (geom) gisVertices[4].Y
+
+					preparedStatement.setDouble(17, hexagon.getGisVertices().get(5).getLongitude());	// geometry : (geom) gisVertices[5].X
+					preparedStatement.setDouble(18, hexagon.getGisVertices().get(5).getLatitude());		// geometry : (geom) gisVertices[5].Y
+
+					preparedStatement.setDouble(19, hexagon.getGisVertices().get(6).getLongitude());	// geometry : (geom) gisVertices[6].X
+					preparedStatement.setDouble(20, hexagon.getGisVertices().get(6).getLatitude());		// geometry : (geom) gisVertices[6].Y
+
+					/* Add INSERT statement into JDBC Batch */
+					preparedStatement.addBatch();
+
+					/* Hexagon counter */
 					hexCount++;
 				}
 			}
+			connection.setAutoCommit(true);
+			preparedStatement.executeBatch();
 
-			System.out.println("---\nTotal batch INSERT (trips to Postgres): " + totalBatches);
+			System.out.println("\n---\nTotal batch INSERT (roundtrips to DB): " + totalBatches);
 			System.out.println("Total hexagons per batch: " + batchSize);
-
-
-			// connection.setAutoCommit(false);
-
-			// preparedStatement.setInt(1, 20);
-			// preparedStatement.setInt(2, 20);
-			// preparedStatement.setInt(3, 20);
-			// preparedStatement.setDouble(4, 1000);
-			// preparedStatement.setString(5, "secret");
-			// preparedStatement.setString(6, "secret");
-			// preparedStatement.addBatch();
-
-			// int[] updateCounts = preparedStatement.executeBatch();
-			// System.out.println(Arrays.toString(updateCounts));
-			// connection.commit();
-			// connection.setAutoCommit(true);
+			System.out.println("Total hexagons INSERTED: " + hexCount);
 		} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
@@ -339,29 +371,27 @@ public class PostgresJDBC {
 
 		// pg.testQuery("chanmay_1km_vietnam", 5);
 
-		// pg.createGeometryTable("quan_test_table");
+		pg.createGeometryTable("hochiminh_vietnam_250m");
 
-		// final Coordinates origin = new Coordinates(106, 15);
-		// // Coordinates origin = new Coordinates(109.466667, 23.383333);
-		// final Hexagon hexagon = new Hexagon(origin, 10000);
+		final Coordinates origin = new Coordinates(106, 15);
+		// Coordinates origin = new Coordinates(109.466667, 23.383333);
+		final Hexagon hexagon = new Hexagon(origin, 250);
 
-		// final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		// final Boundary boundary = new Boundary(
-		// 		new Coordinates(102.133333, 8.033333),
-		// 		new Coordinates(109.466667, 23.383333));
+		final Boundary boundary = new Boundary(
+				new Coordinates(102.133333, 8.033333),
+				new Coordinates(109.466667, 23.383333));
 
-		// tessellation.tessellate(boundary);
+		tessellation.tessellate(boundary);
+		System.out.println("\nTotal hexagons: " + tessellation.getTotalHexagons());
 
 		// try {
-		// 	pg.batchInsert("testTable", tessellation);
-		// 	System.out.println(
-		// 			"Total hexagons: "
-		// 					+ tessellation.getTotalHexagons());
+		// 	pg.batchInsert("hochiminh_vietnam_250m", tessellation);
 		// } catch (Exception e) {
 		// 	System.out.println(e);
 		// }
 
-		// JVMUtils.printMemories("MB");
+		JVMUtils.printMemories("MB");
 	}
 }
