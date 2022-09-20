@@ -50,7 +50,8 @@ public class PostgresJDBC {
 		Connection connection = null;
 		try {
 			connection = DriverManager.getConnection(this.pgjdbcUrl, this.props);
-			System.out.println("Connected to the PostgreSQL server: "
+			System.out.println("\n"
+					+ "Connected to the PostgreSQL server: "
 					+ connection.getMetaData().getUserName());
 		} catch (SQLException e) {
 			printSQLException(e);
@@ -59,36 +60,37 @@ public class PostgresJDBC {
 		return connection;
 	}
 
-	public final void testQuery(String table, int rowsLimit) {
-		final String RAW_SQL = new StringBuilder()
+	public final void testQuery(String table, int limit) {
+		final String SQL_TEMPLATE = new StringBuilder()
 				.append("SELECT * FROM %s\n")
 				.append("LIMIT %s")
 				.toString();
-		final String SQL = String.format(RAW_SQL, table, rowsLimit);
+		final String SQL = String.format(SQL_TEMPLATE, table, limit);
 
 		try (final Connection connection = getConnection();
-				final Statement stmt = connection.createStatement();
-				final ResultSet rs = stmt.executeQuery(SQL)) {
+				final Statement statement = connection.createStatement();
+				final ResultSet resultSet = statement.executeQuery(SQL)) {
 
-			final ResultSetMetaData rsmd = rs.getMetaData();
-			final int columnsCount = rsmd.getColumnCount();
+			final ResultSetMetaData rsMetadata = resultSet.getMetaData();
+			final int columnsCount = rsMetadata.getColumnCount();
 
-			System.out.println("--- Query results ---");
+			System.out.println("--- Query results");
 			// Iterate through the data in the result set and display it.
-			while (rs.next()) {
+			while (resultSet.next()) {
 				// Print one row
 				for (int i = 1; i <= columnsCount; i++) {
 					String tabs;
-					if (rsmd.getColumnName(i).length() < 8) {
+					if (rsMetadata.getColumnName(i).length() < 8) {
 						tabs = "\t\t\t";
 					} else {
 						tabs = "\t\t";
 					}
 
-					System.out.print(String.format("(%s) ", rsmd.getColumnTypeName(i)));
-					System.out.print(rsmd.getColumnName(i) + tabs + ": ");
-					System.out.print(rs.getString(i) + "\n");
+					System.out.print(String.format("(%s) ", rsMetadata.getColumnTypeName(i)));
+					System.out.print(rsMetadata.getColumnName(i) + tabs + ": ");
+					System.out.print(resultSet.getString(i) + "\n");
 				}
+
 				System.out.println("---------------------------------");
 			}
 		} catch (SQLException e) {
@@ -111,23 +113,19 @@ public class PostgresJDBC {
 
 		try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
 			statement.executeUpdate(CREATE_TABLE_SQL);
-			System.out.println("Creating geometry table successfully with query:");
-			System.out.println("---\n" + CREATE_TABLE_SQL);
+			System.out.println("Created geometry table successfully with query:");
+			System.out.println(CREATE_TABLE_SQL);
 		} catch (SQLException e) {
 			printSQLException(e);
 		}
 	}
 
-	public final void batchInsert(String tableName, AxialClockwiseTessellation tessellation) throws Exception {
+	public final void batchInsertByTessellation(String table, AxialClockwiseTessellation tessellation) {
 		/* Tessellation data */
 		final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 		final int TOTAL_HEXAGONS = gisHexagons.size();
 
-		/* Batch execution configurations */
-		final int MAX_BATCH_SIZE = 100;
-		final int MIN_BATCH_SIZE = 10;
-
-		final String INSERT_SQL = "INSERT INTO " + tableName
+		final String INSERT_SQL = "INSERT INTO " + table
 				+ " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) "
 				+ String.format("VALUES (%s, %s, %s, %s, %s, %s);",
 						"?",
@@ -146,87 +144,77 @@ public class PostgresJDBC {
 
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
-			int batchSize; // hexagons per batch
-			if (TOTAL_HEXAGONS >= MAX_BATCH_SIZE) {
-				batchSize = MAX_BATCH_SIZE;
-			} else if (TOTAL_HEXAGONS >= MIN_BATCH_SIZE) {
-				batchSize = MIN_BATCH_SIZE;
-			} else {
-				throw new Exception("Tessellation size is smaller than required minimum batch size: "
-						+ MIN_BATCH_SIZE);
-			}
-
-			/* Partition Tessellation hexagons into small batches */
-			final List<List<Hexagon>> hexagonBatches = Lists.partition(gisHexagons, batchSize);
-			final int totalBatches = hexagonBatches.size();
-			System.out.println("Total batches: " + totalBatches);
 			
-			/* Batch Transaction */
+			/* Set autocommit off */
 			connection.setAutoCommit(false);
 
-			int hexCount = 0;
-			/* Iterate through batch : hexagonBatches */
-			for (int nthBatch = 0; nthBatch < totalBatches; nthBatch++) {
-				if (nthBatch % 10 == 0 && nthBatch != 0) {
-					System.out.println(
-						"\n\n--- Reached 100th batch, begin to executeBatch() ---");
+			/* JDBC Batching configurations */
+			int batchCount = 0; // batchCount only updates if executed, so it starts as 1
+			int batchExecutionCount = 1;
+			final int JDBC_BATCH_LIMIT = 10;
+			
+			System.out.println("Begin batch inserting hexagons to database...");
+			for (Hexagon hexagon : gisHexagons) {
+				preparedStatement.setInt(1, hexagon.getCCI().getQ());					// ccid_q
+				preparedStatement.setInt(2, hexagon.getCCI().getR()); 					// ccid_r
+				preparedStatement.setInt(3, hexagon.getCCI().getS()); 					// ccid_s
+
+				preparedStatement.setDouble(4, hexagon.getCircumradius());				// circumradius
+
+				preparedStatement.setDouble(5,hexagon.getCentroid().getLongitude());			// centroid : (geom) centroidX
+				preparedStatement.setDouble(6, hexagon.getCentroid().getLatitude());			// centroid : (geom) centroidY
+
+				preparedStatement.setDouble(7, hexagon.getGisVertices().get(0).getLongitude());		// geometry : (geom) gisVertices[0].X
+				preparedStatement.setDouble(8, hexagon.getGisVertices().get(0).getLatitude());		// geometry : (geom) gisVertices[0].Y
+
+				preparedStatement.setDouble(9, hexagon.getGisVertices().get(1).getLongitude());		// geometry : (geom) gisVertices[1].X
+				preparedStatement.setDouble(10, hexagon.getGisVertices().get(1).getLatitude());		// geometry : (geom) gisVertices[1].Y
+
+				preparedStatement.setDouble(11, hexagon.getGisVertices().get(2).getLongitude());	// geometry : (geom) gisVertices[2].X
+				preparedStatement.setDouble(12, hexagon.getGisVertices().get(2).getLatitude());		// geometry : (geom) gisVertices[2].Y
+
+				preparedStatement.setDouble(13, hexagon.getGisVertices().get(3).getLongitude());	// geometry : (geom) gisVertices[3].X
+				preparedStatement.setDouble(14, hexagon.getGisVertices().get(3).getLatitude());		// geometry : (geom) gisVertices[3].Y
+
+				preparedStatement.setDouble(15, hexagon.getGisVertices().get(4).getLongitude());	// geometry : (geom) gisVertices[4].X
+				preparedStatement.setDouble(16, hexagon.getGisVertices().get(4).getLatitude());		// geometry : (geom) gisVertices[4].Y
+
+				preparedStatement.setDouble(17, hexagon.getGisVertices().get(5).getLongitude());	// geometry : (geom) gisVertices[5].X
+				preparedStatement.setDouble(18, hexagon.getGisVertices().get(5).getLatitude());		// geometry : (geom) gisVertices[5].Y
+
+				preparedStatement.setDouble(19, hexagon.getGisVertices().get(6).getLongitude());	// geometry : (geom) gisVertices[6].X
+				preparedStatement.setDouble(20, hexagon.getGisVertices().get(6).getLatitude());		// geometry : (geom) gisVertices[6].Y
+
+				/* Add INSERT statement into JDBC Batch */
+				preparedStatement.addBatch();
+
+				/* Execute batch every JDBC_BATCH_LIMIT except batch 0*/
+				if (batchCount % JDBC_BATCH_LIMIT == 0 && batchCount != 0) {
 					try {
 						preparedStatement.executeBatch();
 						connection.commit();
+
+						System.out.println(
+							"- Executed batch " + batchExecutionCount + "th.");
+						batchExecutionCount++;
 					} catch (SQLException e) {
 						connection.rollback();
 						printSQLException(e);
 					}
 				}
 
-				/* Iterate through hexagon : hexagonBatch  */
-				System.out.println("\n- Batch " + nthBatch + "th: ");
-				// System.out.println("INSERT INTO table_name VALUES");
-				List<Hexagon> hexagonBatch = hexagonBatches.get(nthBatch);
-				for (Hexagon hexagon : hexagonBatch) {
-					preparedStatement.setInt(1, hexagon.getCCI().getQ());					// ccid_q
-					preparedStatement.setInt(2, hexagon.getCCI().getR()); 					// ccid_r
-					preparedStatement.setInt(3, hexagon.getCCI().getS()); 					// ccid_s
-
-					preparedStatement.setDouble(4, hexagon.getCircumradius());				// circumradius
-
-					preparedStatement.setDouble(5,hexagon.getCentroid().getLongitude());			// centroid : (geom) centroidX
-					preparedStatement.setDouble(6, hexagon.getCentroid().getLatitude());			// centroid : (geom) centroidY
-
-					preparedStatement.setDouble(7, hexagon.getGisVertices().get(0).getLongitude());		// geometry : (geom) gisVertices[0].X
-					preparedStatement.setDouble(8, hexagon.getGisVertices().get(0).getLatitude());		// geometry : (geom) gisVertices[0].Y
-
-					preparedStatement.setDouble(9, hexagon.getGisVertices().get(1).getLongitude());		// geometry : (geom) gisVertices[1].X
-					preparedStatement.setDouble(10, hexagon.getGisVertices().get(1).getLatitude());		// geometry : (geom) gisVertices[1].Y
-
-					preparedStatement.setDouble(11, hexagon.getGisVertices().get(2).getLongitude());	// geometry : (geom) gisVertices[2].X
-					preparedStatement.setDouble(12, hexagon.getGisVertices().get(2).getLatitude());		// geometry : (geom) gisVertices[2].Y
-
-					preparedStatement.setDouble(13, hexagon.getGisVertices().get(3).getLongitude());	// geometry : (geom) gisVertices[3].X
-					preparedStatement.setDouble(14, hexagon.getGisVertices().get(3).getLatitude());		// geometry : (geom) gisVertices[3].Y
-
-					preparedStatement.setDouble(15, hexagon.getGisVertices().get(4).getLongitude());	// geometry : (geom) gisVertices[4].X
-					preparedStatement.setDouble(16, hexagon.getGisVertices().get(4).getLatitude());		// geometry : (geom) gisVertices[4].Y
-
-					preparedStatement.setDouble(17, hexagon.getGisVertices().get(5).getLongitude());	// geometry : (geom) gisVertices[5].X
-					preparedStatement.setDouble(18, hexagon.getGisVertices().get(5).getLatitude());		// geometry : (geom) gisVertices[5].Y
-
-					preparedStatement.setDouble(19, hexagon.getGisVertices().get(6).getLongitude());	// geometry : (geom) gisVertices[6].X
-					preparedStatement.setDouble(20, hexagon.getGisVertices().get(6).getLatitude());		// geometry : (geom) gisVertices[6].Y
-
-					/* Add INSERT statement into JDBC Batch */
-					preparedStatement.addBatch();
-
-					/* Hexagon counter */
-					hexCount++;
-				}
+				/* Update batchCount */
+				batchCount++;
 			}
+			
+			/* Set auto-commit back to normal and execute batches < JDBC_BATCH_SIZE */
 			connection.setAutoCommit(true);
 			preparedStatement.executeBatch();
 
-			System.out.println("\n---\nTotal batch INSERT (roundtrips to DB): " + totalBatches);
-			System.out.println("Total hexagons per batch: " + batchSize);
-			System.out.println("Total hexagons INSERTED: " + hexCount);
+			System.out.println("\n--- Batch execution logs ---");
+			System.out.println("Total hexagons: " + TOTAL_HEXAGONS);
+			System.out.println("Total batch inserts: " + batchExecutionCount);
+			System.out.println("Total hexagons per batch: " + JDBC_BATCH_LIMIT);
 		} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
@@ -371,14 +359,13 @@ public class PostgresJDBC {
 
 		// pg.testQuery("chanmay_1km_vietnam", 5);
 
-		pg.createGeometryTable("hochiminh_vietnam_250m");
-
+		
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 250);
-
+		final Hexagon hexagon = new Hexagon(origin, 100000);
+		
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
-
+		
 		final Boundary boundary = new Boundary(
 				new Coordinates(102.133333, 8.033333),
 				new Coordinates(109.466667, 23.383333));
@@ -386,12 +373,17 @@ public class PostgresJDBC {
 		tessellation.tessellate(boundary);
 		System.out.println("\nTotal hexagons: " + tessellation.getTotalHexagons());
 
-		// try {
-		// 	pg.batchInsert("hochiminh_vietnam_250m", tessellation);
-		// } catch (Exception e) {
-		// 	System.out.println(e);
-		// }
+		String tableName = "quan_test";
+		// pg.createGeometryTable(tableName);
 
+		try {
+			pg.batchInsertByTessellation(tableName, tessellation);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		JVMUtils.printMemories("MB");
+
+		pg.testQuery(tableName, 10);
+		
 	}
 }
