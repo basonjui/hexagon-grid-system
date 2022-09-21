@@ -3,15 +3,14 @@ package com.masterisehomes.geometryapi.database;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Properties;
 
-import com.google.common.collect.Lists;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
@@ -121,6 +120,7 @@ public class PostgresJDBC {
 	}
 
 	public final void batchInsertByTessellation(String table, AxialClockwiseTessellation tessellation) {
+
 		/* Tessellation data */
 		final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
 		final int TOTAL_HEXAGONS = gisHexagons.size();
@@ -149,11 +149,14 @@ public class PostgresJDBC {
 			connection.setAutoCommit(false);
 
 			/* JDBC Batching configurations */
-			int batchCount = 0; // batchCount only updates if executed, so it starts as 1
-			int batchExecutionCount = 1;
-			final int JDBC_BATCH_LIMIT = 10;
+			int batchCount = 0;
+			int batchExecutionCount = 0;
+			final int JDBC_BATCH_LIMIT = 500;
 			
-			System.out.println("Begin batch inserting hexagons to database...");
+			/* Start time of batch execution */
+			long startTime = System.currentTimeMillis();
+			
+			System.out.println("--- Batch execution begin..");
 			for (Hexagon hexagon : gisHexagons) {
 				preparedStatement.setInt(1, hexagon.getCCI().getQ());					// ccid_q
 				preparedStatement.setInt(2, hexagon.getCCI().getR()); 					// ccid_r
@@ -188,33 +191,43 @@ public class PostgresJDBC {
 				/* Add INSERT statement into JDBC Batch */
 				preparedStatement.addBatch();
 
-				/* Execute batch every JDBC_BATCH_LIMIT except batch 0*/
-				if (batchCount % JDBC_BATCH_LIMIT == 0 && batchCount != 0) {
+				/* Execute batch every JDBC_BATCH_LIMIT */
+				batchCount++; // update batchCount
+				if (batchCount % JDBC_BATCH_LIMIT == 0) {
 					try {
+						batchExecutionCount++;
+
 						preparedStatement.executeBatch();
 						connection.commit();
 
-						System.out.println(
-							"- Executed batch " + batchExecutionCount + "th.");
-						batchExecutionCount++;
+						System.out.println("- Batch " + batchExecutionCount + "th.");
 					} catch (SQLException e) {
 						connection.rollback();
 						printSQLException(e);
 					}
 				}
-
-				/* Update batchCount */
-				batchCount++;
 			}
 			
-			/* Set auto-commit back to normal and execute batches < JDBC_BATCH_SIZE */
+			/* Set auto-commit back to normal and execute left over batches (batch amount < JDBC_BATCH_LIMIT) */
 			connection.setAutoCommit(true);
 			preparedStatement.executeBatch();
+			batchExecutionCount++;
+			System.out.println("- Batch " + batchExecutionCount + "th.");
 
-			System.out.println("\n--- Batch execution logs ---");
-			System.out.println("Total hexagons: " + TOTAL_HEXAGONS);
-			System.out.println("Total batch inserts: " + batchExecutionCount);
-			System.out.println("Total hexagons per batch: " + JDBC_BATCH_LIMIT);
+			/* End time of batch executionn */
+			long endTime = System.currentTimeMillis();
+
+			double elapsedTimeMs = endTime - startTime;
+			double elapsedTimeSec = elapsedTimeMs / 1000;
+
+
+			System.out.println("\n------ Batch execution logs ------");
+			System.out.println("Batch execution time : " + elapsedTimeSec + " s");
+			System.out.println("Total batch inserts  : " + batchExecutionCount);
+			System.out.println("Hexagons per batch   : " + JDBC_BATCH_LIMIT);
+			System.out.println("Hexagons inserted    : " + batchCount);
+			System.out.println("---");
+			System.out.println("Total Hexagons       : " + TOTAL_HEXAGONS);
 		} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
@@ -362,7 +375,7 @@ public class PostgresJDBC {
 		
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 100000);
+		final Hexagon hexagon = new Hexagon(origin, 1000);
 		
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 		
@@ -371,19 +384,38 @@ public class PostgresJDBC {
 				new Coordinates(109.466667, 23.383333));
 
 		tessellation.tessellate(boundary);
-		System.out.println("\nTotal hexagons: " + tessellation.getTotalHexagons());
+		System.out.println("Tessellation hexagons: " + tessellation.getTotalHexagons());
 
 		String tableName = "quan_test";
 		// pg.createGeometryTable(tableName);
 
-		try {
-			pg.batchInsertByTessellation(tableName, tessellation);
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		JVMUtils.printMemories("MB");
+		// try {
+		// 	pg.batchInsertByTessellation(tableName, tessellation);
+		// } catch (Exception e) {
+		// 	System.out.println(e);
+		// }
+		// JVMUtils.printMemories("MB");
 
-		pg.testQuery(tableName, 10);
+		pg.testQuery(tableName, 5);
+
+		/*
+		 * Batch size: 1000
+		 * ------ Batch execution logs ------
+		 * Batch execution time : 116.812 s
+		 * Total batch inserts : 1011
+		 * Hexagons inserted : 1010941
+		 * ---
+		 * Total Hexagons : 1010941
+		 * 
+		 * 
+		 * Batch size: 500
+		 * ------ Batch execution logs ------
+		 * Batch execution time : 278.323 s
+		 * Total batch inserts : 2022
+		 * Hexagons inserted : 1010941
+		 * ---
+		 * Total Hexagons : 1010941
+		 */
 		
 	}
 }
