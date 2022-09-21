@@ -151,7 +151,7 @@ public class PostgresJDBC {
 			/* JDBC Batching configurations */
 			int batchCount = 0;
 			int batchExecutionCount = 0;
-			final int JDBC_BATCH_LIMIT = 500;
+			final int JDBC_BATCH_SIZE = 500;
 			
 			/* Start time of batch execution */
 			long startTime = System.currentTimeMillis();
@@ -193,7 +193,7 @@ public class PostgresJDBC {
 
 				/* Execute batch every JDBC_BATCH_LIMIT */
 				batchCount++; // update batchCount
-				if (batchCount % JDBC_BATCH_LIMIT == 0) {
+				if (batchCount % JDBC_BATCH_SIZE == 0) {
 					try {
 						batchExecutionCount++;
 
@@ -224,7 +224,7 @@ public class PostgresJDBC {
 			System.out.println("\n------ Batch execution logs ------");
 			System.out.println("Batch execution time : " + elapsedTimeSec + " s");
 			System.out.println("Total batch inserts  : " + batchExecutionCount);
-			System.out.println("Hexagons per batch   : " + JDBC_BATCH_LIMIT);
+			System.out.println("Hexagons per batch   : " + JDBC_BATCH_SIZE);
 			System.out.println("Hexagons inserted    : " + batchCount);
 			System.out.println("---");
 			System.out.println("Total Hexagons       : " + TOTAL_HEXAGONS);
