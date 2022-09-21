@@ -394,7 +394,7 @@ public class PostgresJDBC {
 		// } catch (Exception e) {
 		// 	System.out.println(e);
 		// }
-		// JVMUtils.printMemories("MB");
+		JVMUtils.printMemories("MB");
 
 		pg.testQuery(tableName, 5);
 
