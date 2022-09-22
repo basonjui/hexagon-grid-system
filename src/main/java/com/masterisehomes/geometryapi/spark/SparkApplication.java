@@ -20,12 +20,12 @@ import com.masterisehomes.geometryapi.utils.JVMUtils;
 public class SparkApplication {
 	public static void main(String[] args) throws TimeoutException {
 		SparkSession spark = SparkSession.builder()
-				.master("local[2]")
+				.master("local[*]")
 				.appName("SparkApplication")
 				.getOrCreate();
 
 		final Coordinates origin = new Coordinates(106, 15);
-		final Hexagon hexagon = new Hexagon(origin, 2000);
+		final Hexagon hexagon = new Hexagon(origin, 5000);
 		final Boundary boundary = new Boundary(
 				new Coordinates(102.133333, 8.033333),
 				new Coordinates(109.466667, 23.383333));
@@ -35,19 +35,20 @@ public class SparkApplication {
 
 		final AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
 
-		Encoder<Hexagon> encoder = Encoders.bean(Hexagon.class);
-		Dataset<Hexagon> ds = spark.createDataset(dto.getGisHexagons(), encoder);
+		Encoder<Hexagon> hexagonEncoder = Encoders.bean(Hexagon.class);
+		Dataset<Hexagon> ds = spark.createDataset(dto.getGisHexagons(), hexagonEncoder);
 
-		ds.select("centroid").show(10, false);
+		System.out.println("Total rows: " + ds.count());
+		ds.show(10);
 
 		JVMUtils.printMemories("MB");
 
-		try {
-			System.out.print("\nPress enter to stop Spark: ");
-			System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// 	System.out.print("\nPress enter to stop Spark: ");
+		// 	System.in.read();
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// }
 
 		spark.stop();
 	}

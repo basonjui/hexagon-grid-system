@@ -320,7 +320,7 @@ public class AxialClockwiseTessellation {
 				: String.format("nthRing must be < requiredRings (%s), current nthRing: %s",
 						this.requiredRings, nthRing);
 
-		/* Calculate latestGisHexagonListIndex and requiredEdgeHexagons */
+		/* Calculate latestCornerHexagonIndex and requiredEdgeHexagons */
 		final int latestCornerHexagonIndex = nthRing - 2; // -1 for Ring 1 and -1 due to List index start at 0
 		final int requiredEdgeHexagons = nthRing - 1;
 
@@ -414,7 +414,8 @@ public class AxialClockwiseTessellation {
 
 				default:
 					throw new IllegalStateException(
-							"Should never reach this code, current corner position: " + cornerPosition);
+							"cornerPosition should never reach this state, current position: "
+							+ cornerPosition);
 			}
 		}
 	}
@@ -424,7 +425,7 @@ public class AxialClockwiseTessellation {
 		assert quantity >= 1:
 			"(int) quantity must be larger than 1, currently: " + quantity;
 
-		final List<Hexagon> gisEdgeHexagons = new ArrayList<Hexagon>(100);
+		final List<Hexagon> gisEdgeHexagons = new ArrayList<Hexagon>(1000);
 		assert gisEdgeHexagons.isEmpty():
 			"gisEdgeHexagons List must be empty when initialized, current size: " + gisEdgeHexagons.size();
 
@@ -615,7 +616,7 @@ public class AxialClockwiseTessellation {
 
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 250);
+		final Hexagon hexagon = new Hexagon(origin, 50000);
 
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
@@ -631,7 +632,7 @@ public class AxialClockwiseTessellation {
 
 		// FeatureCollection collection = manager.getFeatureCollection();
 
-		System.out.println("\n------------------------ Tessellation ------------------------");
+		System.out.println("\n------ Tessellation ------");
 		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
 		System.out.println("Boundary       : " + tessellation.boundary.gisBoundary());
 		System.out.println("Circumradius   : " + hexagon.getCircumradius());

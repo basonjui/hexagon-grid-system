@@ -59,10 +59,10 @@ public class GeometryApi {
 				// Parse request payload to a JSONObject with Gson
 				JsonObject tessellationPayload = gson.fromJson(request.body(), JsonObject.class);
 
-				AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellationPayload);
-
-				FeatureCollection collection = new GeoJsonManager(dto).getFeatureCollection();
-				return collection;
+				AxialClockwiseTessellationDto tessellationDto = new AxialClockwiseTessellationDto(tessellationPayload);
+				GeoJsonManager manager = new GeoJsonManager(tessellationDto);
+				
+				return manager.getFeatureCollection();
 
 			} catch (Exception e) {
 				return "Invalid JSON data provided: " + e;
