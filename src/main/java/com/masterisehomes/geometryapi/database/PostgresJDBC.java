@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
 import com.masterisehomes.geometryapi.utils.JVMUtils;
@@ -68,14 +69,15 @@ public class PostgresJDBC {
 
 		try (final Connection connection = getConnection();
 				final Statement statement = connection.createStatement();
-				final ResultSet resultSet = statement.executeQuery(SQL)) {
+				final ResultSet rs = statement.executeQuery(SQL)) {
 
-			final ResultSetMetaData rsMetadata = resultSet.getMetaData();
+			final ResultSetMetaData rsMetadata = rs.getMetaData();
 			final int columnsCount = rsMetadata.getColumnCount();
 
 			System.out.println("--- Query results");
+			
 			// Iterate through the data in the result set and display it.
-			while (resultSet.next()) {
+			while (rs.next()) {
 				// Print one row
 				for (int i = 1; i <= columnsCount; i++) {
 					String tabs;
@@ -87,7 +89,7 @@ public class PostgresJDBC {
 
 					System.out.print(String.format("(%s) ", rsMetadata.getColumnTypeName(i)));
 					System.out.print(rsMetadata.getColumnName(i) + tabs + ": ");
-					System.out.print(resultSet.getString(i) + "\n");
+					System.out.print(rs.getString(i) + "\n");
 				}
 
 				System.out.println("---------------------------------");
@@ -158,35 +160,39 @@ public class PostgresJDBC {
 			
 			System.out.println("--- Batch execution begin..");
 			for (Hexagon hexagon : gisHexagons) {
-				preparedStatement.setInt(1, hexagon.getCCI().getQ());					// ccid_q
-				preparedStatement.setInt(2, hexagon.getCCI().getR()); 					// ccid_r
-				preparedStatement.setInt(3, hexagon.getCCI().getS()); 					// ccid_s
+				CubeCoordinatesIndex cci = hexagon.getCCI();
+				preparedStatement.setInt(1, cci.getQ());
+				preparedStatement.setInt(2, cci.getR());
+				preparedStatement.setInt(3, cci.getS());
 
-				preparedStatement.setDouble(4, hexagon.getCircumradius());				// circumradius
+				double circumradius = hexagon.getCircumradius();
+				preparedStatement.setDouble(4, circumradius);
 
-				preparedStatement.setDouble(5,hexagon.getCentroid().getLongitude());			// centroid : (geom) centroidX
-				preparedStatement.setDouble(6, hexagon.getCentroid().getLatitude());			// centroid : (geom) centroidY
+				Coordinates centroid = hexagon.getCentroid();
+				preparedStatement.setDouble(5, centroid.getLongitude());
+				preparedStatement.setDouble(6, centroid.getLatitude());
 
-				preparedStatement.setDouble(7, hexagon.getGisVertices().get(0).getLongitude());		// geometry : (geom) gisVertices[0].X
-				preparedStatement.setDouble(8, hexagon.getGisVertices().get(0).getLatitude());		// geometry : (geom) gisVertices[0].Y
+				List<Coordinates> gisVertices = hexagon.getGisVertices();
+				preparedStatement.setDouble(7, gisVertices.get(0).getLongitude());
+				preparedStatement.setDouble(8, gisVertices.get(0).getLatitude());
 
-				preparedStatement.setDouble(9, hexagon.getGisVertices().get(1).getLongitude());		// geometry : (geom) gisVertices[1].X
-				preparedStatement.setDouble(10, hexagon.getGisVertices().get(1).getLatitude());		// geometry : (geom) gisVertices[1].Y
+				preparedStatement.setDouble(9, gisVertices.get(1).getLongitude());
+				preparedStatement.setDouble(10, gisVertices.get(1).getLatitude());
 
-				preparedStatement.setDouble(11, hexagon.getGisVertices().get(2).getLongitude());	// geometry : (geom) gisVertices[2].X
-				preparedStatement.setDouble(12, hexagon.getGisVertices().get(2).getLatitude());		// geometry : (geom) gisVertices[2].Y
+				preparedStatement.setDouble(11, gisVertices.get(2).getLongitude());
+				preparedStatement.setDouble(12, gisVertices.get(2).getLatitude());
 
-				preparedStatement.setDouble(13, hexagon.getGisVertices().get(3).getLongitude());	// geometry : (geom) gisVertices[3].X
-				preparedStatement.setDouble(14, hexagon.getGisVertices().get(3).getLatitude());		// geometry : (geom) gisVertices[3].Y
+				preparedStatement.setDouble(13, gisVertices.get(3).getLongitude());
+				preparedStatement.setDouble(14, gisVertices.get(3).getLatitude());
 
-				preparedStatement.setDouble(15, hexagon.getGisVertices().get(4).getLongitude());	// geometry : (geom) gisVertices[4].X
-				preparedStatement.setDouble(16, hexagon.getGisVertices().get(4).getLatitude());		// geometry : (geom) gisVertices[4].Y
+				preparedStatement.setDouble(15, gisVertices.get(4).getLongitude());
+				preparedStatement.setDouble(16, gisVertices.get(4).getLatitude());
 
-				preparedStatement.setDouble(17, hexagon.getGisVertices().get(5).getLongitude());	// geometry : (geom) gisVertices[5].X
-				preparedStatement.setDouble(18, hexagon.getGisVertices().get(5).getLatitude());		// geometry : (geom) gisVertices[5].Y
+				preparedStatement.setDouble(17, gisVertices.get(5).getLongitude());
+				preparedStatement.setDouble(18, gisVertices.get(5).getLatitude());
 
-				preparedStatement.setDouble(19, hexagon.getGisVertices().get(6).getLongitude());	// geometry : (geom) gisVertices[6].X
-				preparedStatement.setDouble(20, hexagon.getGisVertices().get(6).getLatitude());		// geometry : (geom) gisVertices[6].Y
+				preparedStatement.setDouble(19, gisVertices.get(6).getLongitude());
+				preparedStatement.setDouble(20, gisVertices.get(6).getLatitude());
 
 				/* Add INSERT statement into JDBC Batch */
 				preparedStatement.addBatch();
@@ -196,10 +202,8 @@ public class PostgresJDBC {
 				if (batchCount % JDBC_BATCH_SIZE == 0) {
 					try {
 						batchExecutionCount++;
-
 						preparedStatement.executeBatch();
 						connection.commit();
-
 						System.out.println("- Batch " + batchExecutionCount + "th.");
 					} catch (SQLException e) {
 						connection.rollback();
@@ -217,9 +221,9 @@ public class PostgresJDBC {
 			/* End time of batch executionn */
 			long endTime = System.currentTimeMillis();
 
+			/* Calculate elapsed time of batch execution */
 			double elapsedTimeMs = endTime - startTime;
 			double elapsedTimeSec = elapsedTimeMs / 1000;
-
 
 			System.out.println("\n------ Batch execution logs ------");
 			System.out.println("Batch execution time : " + elapsedTimeSec + " s");
@@ -351,7 +355,6 @@ public class PostgresJDBC {
 
 		public final Builder reWriteBatchedInserts(boolean isEnabled) {
 			this.props.setProperty("reWriteBatchedInserts", Boolean.toString(isEnabled));
-
 			return this;
 		}
 
@@ -372,7 +375,6 @@ public class PostgresJDBC {
 
 		// pg.testQuery("chanmay_1km_vietnam", 5);
 
-		
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
 		final Hexagon hexagon = new Hexagon(origin, 1000);
@@ -397,25 +399,5 @@ public class PostgresJDBC {
 		JVMUtils.printMemories("MB");
 
 		pg.testQuery(tableName, 5);
-
-		/*
-		 * Batch size: 1000
-		 * ------ Batch execution logs ------
-		 * Batch execution time : 116.812 s
-		 * Total batch inserts : 1011
-		 * Hexagons inserted : 1010941
-		 * ---
-		 * Total Hexagons : 1010941
-		 * 
-		 * 
-		 * Batch size: 500
-		 * ------ Batch execution logs ------
-		 * Batch execution time : 278.323 s
-		 * Total batch inserts : 2022
-		 * Hexagons inserted : 1010941
-		 * ---
-		 * Total Hexagons : 1010941
-		 */
-		
 	}
 }
