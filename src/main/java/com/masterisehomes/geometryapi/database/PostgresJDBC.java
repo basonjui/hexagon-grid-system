@@ -387,6 +387,9 @@ public class PostgresJDBC {
 				new Coordinates(102.133333, 8.033333),
 				new Coordinates(109.466667, 23.383333));
 
+		/*
+		 * Still missing some wards at the top, check missing_wards.csv
+		 */
 		final Boundary oct_17_boundary = new Boundary(
 				new Coordinates(102.050278, 23.583612),
 				new Coordinates(109.666945, 8));
