@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import lombok.Getter;
 import lombok.ToString;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
@@ -612,21 +609,21 @@ public class AxialClockwiseTessellation {
 
 	/* Testing */
 	public static void main(String[] args) {
-		Gson gson = new GsonBuilder().create();
-
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 50000);
+		final Hexagon hexagon = new Hexagon(origin, 250);
 
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 
-		final Boundary boundary = new Boundary(
+		final Boundary old_boundary = new Boundary(
 				new Coordinates(102.133333, 8.033333),
-						new Coordinates(109.466667, 23.383333));
+				new Coordinates(109.466667, 23.383333));
 
-		tessellation.tessellate(boundary);
+		final Boundary oct_17_boundary = new Boundary(
+				new Coordinates(102.050278, 23.583612),
+				new Coordinates(109.666945, 8));
 
-		final AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
+		tessellation.tessellate(oct_17_boundary);
 
 		// GeoJsonManager manager = new GeoJsonManager(dto);
 

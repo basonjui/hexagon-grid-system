@@ -1,6 +1,5 @@
 package com.masterisehomes.geometryapi.spark;
 
-import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.spark.sql.SparkSession;

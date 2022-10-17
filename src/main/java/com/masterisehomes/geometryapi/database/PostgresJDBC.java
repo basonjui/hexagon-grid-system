@@ -146,14 +146,14 @@ public class PostgresJDBC {
 
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
-			
+
 			/* Set autocommit off */
 			connection.setAutoCommit(false);
 
 			/* JDBC Batching configurations */
 			int batchCount = 0;
 			int batchExecutionCount = 0;
-			final int JDBC_BATCH_SIZE = 500;
+			final int JDBC_BATCH_SIZE = 1000;
 			
 			/* Start time of batch execution */
 			long startTime = System.currentTimeMillis();
@@ -232,6 +232,7 @@ public class PostgresJDBC {
 			System.out.println("Hexagons inserted    : " + batchCount);
 			System.out.println("---");
 			System.out.println("Total Hexagons       : " + TOTAL_HEXAGONS);
+
 		} catch (BatchUpdateException batchUpdateException) {
 			printBatchUpdateException(batchUpdateException);
 		} catch (SQLException e) {
@@ -377,27 +378,39 @@ public class PostgresJDBC {
 
 		final Coordinates origin = new Coordinates(106, 15);
 		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 1000);
+		final Hexagon hexagon = new Hexagon(origin, 250);
 		
 		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
 		
+		// Something is wrong with this Boundary
 		final Boundary boundary = new Boundary(
 				new Coordinates(102.133333, 8.033333),
 				new Coordinates(109.466667, 23.383333));
 
-		tessellation.tessellate(boundary);
+		final Boundary oct_17_boundary = new Boundary(
+				new Coordinates(102.050278, 23.583612),
+				new Coordinates(109.666945, 8));
+
+
+
+
+
+				
+
+		/*
+		 * *** DANGEROUS *** 
+		 * 
+		 * Tessellation and write to DB..
+		 */
+
+		tessellation.tessellate(oct_17_boundary);
 		System.out.println("Tessellation hexagons: " + tessellation.getTotalHexagons());
 
-		String tableName = "quan_test";
-		// pg.createGeometryTable(tableName);
-
-		// try {
-		// 	pg.batchInsertByTessellation(tableName, tessellation);
-		// } catch (Exception e) {
-		// 	System.out.println(e);
-		// }
+		final String vietnam_hexagon_250m = "vietnam_hexagon_250m";
+		// pg.createGeometryTable(vietnam_hexagon_250m);
+		// pg.batchInsertByTessellation(vietnam_hexagon_250m, tessellation);
 		JVMUtils.printMemories("MB");
 
-		pg.testQuery(tableName, 5);
+		pg.testQuery(vietnam_hexagon_250m, 5);
 	}
 }
