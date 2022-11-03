@@ -92,7 +92,7 @@ public class Boundary {
 	}
 
 	/* Getters */
-	public String gisBoundary() {
+	public String getGisBoundary() {
 		return String.format("GisBoundary(minLat=%s, minLng=%s, maxLat=%s, maxLng=%s)", minLat, minLng, maxLat, maxLng);
 	}
 }

@@ -171,6 +171,14 @@ public class AxialClockwiseTessellation {
 			assert hexSize == gisHexSize;
 			this.totalHexagons = (hexSize + gisHexSize) / 2;
 		}
+
+                /* Print tessellation basic results */
+                System.out.println("------ Tessellation results ------");
+                System.out.println("Centroid            : " + this.rootHexagon.getCentroid());
+                System.out.println("Circumradius        : " + this.circumradius);
+                System.out.println("Boundary            : " + this.boundary.getGisBoundary());
+                System.out.println("Coverage distance   : " + this.tessellationDistance);
+                System.out.println("Total hexagons      : " + this.totalHexagons);
 	}
 
 	/* Hexagons population */
@@ -223,8 +231,8 @@ public class AxialClockwiseTessellation {
 			NeighborPosition position = hexagon.getPosition();
 
 			switch (position) {
+                                // Ignore position ZERO, already added rootHexagon
 				case ZERO:
-					// Ignore position ZERO, already added rootHexagon
 					break;
 				case ONE:
 					this.c1Hexagons.add(hexagon);
@@ -317,8 +325,18 @@ public class AxialClockwiseTessellation {
 				: String.format("nthRing must be < requiredRings (%s), current nthRing: %s",
 						this.requiredRings, nthRing);
 
-		/* Calculate latestCornerHexagonIndex and requiredEdgeHexagons */
-		final int latestCornerHexagonIndex = nthRing - 2; // -1 for Ring 1 and -1 due to List index start at 0
+                /*
+                * Calculate latestCornerHexagonIndex and requiredEdgeHexagons
+                * 
+                * --- latestCornerHexagonIndex
+                * only starts when nthRing=2 (Since ring 0 & ring 1 have a different geometric
+                * pattern to tessellate)
+                * 
+                * --- requiredEdgeHexagons
+                * For every hexagon ring after ring 1, the requiredEdgeHexagons to fill the
+                * grid is equal to nthRing - 1
+                */
+		final int latestCornerHexagonIndex = nthRing - 2;
 		final int requiredEdgeHexagons = nthRing - 1;
 
 		/*
@@ -631,7 +649,7 @@ public class AxialClockwiseTessellation {
 
 		System.out.println("\n------ Tessellation ------");
 		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
-		System.out.println("Boundary       : " + tessellation.boundary.gisBoundary());
+		System.out.println("Boundary       : " + tessellation.boundary.getGisBoundary());
 		System.out.println("Circumradius   : " + hexagon.getCircumradius());
 
 		System.out.println("Distance       : " + tessellation.tessellationDistance);

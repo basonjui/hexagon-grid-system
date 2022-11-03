@@ -1,4 +1,11 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.jdt.ls.java.home": ""
+    "java.jdt.ls.java.home": "",
+    "editor.tabSize": 8,
+    "editor.codeActionsOnSave": {
+
+    },
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java",
+      },
 }
