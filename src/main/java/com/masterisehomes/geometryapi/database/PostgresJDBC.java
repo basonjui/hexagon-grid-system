@@ -379,38 +379,41 @@ public class PostgresJDBC {
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-                final Coordinates origin = new Coordinates(106, 15);
                 // Coordinates origin = new Coordinates(109.466667, 23.383333);
                 // final Hexagon hexagon = new Hexagon(origin, 250);
-                final Hexagon hexagon_750 = new Hexagon(origin, 750);
 
                 /* Something is wrong with this Boundary */
                 final Boundary boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
-                                new Coordinates(109.466667, 23.383333)
-				);
+                                new Coordinates(109.466667, 23.383333));
                 /* Still missing some wards at the top, check missing_wards.csv */
                 final Boundary oct_17_boundary = new Boundary(
                                 new Coordinates(102.050278, 23.583612),
-                                new Coordinates(109.666945, 8)
-				);
+                                new Coordinates(109.666945, 8));
 
                 /*
                  * *** DANGEROUS ***
                  * 
                  * Tessellation and write to DB..
                  */
-                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon_750);
+                final Coordinates centroid = new Coordinates(106, 15);
+                final int circumradius = 2250;
+
+                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(
+                                new Hexagon(centroid, circumradius));
+
                 tessellation.tessellate(oct_17_boundary);
 
-                // final String vietnam_hexagon_250m = "vietnam_hexagon_250m";
-                final String vietnam_hexagon_750m = "vietnam_hexagon_750m";
+                final String table_name = String.format("vietnam_hexagon_%sm", circumradius);
+                System.out.println("\n------ Saving Tessellation to database ------");
+                System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
+                System.out.println("Circumradius        : " + tessellation.getCircumradius());
+                System.out.println("Table name          : " + table_name);
 
-		final String table_name = vietnam_hexagon_750m;
-                // pg.createGeometryTable(table_name);
-                // pg.batchInsertByTessellation(table_name, tessellation);
-                // JVMUtils.printMemories("MB");
-
-                pg.testQuery(vietnam_hexagon_750m, 5);
+                pg.createGeometryTable(table_name);
+                pg.batchInsertByTessellation(table_name, tessellation);
+                JVMUtils.printMemories("MB");
+                
+                pg.testQuery(table_name, 5);
         }
 }
