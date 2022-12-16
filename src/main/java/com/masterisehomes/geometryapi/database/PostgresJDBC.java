@@ -397,21 +397,22 @@ public class PostgresJDBC {
                  * Tessellation and write to DB..
                  */
                 final Coordinates centroid = new Coordinates(106, 15);
-                final int circumradius = 2250;
+                // final Coordinates nov7_centroid = new Coordinates(106.36477673793337, 11.010483780666492); // 11.010483780666492, 106.36477673793337
+                final int circumradius = 3750;
+                final Hexagon hexagon = new Hexagon(centroid, circumradius);
 
-                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(
-                                new Hexagon(centroid, circumradius));
-
+                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
                 tessellation.tessellate(oct_17_boundary);
 
                 final String table_name = String.format("vietnam_hexagon_%sm", circumradius);
+
                 System.out.println("\n------ Saving Tessellation to database ------");
                 System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
                 System.out.println("Circumradius        : " + tessellation.getCircumradius());
                 System.out.println("Table name          : " + table_name);
 
                 pg.createGeometryTable(table_name);
-                pg.batchInsertByTessellation(table_name, tessellation);
+                // pg.batchInsertByTessellation(table_name, tessellation);
                 JVMUtils.printMemories("MB");
                 
                 pg.testQuery(table_name, 5);
