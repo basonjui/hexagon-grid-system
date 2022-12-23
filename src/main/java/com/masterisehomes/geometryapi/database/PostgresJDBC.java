@@ -379,9 +379,6 @@ public class PostgresJDBC {
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-                // Coordinates origin = new Coordinates(109.466667, 23.383333);
-                // final Hexagon hexagon = new Hexagon(origin, 250);
-
                 /* Something is wrong with this Boundary */
                 final Boundary boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
@@ -391,11 +388,8 @@ public class PostgresJDBC {
                                 new Coordinates(102.050278, 23.583612),
                                 new Coordinates(109.666945, 8));
 
-                /*
-                 * *** DANGEROUS ***
-                 * 
-                 * Tessellation and write to DB..
-                 */
+
+                // DANGEROUS OPERATIONS: tessellation and write to DB
                 final Coordinates centroid = new Coordinates(106, 15);
                 // final Coordinates nov7_centroid = new Coordinates(106.36477673793337, 11.010483780666492); // 11.010483780666492, 106.36477673793337
                 final int circumradius = 3750;
@@ -411,7 +405,7 @@ public class PostgresJDBC {
                 System.out.println("Circumradius        : " + tessellation.getCircumradius());
                 System.out.println("Table name          : " + table_name);
 
-                pg.createGeometryTable(table_name);
+                // pg.createGeometryTable(table_name);
                 // pg.batchInsertByTessellation(table_name, tessellation);
                 JVMUtils.printMemories("MB");
                 

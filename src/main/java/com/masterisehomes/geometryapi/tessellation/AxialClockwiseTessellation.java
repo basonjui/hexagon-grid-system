@@ -1,6 +1,5 @@
 package com.masterisehomes.geometryapi.tessellation;
 
-
 import java.lang.Math;
 import java.util.List;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
-
 import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 /*
