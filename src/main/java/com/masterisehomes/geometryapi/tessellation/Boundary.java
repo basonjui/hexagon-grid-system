@@ -18,14 +18,16 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 @ToString
 public class Boundary {
 	@Getter
+	@ToString.Exclude
 	private final Coordinates minCoordinates, maxCoordinates;
 
 	// Processing attributes
-	private int width, height;
+	@ToString.Exclude private int width, height;
 
 	// WGS84 Coordinates attributes
 	@Getter
 	private final double minLat, minLng;
+
 	@Getter
 	private final double maxLat, maxLng;
 
@@ -89,10 +91,5 @@ public class Boundary {
 		} else {
 			return false;
 		}
-	}
-
-	/* Getters */
-	public String getGisBoundary() {
-		return String.format("GisBoundary(minLat=%s, minLng=%s, maxLat=%s, maxLng=%s)", minLat, minLng, maxLat, maxLng);
 	}
 }

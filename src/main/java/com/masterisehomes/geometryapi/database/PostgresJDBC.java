@@ -334,8 +334,8 @@ public class PostgresJDBC {
                 public Builder() {
                 }
 
-                public final Builder host(String host) {
-                        this.host = host;
+                public final Builder host(String hostKey) {
+                        this.host = dotenv.get(hostKey);
                         return this;
                 }
 
@@ -350,8 +350,8 @@ public class PostgresJDBC {
                 }
 
                 public final Builder authentication(String usernameKey, String passwordKey) {
-                        String username = dotenv.get(usernameKey);
-                        String password = dotenv.get(passwordKey);
+                        final String username = dotenv.get(usernameKey);
+                        final String password = dotenv.get(passwordKey);
 
                         this.props.setProperty("user", username);
                         this.props.setProperty("password", password);
@@ -372,43 +372,58 @@ public class PostgresJDBC {
         /* Test */
         public static void main(String[] args) {
                 PostgresJDBC pg = new PostgresJDBC.Builder()
-                                .host("10.10.12.197")
+                                .host("POSTGRES_HOST")
                                 .port(5432)
                                 .database("spatial_db")
-                                .authentication("POSTGRES_DWH_USERNAME", "POSTGRES_DWH_PASSWORD")
+                                .authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-                /* Something is wrong with this Boundary */
-                final Boundary boundary = new Boundary(
+                // Vietnam
+                final Boundary vn_boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
                                 new Coordinates(109.466667, 23.383333));
-                /* Still missing some wards at the top, check missing_wards.csv */
-                final Boundary oct_17_boundary = new Boundary(
+                // Still missing some wards at the top, check missing_wards.csv 
+                final Boundary oct_17_vn_boundary = new Boundary(
                                 new Coordinates(102.050278, 23.583612),
                                 new Coordinates(109.666945, 8));
+                final Coordinates vn_centroid = new Coordinates(106, 15);
+
+
+                // Ho Chi Minh City
+                final Coordinates hcm_max_coordinates = new Coordinates(107.02750646000003, 11.160309929999999);
+                final Coordinates hcm_min_coordinates = new Coordinates(106.35667121999998, 10.35422636000001);
+
+                final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
+                final Boundary hcm_boundary = new Boundary(hcm_min_coordinates, hcm_max_coordinates);
 
 
                 // DANGEROUS OPERATIONS: tessellation and write to DB
-                final Coordinates centroid = new Coordinates(106, 15);
                 // final Coordinates nov7_centroid = new Coordinates(106.36477673793337, 11.010483780666492); // 11.010483780666492, 106.36477673793337
-                final int circumradius = 3750;
-                final Hexagon hexagon = new Hexagon(centroid, circumradius);
+                final int circumradius = 50;
+                final Hexagon hexagon = new Hexagon(hcm_centroid, circumradius);
 
                 final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
-                tessellation.tessellate(oct_17_boundary);
+                tessellation.tessellate(hcm_boundary);
 
-                final String table_name = String.format("vietnam_hexagon_%sm", circumradius);
+                // Print Tessellation results
+                final String vn_table_name = String.format("vietnam_hexagon_%sm", circumradius);
+                final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
 
-                System.out.println("\n------ Saving Tessellation to database ------");
-                System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
-                System.out.println("Circumradius        : " + tessellation.getCircumradius());
-                System.out.println("Table name          : " + table_name);
-
+                final String table_name = hcm_table_name;
                 // pg.createGeometryTable(table_name);
                 // pg.batchInsertByTessellation(table_name, tessellation);
+
+                System.out.println("\n------ Saving Tessellation to database ------");
+                System.out.println("Boundary            : " + tessellation.getBoundary());
+                System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
+                System.out.println("Circumradius        : " + tessellation.getCircumradius());
+                System.out.println("Total hexagons      : " + tessellation.getTotalHexagons());
+                System.out.println("Table name          : " + table_name);
+
                 JVMUtils.printMemories("MB");
                 
+                // Test query
                 pg.testQuery(table_name, 5);
         }
 }

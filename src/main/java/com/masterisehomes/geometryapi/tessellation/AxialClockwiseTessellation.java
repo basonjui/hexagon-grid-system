@@ -174,7 +174,7 @@ public class AxialClockwiseTessellation {
                 System.out.println("------ Tessellation results ------");
                 System.out.println("Centroid            : " + this.rootHexagon.getCentroid());
                 System.out.println("Circumradius        : " + this.circumradius);
-                System.out.println("Boundary            : " + this.boundary.getGisBoundary());
+                System.out.println("Boundary            : " + this.boundary);
                 System.out.println("Coverage distance   : " + this.tessellationDistance);
                 System.out.println("Total hexagons      : " + this.totalHexagons);
 	}
@@ -647,7 +647,7 @@ public class AxialClockwiseTessellation {
 
 		System.out.println("\n------ Tessellation ------");
 		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
-		System.out.println("Boundary       : " + tessellation.boundary.getGisBoundary());
+		System.out.println("Boundary       : " + tessellation.boundary);
 		System.out.println("Circumradius   : " + hexagon.getCircumradius());
 
 		System.out.println("Distance       : " + tessellation.tessellationDistance);

@@ -23,8 +23,8 @@ import lombok.ToString;
 @Getter
 @Setter
 public class Coordinates implements Serializable {
-	private double x;
-	private double y;
+	@ToString.Exclude private double x;
+	@ToString.Exclude private double y;
 	private double longitude;
 	private double latitude;
 
