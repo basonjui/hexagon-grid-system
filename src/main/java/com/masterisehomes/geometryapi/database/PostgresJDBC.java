@@ -383,7 +383,7 @@ public class PostgresJDBC {
                 final Boundary vn_boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
                                 new Coordinates(109.466667, 23.383333));
-                // Still missing some wards at the top, check missing_wards.csv 
+                // Still missing some wards at the top, check missing_wards.csv
                 final Boundary oct_17_vn_boundary = new Boundary(
                                 new Coordinates(102.050278, 23.583612),
                                 new Coordinates(109.666945, 8));
@@ -391,36 +391,46 @@ public class PostgresJDBC {
 
 
                 // Ho Chi Minh City
-                final Coordinates hcm_max_coordinates = new Coordinates(107.02750646000003, 11.160309929999999);
-                final Coordinates hcm_min_coordinates = new Coordinates(106.35667121999998, 10.35422636000001);
-
                 final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
-                final Boundary hcm_boundary = new Boundary(hcm_min_coordinates, hcm_max_coordinates);
+                final Coordinates hcm_min_coords = new Coordinates(106.35667121999998, 10.35422636000001);
+                final Coordinates hcm_max_coords = new Coordinates(107.02750646000003, 11.160309929999999);
+                final Boundary hcm_boundary = new Boundary(hcm_min_coords, hcm_max_coords);
+
+                // Ha Noi City
+                final Coordinates hanoi_centroid = new Coordinates(105.700030001506, 20.998981122751463);
+                final Coordinates hanoi_min_coords = new Coordinates(105.28813170999999, 20.564474110000003);
+                final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
+                final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
+                //POINT(105.700030001506 20.998981122751463)
 
 
-                // DANGEROUS OPERATIONS: tessellation and write to DB
-                // final Coordinates nov7_centroid = new Coordinates(106.36477673793337, 11.010483780666492); // 11.010483780666492, 106.36477673793337
+                /*
+                 * ---
+                 * DATABASE OPERATIONS
+                 * ---
+                 */
                 final int circumradius = 50;
-                final Hexagon hexagon = new Hexagon(hcm_centroid, circumradius);
-
+                final Hexagon hexagon = new Hexagon(hanoi_centroid, circumradius);
                 final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
-                tessellation.tessellate(hcm_boundary);
+                tessellation.tessellate(hanoi_boundary);
 
                 // Print Tessellation results
                 final String vn_table_name = String.format("vietnam_hexagon_%sm", circumradius);
                 final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
+                final String hanoi_table_name = String.format("hanoi_tessellation_%sm", circumradius);
 
-                final String table_name = hcm_table_name;
-                // pg.createGeometryTable(table_name);
-                // pg.batchInsertByTessellation(table_name, tessellation);
+                // Tessellate & insert to database
+                final String table_name = hanoi_table_name;
+                pg.createGeometryTable(table_name);
+                pg.batchInsertByTessellation(table_name, tessellation);
 
+                // Print results
                 System.out.println("\n------ Saving Tessellation to database ------");
                 System.out.println("Boundary            : " + tessellation.getBoundary());
                 System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
                 System.out.println("Circumradius        : " + tessellation.getCircumradius());
                 System.out.println("Total hexagons      : " + tessellation.getTotalHexagons());
                 System.out.println("Table name          : " + table_name);
-
                 JVMUtils.printMemories("MB");
                 
                 // Test query
