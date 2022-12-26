@@ -30,19 +30,17 @@ import com.masterisehomes.geometryapi.utils.JVMUtils;
 * 
 * This gap can be perfectly filled with the right number of hexagons (same
 * size) to form a Hexagonal Grid Map.
-* -
-* https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-
-* geometric-hexagon-pattern
+*   - https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-geometric-hexagon-pattern
 * 
 * When you look at a complete Hexagon Grid Map, you will see that the grid map
 * itself form a large Hexagon (in different orientation), that is tiled by
 * smaller hexagons perfectly without gaps - this concept is Tessellation.
 * 
 * What interesting is, these direct Neighbors from the Central Hexagon, when
-* extended,
-* - always become the CORNERS of the Hexagon Grid Map (see the website
+* extended:
+*   1. always become the CORNERS of the Hexagon Grid Map (see the website
 * above).
-* - and the hexagons that fill the gaps between these Corner Hexagons, always
+*   2. and the hexagons that fill the gaps between these Corner Hexagons, always
 * become the EDGES of the Grid Map.
 * 
 * It is much easier to see this when you look at Hexagon Grid Maps as rings

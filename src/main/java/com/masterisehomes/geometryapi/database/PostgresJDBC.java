@@ -92,14 +92,14 @@ public class PostgresJDBC {
                                         System.out.print(rs.getString(i) + "\n");
                                 }
 
-                                System.out.println("---------------------------------");
+                                System.out.println("--------------------------------");
                         }
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
         }
 
-        public final void createGeometryTable(String tableName) {
+        public final void createTessellationTable(String tableName) {
                 final String CREATE_TABLE_SQL = new StringBuilder()
                                 .append("CREATE TABLE IF NOT EXISTS " + tableName + " (" + "\n")
                                 .append("	ccid_q		integer 		NOT NULL," + "\n")
@@ -401,7 +401,6 @@ public class PostgresJDBC {
                 final Coordinates hanoi_min_coords = new Coordinates(105.28813170999999, 20.564474110000003);
                 final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
                 final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
-                //POINT(105.700030001506 20.998981122751463)
 
 
                 /*
@@ -421,8 +420,8 @@ public class PostgresJDBC {
 
                 // Tessellate & insert to database
                 final String table_name = hanoi_table_name;
-                pg.createGeometryTable(table_name);
-                pg.batchInsertByTessellation(table_name, tessellation);
+                // pg.createGeometryTable(table_name);
+                // pg.batchInsertByTessellation(table_name, tessellation);
 
                 // Print results
                 System.out.println("\n------ Saving Tessellation to database ------");
