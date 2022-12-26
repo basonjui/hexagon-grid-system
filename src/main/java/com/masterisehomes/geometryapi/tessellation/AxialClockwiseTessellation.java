@@ -12,7 +12,6 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
-import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 /*
 * TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
@@ -588,36 +587,36 @@ public class AxialClockwiseTessellation {
 
 	/* Reset data */
 	private final void resetRings() {
-		this.totalRings = 0;
-		this.requiredRings = 0;
-		this.nthRing = 0;
+		totalRings = 0;
+		requiredRings = 0;
+		nthRing = 0;
 	}
 
 	private final void clearCornerHexagons() {
 		// Corner hexagons
-		this.c1Hexagons.clear();
-		this.c2Hexagons.clear();
-		this.c3Hexagons.clear();
-		this.c4Hexagons.clear();
-		this.c5Hexagons.clear();
-		this.c6Hexagons.clear();
+		c1Hexagons.clear();
+		c2Hexagons.clear();
+		c3Hexagons.clear();
+		c4Hexagons.clear();
+		c5Hexagons.clear();
+		c6Hexagons.clear();
 
 		// Corner GIS hexagons
-		this.c1GisHexagons.clear();
-		this.c2GisHexagons.clear();
-		this.c3GisHexagons.clear();
-		this.c4GisHexagons.clear();
-		this.c5GisHexagons.clear();
-		this.c6GisHexagons.clear();
+		c1GisHexagons.clear();
+		c2GisHexagons.clear();
+		c3GisHexagons.clear();
+		c4GisHexagons.clear();
+		c5GisHexagons.clear();
+		c6GisHexagons.clear();
 	}
 
 	private final void clearCentroids() {
-		this.centroids.clear();
-		this.gisCentroids.clear();
+		centroids.clear();
+		gisCentroids.clear();
 	}
 
 	private final void clearHexagons() {
-		this.hexagons.clear();
-		this.gisHexagons.clear();
+		hexagons.clear();
+		gisHexagons.clear();
 	}
 }
