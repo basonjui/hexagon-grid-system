@@ -11,16 +11,16 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
-import com.masterisehomes.geometryapi.hexagon.Coordinates;
-import com.masterisehomes.geometryapi.hexagon.Hexagon;
-import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
-import com.masterisehomes.geometryapi.tessellation.Boundary;
-import com.masterisehomes.geometryapi.utils.JVMUtils;
-
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.ToString;
+
+import com.masterisehomes.geometryapi.hexagon.Coordinates;
+import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
+import com.masterisehomes.geometryapi.hexagon.Hexagon;
+import com.masterisehomes.geometryapi.tessellation.Boundary;
+import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
+import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 @ToString
 public class PostgresJDBC {
@@ -51,7 +51,7 @@ public class PostgresJDBC {
                 try {
                         connection = DriverManager.getConnection(this.pgjdbcUrl, this.props);
                         System.out.println("\n"
-                                        + "Connected to the PostgreSQL server: "
+                                        + "Connected to the PostgreSQL server as user: "
                                         + connection.getMetaData().getUserName());
                 } catch (SQLException e) {
                         printSQLException(e);
@@ -121,13 +121,12 @@ public class PostgresJDBC {
                 }
         }
 
-        public final void batchInsertByTessellation(String table, AxialClockwiseTessellation tessellation) {
-
+        public final void batchInsertTessellation(String tableName, AxialClockwiseTessellation tessellation) {
                 /* Tessellation data */
                 final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
                 final int TOTAL_HEXAGONS = gisHexagons.size();
 
-                final String INSERT_SQL = "INSERT INTO " + table
+                final String INSERT_SQL_TEMPLATE = "INSERT INTO " + tableName
                                 + " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) "
                                 + String.format("VALUES (%s, %s, %s, %s, %s, %s);",
                                                 "?",
@@ -145,15 +144,15 @@ public class PostgresJDBC {
                                                                 + "ST_MakePoint(?, ?)])), 4326)");
 
                 try (Connection connection = getConnection();
-                                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
+                                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL_TEMPLATE)) {
 
                         /* Set autocommit off */
                         connection.setAutoCommit(false);
 
-                        /* JDBC Batching configurations */
+                        /* JDBC batch configurations */
                         int batchCount = 0;
                         int batchExecutionCount = 0;
-                        final int JDBC_BATCH_SIZE = 1000;
+                        final int BATCH_SIZE = 1000;
 
                         /* Start time of batch execution */
                         System.out.println("--- Batch execution begin..");
@@ -194,18 +193,18 @@ public class PostgresJDBC {
                                 preparedStatement.setDouble(19, gisVertices.get(6).getLongitude());
                                 preparedStatement.setDouble(20, gisVertices.get(6).getLatitude());
 
-                                /* Add INSERT statement into JDBC Batch */
+                                // Add INSERT statement into JDBC Batch
                                 preparedStatement.addBatch();
 
-                                /* Execute batch every JDBC_BATCH_LIMIT */
-                                batchCount++; // update batchCount
+                                // Count total batches added
+                                batchCount++;
 
-                                /* Commit to DB every JDBC_BATCH_SIZE */
-                                if (batchCount % JDBC_BATCH_SIZE == 0) {
+                                // Commit to DB every BATCH_SIZE (default: 1000)
+                                if (batchCount % BATCH_SIZE == 0) {
                                         try {
-                                                batchExecutionCount++;
                                                 preparedStatement.executeBatch();
                                                 connection.commit();
+                                                batchExecutionCount++; // update batchExecutionCount
                                                 System.out.println("- Batch " + batchExecutionCount + "th.");
                                         } catch (SQLException e) {
                                                 connection.rollback();
@@ -223,20 +222,21 @@ public class PostgresJDBC {
                         batchExecutionCount++;
                         System.out.println("- Batch " + batchExecutionCount + "th.");
 
-                        /* End time of batch executionn */
+                        // End time when finished batch inserts
                         long endTime = System.currentTimeMillis();
 
-                        /* Calculate elapsed time of batch execution */
+                        // Calculate elapsed time of batch execution
                         double elapsedTimeMs = endTime - startTime;
                         double elapsedTimeSec = elapsedTimeMs / 1000;
 
-                        System.out.println("\n------ Batch execution logs ------");
-                        System.out.println("Batch execution time : " + elapsedTimeSec + " s");
-                        System.out.println("Total batch inserts  : " + batchExecutionCount);
-                        System.out.println("Hexagons per batch   : " + JDBC_BATCH_SIZE);
-                        System.out.println("Hexagons inserted    : " + batchCount);
+                        System.out.println("\n------ Batch insert results ------");
+                        System.out.println("Table name             : " + tableName);
+                        System.out.println("Total hexagons         : " + TOTAL_HEXAGONS);
                         System.out.println("---");
-                        System.out.println("Total Hexagons       : " + TOTAL_HEXAGONS);
+                        System.out.println("Total batch executions : " + batchExecutionCount);
+                        System.out.println("Elapsed time           : " + elapsedTimeSec + " s");
+                        System.out.println("Hexagons per batch     : " + BATCH_SIZE);
+                        System.out.println("Hexagons inserted      : " + batchCount);
 
                 } catch (BatchUpdateException batchUpdateException) {
                         printBatchUpdateException(batchUpdateException);
@@ -250,7 +250,7 @@ public class PostgresJDBC {
                 System.err.println("SQLState: \t" + b.getSQLState());
                 System.err.println("Message: \t" + b.getMessage());
                 System.err.println("Vendor: \t" + b.getErrorCode());
-                System.err.print("Update counts: \t");
+                System.err.println("Update counts: \t");
 
                 int[] updateCounts = b.getUpdateCounts();
                 for (int i = 0; i < updateCounts.length; i++) {
@@ -271,6 +271,7 @@ public class PostgresJDBC {
                                 // jdbc:postgresql:database
                                 urlBuilder.append(this.database);
                         }
+
                 } else {
                         // jdbc:postgresql://host
                         urlBuilder.append("//").append(this.host);
@@ -402,11 +403,8 @@ public class PostgresJDBC {
                 final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
                 final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
 
-
-                /*
-                 * ---
+                /**
                  * DATABASE OPERATIONS
-                 * ---
                  */
                 final int circumradius = 50;
                 final Hexagon hexagon = new Hexagon(hanoi_centroid, circumradius);
@@ -422,17 +420,9 @@ public class PostgresJDBC {
                 final String table_name = hanoi_table_name;
                 // pg.createGeometryTable(table_name);
                 // pg.batchInsertByTessellation(table_name, tessellation);
-
-                // Print results
-                System.out.println("\n------ Saving Tessellation to database ------");
-                System.out.println("Boundary            : " + tessellation.getBoundary());
-                System.out.println("Centroid            : " + tessellation.getRootHexagon().getCentroid());
-                System.out.println("Circumradius        : " + tessellation.getCircumradius());
-                System.out.println("Total hexagons      : " + tessellation.getTotalHexagons());
-                System.out.println("Table name          : " + table_name);
                 JVMUtils.printMemories("MB");
                 
                 // Test query
-                pg.testQuery(table_name, 5);
+                // pg.testQuery(table_name, 5);
         }
 }

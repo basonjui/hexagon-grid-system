@@ -21,51 +21,32 @@ public class Boundary {
 	@ToString.Exclude
 	private final Coordinates minCoordinates, maxCoordinates;
 
-	// Processing attributes
-	@ToString.Exclude private int width, height;
-
-	// WGS84 Coordinates attributes
 	@Getter
-	private final double minLat, minLng;
-
+	private final double minLongitude, minLatitude;
 	@Getter
-	private final double maxLat, maxLng;
+	private final double maxLongitude, maxLatitude;
 
-	// Builder pattern to take in dimension ,
-	public Boundary(float x, float y, int width, int height) {
-		this.minCoordinates = new Coordinates(x, y);
-		this.width = width;
-		this.height = height;
-		this.maxCoordinates = new Coordinates(x + width, y + height);
-
-		this.minLat = minCoordinates.getLatitude();
-		this.minLng = minCoordinates.getLongitude();
-		this.maxLat = maxCoordinates.getLatitude();
-		this.maxLng = maxCoordinates.getLongitude();
-	}
-
-	// WGS84 Coordinates Boundary
 	public Boundary(Coordinates minCoordinates, Coordinates maxCoordinates) {
 		this.minCoordinates = minCoordinates;
 		this.maxCoordinates = maxCoordinates;
 
-		this.minLat = minCoordinates.getLatitude();
-		this.minLng = minCoordinates.getLongitude();
-		this.maxLat = maxCoordinates.getLatitude();
-		this.maxLng = maxCoordinates.getLongitude();
+		this.minLatitude = minCoordinates.getLatitude();
+		this.minLongitude = minCoordinates.getLongitude();
+		this.maxLatitude = maxCoordinates.getLatitude();
+		this.maxLongitude = maxCoordinates.getLongitude();
 	}
 
 	/* Calculate Great-circle distance */
 	public double greatCircleDistance() {
 		double greatCircleDistance = Harversine.distance(
-			minLat, minLng,
-			maxLat, maxLng);
+			minLatitude, minLongitude,
+			maxLatitude, maxLongitude);
 
 		return greatCircleDistance;
 	}
 
 	/* Comparison methods */
-	public boolean contains(Coordinates centroid) {
+	public boolean containsCentroid(Coordinates centroid) {
 		double centroidLat = centroid.getLatitude();
 		double centroidLng = centroid.getLongitude();
 
@@ -78,7 +59,7 @@ public class Boundary {
 
 	// Internal methods
 	private boolean containsLat(double lat) {
-		if (lat >= this.minLat && lat <= this.maxLat) {
+		if (lat >= this.minLatitude && lat <= this.maxLatitude) {
 			return true;
 		} else {
 			return false;
@@ -86,7 +67,7 @@ public class Boundary {
 	}
 
 	private boolean containsLng(double lng) {
-		if (lng >= this.minLng && lng <= this.maxLng) {
+		if (lng >= this.minLongitude && lng <= this.maxLongitude) {
 			return true;
 		} else {
 			return false;

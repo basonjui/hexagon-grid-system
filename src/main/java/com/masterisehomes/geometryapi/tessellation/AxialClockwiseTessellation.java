@@ -168,13 +168,13 @@ public class AxialClockwiseTessellation {
 			this.totalHexagons = (hexSize + gisHexSize) / 2;
 		}
 
-                /* Print tessellation basic results */
+                /* Print tessellation results */
                 System.out.println("------ Tessellation results ------");
-                System.out.println("Centroid            : " + this.rootHexagon.getCentroid());
-                System.out.println("Circumradius        : " + this.circumradius);
-                System.out.println("Boundary            : " + this.boundary);
-                System.out.println("Coverage distance   : " + this.tessellationDistance);
-                System.out.println("Total hexagons      : " + this.totalHexagons);
+                System.out.println("Centroid              : " + this.rootHexagon.getCentroid());
+                System.out.println("Circumradius          : " + this.circumradius);
+                System.out.println("Boundary              : " + this.boundary);
+                System.out.println("Tessellation distance : " + this.tessellationDistance);
+                System.out.println("Total hexagons        : " + this.totalHexagons);
 	}
 
 	/* Hexagons population */
@@ -619,39 +619,5 @@ public class AxialClockwiseTessellation {
 	private final void clearHexagons() {
 		this.hexagons.clear();
 		this.gisHexagons.clear();
-	}
-
-	/* Testing */
-	public static void main(String[] args) {
-		final Coordinates origin = new Coordinates(106, 15);
-		// Coordinates origin = new Coordinates(109.466667, 23.383333);
-		final Hexagon hexagon = new Hexagon(origin, 250);
-
-		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
-
-		final Boundary old_boundary = new Boundary(
-				new Coordinates(102.133333, 8.033333),
-				new Coordinates(109.466667, 23.383333));
-
-		final Boundary oct_17_boundary = new Boundary(
-				new Coordinates(102.050278, 23.583612),
-				new Coordinates(109.666945, 8));
-
-		tessellation.tessellate(oct_17_boundary);
-
-		// GeoJsonManager manager = new GeoJsonManager(dto);
-
-		// FeatureCollection collection = manager.getFeatureCollection();
-
-		System.out.println("\n------ Tessellation ------");
-		System.out.println("Centroid       : " + tessellation.rootHexagon.getCentroid().toGeoJsonPosition());
-		System.out.println("Boundary       : " + tessellation.boundary);
-		System.out.println("Circumradius   : " + hexagon.getCircumradius());
-
-		System.out.println("Distance       : " + tessellation.tessellationDistance);
-		System.out.println("Required rings : " + tessellation.requiredRings);
-		System.out.println("Total hexagons : " + tessellation.totalHexagons);
-
-		JVMUtils.printMemories("MB");
 	}
 }
