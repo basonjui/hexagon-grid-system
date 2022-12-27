@@ -370,6 +370,7 @@ public class PostgresJDBC {
                 }
         }
 
+
         /* Test */
         public static void main(String[] args) {
                 PostgresJDBC pg = new PostgresJDBC.Builder()
@@ -390,7 +391,6 @@ public class PostgresJDBC {
                                 new Coordinates(109.666945, 8));
                 final Coordinates vn_centroid = new Coordinates(106, 15);
 
-
                 // Ho Chi Minh City
                 final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
                 final Coordinates hcm_min_coords = new Coordinates(106.35667121999998, 10.35422636000001);
@@ -403,23 +403,30 @@ public class PostgresJDBC {
                 final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
                 final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
 
+                
                 /**
-                 * DATABASE OPERATIONS
+                 * Hexagon configurations
                  */
-                final int circumradius = 50;
-                final Hexagon hexagon = new Hexagon(hanoi_centroid, circumradius);
-                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
-                tessellation.tessellate(hanoi_boundary);
+                final int circumradius = 1350;                  // change this
+                final Coordinates centroid = hcm_centroid;      // change this
+                final Boundary boundary = hcm_boundary;         // change this
 
-                // Print Tessellation results
+                /**
+                 * Database table configurations
+                 */ 
                 final String vn_table_name = String.format("vietnam_hexagon_%sm", circumradius);
                 final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
                 final String hanoi_table_name = String.format("hanoi_tessellation_%sm", circumradius);
 
-                // Tessellate & insert to database
-                final String table_name = hanoi_table_name;
-                // pg.createGeometryTable(table_name);
-                // pg.batchInsertByTessellation(table_name, tessellation);
+                /* Tessellation: don't touch this */ 
+                final Hexagon hexagon = new Hexagon(centroid, circumradius);
+                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+                tessellation.tessellate(boundary);
+
+                // Batch inserts
+                final String table_name = hcm_table_name;
+                pg.createTessellationTable(table_name);
+                pg.batchInsertTessellation(table_name, tessellation);
                 JVMUtils.printMemories("MB");
                 
                 // Test query
