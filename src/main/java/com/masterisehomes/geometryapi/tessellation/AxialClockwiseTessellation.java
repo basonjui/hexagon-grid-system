@@ -13,43 +13,46 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 
-/*
-* TESSELLATION CONCEPTS: CORNER HEXAGONS & EDGE HEXAGONS
-* ---
-* 
-* From a Central Hexagon, you can find 6 immediate Neighbor Hexagons that
-* fit to the central hexagon on its EDGES - given a centroid & inradius.
-* 
-* If you keep extending these 6 Neighbors using their centroids and the same
-* inradius (distance), you will be able to extend the hexagons infinitely in
-* 6 diagonal directions (or 3 axes).
-* 
-* However, the more you extend, the more hexagons you will miss in between the
-* diagonal directions, in a systematic way.
-* 
-* This gap can be perfectly filled with the right number of hexagons (same
-* size) to form a Hexagonal Grid Map.
-*   - https://math.stackexchange.com/questions/2389139/determining-neighbors-in-a-geometric-hexagon-pattern
-* 
-* When you look at a complete Hexagon Grid Map, you will see that the grid map
-* itself form a large Hexagon (in different orientation), that is tiled by
-* smaller hexagons perfectly without gaps - this concept is Tessellation.
-* 
-* What interesting is, these direct Neighbors from the Central Hexagon, when
-* extended:
-*   1. always become the CORNERS of the Hexagon Grid Map (see the website
-* above).
-*   2. and the hexagons that fill the gaps between these Corner Hexagons, always
-* become the EDGES of the Grid Map.
-* 
-* It is much easier to see this when you look at Hexagon Grid Maps as rings
-* of hexagons around the Central Hexagons.
-* The more rings wrap around the Central Hexagons, the more EDGE HEXAGONS
-* exist between the CORNER HEXAGONS in a special 1:1 ratio.
-* 
-* From the 2nd ring onward, the geometric property is:
-* +1 ring = +1 EDGE HEXAGON
-*/
+/**
+ * TESSELLATION CONCEPTS: A HEXAGON-SHAPED GRID
+ * 
+ * In this Hexagon Tessellation algorithm, we will form a hexagon grid that have
+ * a shape of a regular hexagon:
+ * - https://math.stackexchange.com/a/2389652
+ * 
+ * --- RINGS OF HEXAGONS
+ * Basically, the grid is made of "rings of hexagons" wrap around the Central Hexagon (root hexagon).
+ * 
+ * These hexagon rings have 2 special cases: Ring 0 & Ring 1
+ * - Ring 0: is a conceptual ring - it is just the Central Hexagon.
+ * - Ring 1: is the first visible ring, where there are 7 hexagons wrapped around the Central Hexagon.
+ * 
+ * But from Ring 2 onward, we can see a consistent geometric property of the hexagon grid, 
+ * where each ring always consist of: 6 Corner Hexagons and n Edge Hexagons.
+ * 
+ * --- CORNER & EDGE HEXAGONS
+ * When you look at a complete Hexagon-shaped Grid, you will see that the grid itself form a large Hexagon (in different orientation), 
+ * that is tiled by smaller hexagons perfectly without gaps - this concept is Tessellation.
+ * 
+ * What interesting is, these direct Neighbors from the Central Hexagon, when extended:
+ * 	1. always become the CORNERS of the Hexagon Grid Map (see the website above).
+ * 	2. and the hexagons that fill the gaps between these Corner Hexagons, always become the EDGES of the Grid.
+ * 
+ * This n Edge Hexagon has a linear relationship with the n Rings, where:
+ * n_edge_hexagons = n_rings - 2.
+ * 
+ * For examples:
+ * - at Ring 2, we have 2 - 2 = 0 Edge Hexagon
+ * - at Ring 9, we have 9 - 2 = 7 Edge Hexagons
+ * 
+ * ---
+ * So in order to create a Hexagon-shaped Tessellation, we need to:
+ * 1. Calculate tessellationDistance (equals to largestBoundaryDistance)
+ * 2. Calculate requiredCornerHexagons (given tessellationDistance &
+ * hexagonMinimalDiameter)
+ * 3. Calculate requiredEdgeHexagons for each ring
+ */
+
 @ToString
 public class AxialClockwiseTessellation {
 	/* Initialization data */
@@ -504,13 +507,13 @@ public class AxialClockwiseTessellation {
 
 	/* Calculate RequiredRings */
 	private final int calculateRequiredRings(Boundary boundary) {
-		/*
-		 * ERROR MARGINS - TODO: needs to update descriptions
+		/**
+		 * ERROR MARGINS
 		 * 
 		 * Geometrically, at the outer most ring, 1/6 the area of each hexagon can be
 		 * missed.
 		 * 
-		 * This adjustment constant serves as a safe method to ensure that no POI in a
+		 * These adjustment constants serve as safe rounded values to ensure that no POI in a
 		 * given Boundary, even when accurately calculated, is missed due to the
 		 * geometric property of AxialClockwiseTessellation.
 		 */
@@ -529,41 +532,74 @@ public class AxialClockwiseTessellation {
 		final Coordinates maxCoordinates = boundary.getMaxCoordinates();
 		final Coordinates centroidCoordinates = rootHexagon.getCentroid();
 
-		// Calculate distance between Boundary's minCoordinates/maxCoordinates to rootCentroid
+		// Calculate distance between Boundary's minCoordinates/maxCoordinates to grid centroid
 		final double minCoordinatesDistance = Harversine.distance(minCoordinates, centroidCoordinates);
 		final double maxCoordinatesDistance = Harversine.distance(maxCoordinates, centroidCoordinates);
 
-		// Determine requiredTessellationDistance: the larger distance == the requiredTessellationDistance
-		final double requiredTessellationDistance;
+		// Determine tessellationDistance (equals to the maxBoundaryDistance)
+		final double largestBoundaryDistance;
 		if (minCoordinatesDistance >= maxCoordinatesDistance) {
-			requiredTessellationDistance = minCoordinatesDistance;
+			largestBoundaryDistance = minCoordinatesDistance;
 		} else {
-			requiredTessellationDistance = maxCoordinatesDistance;
+			largestBoundaryDistance = maxCoordinatesDistance;
 		}
-		this.tessellationDistance = requiredTessellationDistance;
+		// this.tessellationDistance = largestBoundaryDistance;
 
 		/*
-		 * Neighbor's distance - distance between each hexagon's neighbor centroid:
-		 * neighborDistance = inradius * 2
+		 * Hexagon Minimal Diameter - the distance from a hexagon edge to the 
+		 * opposite edge (basically neighbor distance: 2 * inradius).
 		 * 
-		 * Given maxDistance,
-		 * the maximum number of hexagons stack up in any axial direction is:
-		 * = maxDistance / neighborDistance
+		 * Since hexagons tile on edges in Tessellation, this is the coverage 
+		 * length of a single hexagon in a grid map.
+		 */
+		final double hexagonMinimalDiameter = this.inradius * 2;
+
+		/*
+		 * --- PROBLEM
+		 * However, keep in mind that the Grid itself is Hexagon-shaped!
+		 * Therefore, it inherits all the geometric properties of a hexagon as the followings:
+		 * - Centroid		: the Central Hexagon of the grid.
+		 * - Circumradius	: the sum of the Minimal Diameters from Central Hexagon to the outer-most Corner Hexagon.
+		 * - Inradius		: can be calculated with: r = R * √3/2
 		 * 
-		 * However, we need to use Math.ceil() to round it up to nearest int
+		 * Because our Grid is hexagon-shaped, and a hexagon has 2 radiuses, therefore, 
+		 * our grid will always cover less boundary distance at where the Edge Hexagons are 
+		 * (due to them being the Inradius of the grid).
+		 * -> This cause our Hexagon Grid to miss some boundary areas at Edges.
+		 * 
+		 * --- SOLUTION
+		 * Previously, our tessellationDistance == largestBoundaryDistance. With this logic, 
+		 * we are ACTUALLY setting the tessellationDistance to be the Circumradius of the Grid.
+		 * 
+		 * Since the tessellationDistance is the EXACT distance to cover the required Boundary, 
+		 * of course the Inradius of the grid will not be able to cover some area of the boundary! 
+		 * - because: Circumradius > Inradius
+		 *  
+		 * To solve this, we will CONSIDER the largestBoundaryDistance to be the Inradius of the grid - 
+		 * which is the MINIMUM DISTANCE that the grid has to be able to COVER! 
+		 * Previously, we considered  it to be the Circumradius of the grid - which is the 
+		 * MAXIMUM DISTANCE that the grid can cover. 
+		 * 
+		 * Now, given that the largestBoundaryDistance is the Inradius of the tessellation,
+		 * we will now convert that Inradius -> Circumradius. 
+		 * - Pseudocode:
+		 * 	// Step 1: set largestBoundaryDistance to be grid's Inradius
+		 * 	tessellationInradius = largestBoundaryDistance;
+		 * 
+		 * 	// Step 2: convert Inradius -> Circumradius
+		 * 	tessellationCircumradius = tessellationInradius * 2/√3
+		 * 
+		 * Given a tessellationDistance, we can calculate the number of hexagons
+		 * required to stack up to cover that distance. 
+		 * 	totalHexagons = tessellationDistance / hexagon_length
 		 */
-		final double neighborDistance = this.inradius * 2;
+		final double tessellationInradius = largestBoundaryDistance;
+		final double tessellationCircumradius = tessellationInradius * 2 / Math.sqrt(3);
+		// Round-up hexagons by Math.ceil() so that we do not lose any coverage area
+		final int requiredCornerHexagons = (int) Math.ceil(tessellationCircumradius / hexagonMinimalDiameter);
 
 		/*
-		 * In Hexagons grids, we can look at it with 3 primary axes (the 6 neighbor
-		 * directions):
-		 * - requiredAxialHexagons is the minimum amount of hexagons that required to stack
-		 * up (from edges) in those 3 axes to cover the boundary largest diameter.
-		 */
-		final int requiredAxialHexagons = (int) Math.ceil(requiredTessellationDistance / neighborDistance); // round up
-
-		/*
-		 * Calculate the Minimum Required Rings
+		 * Calculate the Required Rings
 		 * 
 		 * In a normal case, where Centroid is always in the exact middle of the
 		 * Boundary, we would calculate the Minimum Required Rings by:
@@ -580,8 +616,8 @@ public class AxialClockwiseTessellation {
 		 * more than True Required Hexagons.
 		 * 	- Pros: To never miss any required coverage
 		 */
-		final int requiredRings = requiredAxialHexagons + RING_ERROR_MARGIN;
-
+		final int requiredRings = requiredCornerHexagons + RING_ERROR_MARGIN;
+		
 		return requiredRings;
 	}
 
