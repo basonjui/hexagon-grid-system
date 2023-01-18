@@ -85,7 +85,9 @@ public class AxialClockwiseTessellation {
 	@Getter
 	private int totalHexagons = 0;
 	@Getter
-	private double tessellationDistance = 0;
+	private double tessellationInradius = 0;
+	@Getter
+	private double tessellationCircumradius = 0;
 
 	/*
 	 * Corner Hexagons - used to find Edge Hexagons (based on nthRing)
@@ -172,11 +174,12 @@ public class AxialClockwiseTessellation {
 
                 /* Print tessellation results */
                 System.out.println("------ Tessellation results ------");
-                System.out.println("Centroid              : " + this.rootHexagon.getCentroid());
-                System.out.println("Circumradius          : " + this.circumradius);
-                System.out.println("Boundary              : " + this.boundary);
-                System.out.println("Tessellation distance : " + this.tessellationDistance);
-                System.out.println("Total hexagons        : " + this.totalHexagons);
+                System.out.println("Centroid			: " + this.rootHexagon.getCentroid());
+                System.out.println("Circumradius			: " + this.circumradius);
+                System.out.println("Boundary			: " + this.boundary);
+                System.out.println("Tessellation inradius		: " + this.tessellationInradius);
+                System.out.println("Tessellation circumradius	: " + this.tessellationCircumradius);
+                System.out.println("Total hexagons			: " + this.totalHexagons);
 	}
 
 	/* Hexagons population */
@@ -593,8 +596,14 @@ public class AxialClockwiseTessellation {
 		 * required to stack up to cover that distance. 
 		 * 	totalHexagons = tessellationDistance / hexagon_length
 		 */
+
 		final double tessellationInradius = largestBoundaryDistance;
 		final double tessellationCircumradius = tessellationInradius * 2 / Math.sqrt(3);
+
+		// Set Tessellation's inradius & circumradius
+		this.tessellationInradius = tessellationInradius;
+		this.tessellationCircumradius = tessellationCircumradius;
+
 		// Round-up hexagons by Math.ceil() so that we do not lose any coverage area
 		final int requiredCornerHexagons = (int) Math.ceil(tessellationCircumradius / hexagonMinimalDiameter);
 
@@ -609,12 +618,7 @@ public class AxialClockwiseTessellation {
 		 * where the Centroid could be place at the Start or End coordinates of the
 		 * Boundary.
 		 * 
-		 * We can do this by setting the Minimum Required Rings to be EQUAL to
-		 * minAxialHexagons - which allow the Centroid to cover the minAxialHexagons
-		 * in all 6 neighborly directions:
-		 * 	- Cons: Increase the amount of generated hexagons up to ~84% (quick guess)
-		 * more than True Required Hexagons.
-		 * 	- Pros: To never miss any required coverage
+		 * We can do this by adding a RING_ERROR_MARGIN to requiredCornerHexagons
 		 */
 		final int requiredRings = requiredCornerHexagons + RING_ERROR_MARGIN;
 		
