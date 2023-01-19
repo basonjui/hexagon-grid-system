@@ -33,15 +33,14 @@ public class PostgresJDBC {
         private final int port;
         @Getter
         private final String database;
-
         @ToString.Exclude
-        private final Properties props;
+        private final Properties properties;
 
         public PostgresJDBC(Builder builder) {
                 this.host = builder.host;
                 this.port = builder.port;
                 this.database = builder.database;
-                this.props = builder.props;
+                this.properties = builder.properties;
                 this.pgjdbcUrl = generateJDBCUrl();
         }
 
@@ -49,8 +48,8 @@ public class PostgresJDBC {
         public final Connection getConnection() {
                 Connection connection = null;
                 try {
-                        connection = DriverManager.getConnection(this.pgjdbcUrl, this.props);
-                        System.out.println("\n"
+                        connection = DriverManager.getConnection(pgjdbcUrl, properties);
+                        System.out.println("\n" 
                                         + "Connected to the PostgreSQL server as user: "
                                         + connection.getMetaData().getUserName());
                 } catch (SQLException e) {
@@ -60,16 +59,16 @@ public class PostgresJDBC {
                 return connection;
         }
 
-        public final void testQuery(String table, int limit) {
+        public final void testQuery(String tableName, int rowsLimit) {
                 final String SQL_TEMPLATE = new StringBuilder()
                                 .append("SELECT * FROM %s\n")
                                 .append("LIMIT %s")
                                 .toString();
-                final String SQL = String.format(SQL_TEMPLATE, table, limit);
+                final String sql = String.format(SQL_TEMPLATE, tableName, rowsLimit);
 
                 try (final Connection connection = getConnection();
                                 final Statement statement = connection.createStatement();
-                                final ResultSet rs = statement.executeQuery(SQL)) {
+                                final ResultSet rs = statement.executeQuery(sql)) {
 
                         final ResultSetMetaData rsMetadata = rs.getMetaData();
                         final int columnsCount = rsMetadata.getColumnCount();
@@ -94,40 +93,42 @@ public class PostgresJDBC {
 
                                 System.out.println("--------------------------------");
                         }
+
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
         }
 
         public final void createTessellationTable(String tableName) {
-                final String CREATE_TABLE_SQL = new StringBuilder()
+                final String sql = new StringBuilder()
                                 .append("CREATE TABLE IF NOT EXISTS " + tableName + " (" + "\n")
-                                .append("	ccid_q		integer 		NOT NULL," + "\n")
-                                .append("	ccid_r		integer 		NOT NULL," + "\n")
-                                .append("	ccid_s		integer 		NOT NULL," + "\n")
-                                .append("	circumradius 	float8 			NOT NULL," + "\n")
-                                .append("	centroid	geometry(POINT,4326)    NOT NULL," + "\n")
-                                .append("	geometry  	geometry(POLYGON,4326) 	NOT NULL," + "\n")
-                                .append("	PRIMARY KEY(ccid_q, ccid_r, ccid_s)" + "\n")
+                                .append("    ccid_q             integer 		NOT NULL," + "\n")
+                                .append("    ccid_r             integer 		NOT NULL," + "\n")
+                                .append("    ccid_s             integer 		NOT NULL," + "\n")
+                                .append("    circumradius 	float8 			NOT NULL," + "\n")
+                                .append("    centroid	        geometry(POINT, 4326)   NOT NULL," + "\n")
+                                .append("    geometry  	        geometry(POLYGON, 4326) NOT NULL," + "\n")
+                                .append("    PRIMARY KEY(ccid_q, ccid_r, ccid_s)" + "\n")
                                 .append(");" + " ")
                                 .toString();
 
                 try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(CREATE_TABLE_SQL);
-                        System.out.println("Created geometry table successfully with query:");
-                        System.out.println(CREATE_TABLE_SQL);
+                        statement.executeUpdate(sql);
+                        System.out.println("Created tessellation table successfully with query:");
+                        System.out.println(sql);
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
         }
 
         public final void batchInsertTessellation(String tableName, AxialClockwiseTessellation tessellation) {
+
                 /* Tessellation data */
                 final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
                 final int TOTAL_HEXAGONS = gisHexagons.size();
 
-                final String INSERT_SQL_TEMPLATE = "INSERT INTO " + tableName
-                                + " (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry) "
+                final String INSERT_SQL_TEMPLATE = "INSERT INTO " + tableName + " "
+                                + "(ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry)" + " "
                                 + String.format("VALUES (%s, %s, %s, %s, %s, %s);",
                                                 "?",
                                                 "?",
@@ -156,7 +157,7 @@ public class PostgresJDBC {
 
                         /* Start time of batch execution */
                         System.out.println("--- Batch execution begin..");
-                        long startTime = System.currentTimeMillis();
+                        final long startTime = System.currentTimeMillis();
 
                         for (Hexagon hexagon : gisHexagons) {
                                 CubeCoordinatesIndex cci = hexagon.getCCI();
@@ -193,7 +194,7 @@ public class PostgresJDBC {
                                 preparedStatement.setDouble(19, gisVertices.get(6).getLongitude());
                                 preparedStatement.setDouble(20, gisVertices.get(6).getLatitude());
 
-                                // Add INSERT statement into JDBC Batch
+                                // Add INSERT statement into JDBC batch
                                 preparedStatement.addBatch();
 
                                 // Count total batches added
@@ -214,27 +215,25 @@ public class PostgresJDBC {
                         }
 
                         /*
-                         * Set auto-commit back to normal and execute left over batches (batch amount <
-                         * JDBC_BATCH_LIMIT)
+                         * Set auto-commit back to normal and execute left over batches (batch amount < JDBC_BATCH_LIMIT)
                          */
                         connection.setAutoCommit(true);
                         preparedStatement.executeBatch();
                         batchExecutionCount++;
-                        System.out.println("- Batch " + batchExecutionCount + "th.");
+                        System.out.println("- Batch " + batchExecutionCount + "th executed.");
 
                         // End time when finished batch inserts
-                        long endTime = System.currentTimeMillis();
+                        final long endTime = System.currentTimeMillis();
 
                         // Calculate elapsed time of batch execution
-                        double elapsedTimeMs = endTime - startTime;
-                        double elapsedTimeSec = elapsedTimeMs / 1000;
+                        final double elapsedMillisecs = endTime - startTime;
+                        final double elapsedSeconds = elapsedMillisecs / 1000;
 
                         System.out.println("\n------ Batch insert results ------");
                         System.out.println("Table name             : " + tableName);
                         System.out.println("Total hexagons         : " + TOTAL_HEXAGONS);
-                        System.out.println("---");
                         System.out.println("Total batch executions : " + batchExecutionCount);
-                        System.out.println("Elapsed time           : " + elapsedTimeSec + " s");
+                        System.out.println("Elapsed time           : " + elapsedSeconds + " s");
                         System.out.println("Hexagons per batch     : " + BATCH_SIZE);
                         System.out.println("Hexagons inserted      : " + batchCount);
 
@@ -263,7 +262,8 @@ public class PostgresJDBC {
                 final StringBuilder urlBuilder = new StringBuilder().append(DBMS_URL);
 
                 if (this.host == null) {
-                        /* No host */
+
+                        // No host
                         if (this.database == null) {
                                 // jdbc:postgresql:/
                                 urlBuilder.append("/");
@@ -273,6 +273,7 @@ public class PostgresJDBC {
                         }
 
                 } else {
+
                         // jdbc:postgresql://host
                         urlBuilder.append("//").append(this.host);
 
@@ -325,7 +326,7 @@ public class PostgresJDBC {
                 private String host;
                 private int port;
                 private String database;
-                private Properties props = new Properties();
+                private Properties properties = new Properties();
 
                 private final Dotenv dotenv = Dotenv.configure()
                                 .directory(System.getProperty("user.dir"))
@@ -354,14 +355,14 @@ public class PostgresJDBC {
                         final String username = dotenv.get(usernameKey);
                         final String password = dotenv.get(passwordKey);
 
-                        this.props.setProperty("user", username);
-                        this.props.setProperty("password", password);
+                        this.properties.setProperty("user", username);
+                        this.properties.setProperty("password", password);
 
                         return this;
                 }
 
                 public final Builder reWriteBatchedInserts(boolean isEnabled) {
-                        this.props.setProperty("reWriteBatchedInserts", Boolean.toString(isEnabled));
+                        this.properties.setProperty("reWriteBatchedInserts", Boolean.toString(isEnabled));
                         return this;
                 }
 
@@ -381,55 +382,90 @@ public class PostgresJDBC {
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-                // Vietnam
+
+                /* Vietnam */ 
                 final Boundary vn_boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
                                 new Coordinates(109.466667, 23.383333));
+
                 // Still missing some wards at the top, check missing_wards.csv
                 final Boundary oct_17_vn_boundary = new Boundary(
                                 new Coordinates(102.050278, 23.583612),
                                 new Coordinates(109.666945, 8));
+
                 final Coordinates vn_centroid = new Coordinates(106, 15);
 
-                // Ho Chi Minh City
-                final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
+
+                /* 
+                 * Vietnam - Nominatim OpenStreetMap
+                 * - URL : https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=49915
+                 * - ID  : R49915
+                 */
+                final Coordinates vn_min_coords_osm = new Coordinates(102, 8);
+                final Coordinates vn_max_coords_osm = new Coordinates(109.9, 23.5);
+
+                final Coordinates vn_centroid_osm = new Coordinates(107.9650855, 15.9266657);
+                final Boundary vn_boundary_osm = new Boundary(vn_min_coords_osm, vn_max_coords_osm);
+
+
+                /* 
+                 * Vietnam - spatial_db
+                 * - database   : spatial_db
+                 * - table      : vietnam_border
+                 */
+                final Coordinates vn_min_coords_internal = new Coordinates(102.14458466, 7.39143848);
+                final Coordinates vn_max_coords_internal = new Coordinates(117.81734467, 23.39243698);
+
+                final Coordinates vn_centroid_internal = new Coordinates(106.4063821609223, 16.57755915233502);
+                final Boundary vn_boundary_internal = new Boundary(vn_min_coords_internal, vn_max_coords_internal);
+
+
+                /* Ho Chi Minh City */
                 final Coordinates hcm_min_coords = new Coordinates(106.35667121999998, 10.35422636000001);
                 final Coordinates hcm_max_coords = new Coordinates(107.02750646000003, 11.160309929999999);
+
+                final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
                 final Boundary hcm_boundary = new Boundary(hcm_min_coords, hcm_max_coords);
 
-                // Ha Noi City
-                final Coordinates hanoi_centroid = new Coordinates(105.700030001506, 20.998981122751463);
+
+                /* Ha Noi City */
                 final Coordinates hanoi_min_coords = new Coordinates(105.28813170999999, 20.564474110000003);
                 final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
+
+                final Coordinates hanoi_centroid = new Coordinates(105.700030001506, 20.998981122751463);
                 final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
 
                 
-                /**
-                 * Hexagon configurations
+                /*
+                 * Tessellation configurations
                  */
-                final int circumradius = 1350;                  // change this
-                final Coordinates centroid = hcm_centroid;      // change this
-                final Boundary boundary = hcm_boundary;         // change this
+                final int circumradius = 450;
+                final Coordinates centroid = vn_centroid_internal;
+                final Boundary boundary = vn_boundary_internal;
 
-                /**
-                 * Database table configurations
-                 */ 
-                final String vn_table_name = String.format("vietnam_hexagon_%sm", circumradius);
-                final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
-                final String hanoi_table_name = String.format("hanoi_tessellation_%sm", circumradius);
-
-                /* Tessellation: don't touch this */ 
+                // Don't modify this
                 final Hexagon hexagon = new Hexagon(centroid, circumradius);
                 final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
                 tessellation.tessellate(boundary);
 
-                // Batch inserts
-                final String table_name = hcm_table_name;
-                pg.createTessellationTable(table_name);
-                pg.batchInsertTessellation(table_name, tessellation);
+                /*
+                 * Database table name formats
+                 */ 
+                final String vn_table_name = String.format("vietnam_tessellation_%sm", circumradius);
+                final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
+                final String hanoi_table_name = String.format("hanoi_tessellation_%sm", circumradius);
+
+                // Database configurations
+                System.out.println("\n------ Database configs ------");
+                final String table_name = vn_table_name;
+                System.out.println("Table name: " + table_name);
+
+                // pg.createTessellationTable(table_name);
+                // pg.batchInsertTessellation(table_name, tessellation);
+
                 JVMUtils.printMemories("MB");
                 
                 // Test query
-                // pg.testQuery(table_name, 5);
+                pg.testQuery(table_name, 5);
         }
 }
