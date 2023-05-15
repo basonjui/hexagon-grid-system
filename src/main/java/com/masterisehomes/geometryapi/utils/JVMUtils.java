@@ -5,7 +5,7 @@ public class JVMUtils {
 
         private static final int MB = 1024 * 1024;
         private static final int GB = 1024 * 1024 * 1024;
-        
+
         private static final long maxMemory = RUNTIME.maxMemory();
         private static final long freeMemory = RUNTIME.freeMemory();
         private static final long totalMemory = RUNTIME.totalMemory();
@@ -67,7 +67,7 @@ public class JVMUtils {
 
         public static final void printMaxMemory(String unit) {
                 final long convertedMemory;
-
+                
                 switch(unit) {
                         case "MB":
                                 convertedMemory = maxMemory / MB;
@@ -83,7 +83,7 @@ public class JVMUtils {
                 System.out.println("Max Memory\t: " + convertedMemory  + unit);
         }
 
-        public static final void printMemories(String unit) {
+        public static final void printMemoryUsages(String unit) {
                 System.out.println("\n------ JVM's stats ------");
                 printMaxMemory(unit);
                 printTotalMemory(unit);

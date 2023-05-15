@@ -12,9 +12,9 @@ import com.google.gson.JsonObject;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 
-@ToString
 @Getter
 @Setter
+@ToString
 public class AxialClockwiseTessellationDto implements Serializable {
         private Coordinates rootCentroid;
 	private double circumradius;
@@ -31,7 +31,7 @@ public class AxialClockwiseTessellationDto implements Serializable {
 
         public AxialClockwiseTessellationDto(AxialClockwiseTessellation tessellation) {
                 this.rootHexagon = tessellation.getRootHexagon();
-                this.rootCentroid = this.rootHexagon.getCentroid();
+                this.rootCentroid = tessellation.getRootHexagon().getCentroid();
                 this.circumradius = tessellation.getCircumradius();
                 this.inradius = tessellation.getInradius();
                 this.boundary = tessellation.getBoundary();

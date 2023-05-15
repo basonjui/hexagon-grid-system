@@ -2,7 +2,9 @@ package com.masterisehomes.geometryapi.tessellation;
 
 import java.lang.Math;
 import java.util.List;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -173,13 +175,52 @@ public class AxialClockwiseTessellation {
 		}
 
                 /* Print tessellation results */
-                System.out.println("------ Tessellation results ------");
-                System.out.println("Centroid			: " + this.rootHexagon.getCentroid());
-                System.out.println("Circumradius			: " + this.circumradius);
-                System.out.println("Boundary			: " + this.boundary);
-                System.out.println("Tessellation inradius		: " + this.tessellationInradius);
-                System.out.println("Tessellation circumradius	: " + this.tessellationCircumradius);
-                System.out.println("Total hexagons			: " + this.totalHexagons);
+		List<String> TESSELLATION_RESULTS = Arrays.asList(
+			"Centroid",
+			"Circumradius",
+			"Boundary",
+			"Tessellation Inradius",
+			"Tessellation Circumradius",
+			"Total Hexagons"
+		);
+
+		// Get values and apply padding to results
+		int padding = 26;
+		for (int i = 0; i < TESSELLATION_RESULTS.size(); i++) {
+			String result = TESSELLATION_RESULTS.get(i);
+			String value;
+
+			switch(result) {
+				case "Centroid":
+					value = this.rootHexagon.getCentroid().asWKT();
+					break;
+				case "Circumradius":
+					value = Double.toString(this.circumradius);
+					break;
+				case "Boundary":
+					value = this.boundary.getMinCoordinates().asWKT() + ", " + this.boundary.getMaxCoordinates().asWKT();
+					break;
+				case "Tessellation Inradius":
+					value = Double.toString(this.tessellationInradius);
+					break;
+				case "Tessellation Circumradius":
+					value = Double.toString(this.tessellationCircumradius);
+					break;
+				case "Total Hexagons":
+					value = Integer.toString(this.totalHexagons);
+					break;
+				default:
+					value = String.format("ERROR: mishandled logic for case '%s'", result);
+			}
+
+			TESSELLATION_RESULTS.set(i, String.format("%-" + padding + "s", result) + ": " + value);
+		}
+
+		// Print results
+		System.out.println("------ Tessellation results ------");
+		for (String result : TESSELLATION_RESULTS) {
+			System.out.println(result);
+		}
 	}
 
 	/* Hexagons population */
@@ -206,63 +247,12 @@ public class AxialClockwiseTessellation {
 	}
 
 	/* Rings population */
-	private final void populateRing0(Hexagon rootHexagon) { // Ring 0 has no corners
-		this.hexagons.add(rootHexagon);
-	}
+	// private final void populateRing0(Hexagon rootHexagon) { // Ring 0 has no corners
+	// 	this.hexagons.add(rootHexagon);
+	// }
 
 	private final void populateGisRing0(Hexagon rootHexagon) { // Ring 0 has no corners
 		this.gisHexagons.add(rootHexagon);
-	}
-
-	private final void populateRing1(Neighbors neighbors) {
-		final List<Hexagon> neighborHexagons = neighbors.getHexagons();
-
-		/* Validate neighbors */
-		assert neighborHexagons.size() == 7
-				: String.format("neighborHexagons size must equals 7, current size: ",
-						neighborHexagons.size());
-
-		/*
-		 * For each Neighbor, add it to Corners (1 - 6) based on NeighborPosition
-		 * 
-		 * Since we populated rootHexagon already (from populateRing0 method),
-		 * we will skip position 0 of Neighbors' hexagons list.
-		 */
-		for (Hexagon hexagon : neighborHexagons) {
-			NeighborPosition position = hexagon.getPosition();
-
-			switch (position) {
-                                // Ignore position ZERO, already added rootHexagon
-				case ZERO:
-					break;
-				case ONE:
-					this.c1Hexagons.add(hexagon);
-					break;
-				case TWO:
-					this.c2Hexagons.add(hexagon);
-					break;
-				case THREE:
-					this.c4Hexagons.add(hexagon);
-					break;
-				case FOUR:
-					this.c4Hexagons.add(hexagon);
-					break;
-				case FIVE:
-					this.c5Hexagons.add(hexagon);
-					break;
-				case SIX:
-					this.c6Hexagons.add(hexagon);
-					break;
-
-				// Handle illegal position
-				default:
-					throw new IllegalStateException("Only position 1-6 are valid, current position: "
-							+ position);
-			}
-		}
-
-		/* Populate hexagons with Neighbors 1 - 6 */
-		this.hexagons.addAll(neighborHexagons.subList(1, 7)); // 7 is exclusive. Why? ask Java :)
 	}
 
 	private final void populateGisRing1(Neighbors neighbors) {
@@ -313,10 +303,6 @@ public class AxialClockwiseTessellation {
 
 		/* Populate hexagons with Neighbors 1 - 6 */
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
-	}
-
-	private final void populateRingN() {
-		// TODO: not yet implemented
 	}
 
 	private final void populateGisRingN(int nthRing) {

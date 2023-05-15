@@ -91,7 +91,7 @@ public class Coordinates implements Serializable {
 		}
 	}
 
-	/* GeoJSON stuff */
+	/* Various representations */
 
 	/*
 	 * Position
@@ -119,6 +119,10 @@ public class Coordinates implements Serializable {
 	public final List<Double> toPixel() {
 		final List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
 		return pixelCoordinates;
+	}
+
+	public final String asWKT() {
+		return String.format("%s %s", longitude, latitude);
 	}
 
 	/* Internal methods */

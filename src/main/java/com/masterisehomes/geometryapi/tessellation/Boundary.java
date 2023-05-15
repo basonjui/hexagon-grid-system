@@ -3,6 +3,8 @@ package com.masterisehomes.geometryapi.tessellation;
 import lombok.Getter;
 import lombok.ToString;
 
+import org.apache.commons.lang3.builder.ToStringExclude;
+
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
@@ -18,9 +20,8 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 @ToString
 public class Boundary {
 	@Getter
-	@ToString.Exclude
+	@ToStringExclude
 	private final Coordinates minCoordinates, maxCoordinates;
-
 	@Getter
 	private final double minLongitude, minLatitude;
 	@Getter

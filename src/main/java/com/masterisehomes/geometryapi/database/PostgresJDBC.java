@@ -15,8 +15,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.ToString;
 
-import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
+import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
 import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
@@ -26,7 +26,6 @@ import com.masterisehomes.geometryapi.utils.JVMUtils;
 public class PostgresJDBC {
         private static final String DBMS_URL = "jdbc:postgresql:";
         private final String pgjdbcUrl;
-
         @Getter
         private final String host;
         @Getter
@@ -49,7 +48,7 @@ public class PostgresJDBC {
                 Connection connection = null;
                 try {
                         connection = DriverManager.getConnection(pgjdbcUrl, properties);
-                        System.out.println("\n" 
+                        System.out.println("\n"
                                         + "Connected to the PostgreSQL server as user: "
                                         + connection.getMetaData().getUserName());
                 } catch (SQLException e) {
@@ -145,7 +144,8 @@ public class PostgresJDBC {
                                                                 + "ST_MakePoint(?, ?)])), 4326)");
 
                 try (Connection connection = getConnection();
-                                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL_TEMPLATE)) {
+                                PreparedStatement preparedStatement = connection
+                                                .prepareStatement(INSERT_SQL_TEMPLATE)) {
 
                         /* Set autocommit off */
                         connection.setAutoCommit(false);
@@ -215,7 +215,8 @@ public class PostgresJDBC {
                         }
 
                         /*
-                         * Set auto-commit back to normal and execute left over batches (batch amount < JDBC_BATCH_LIMIT)
+                         * Set auto-commit back to normal and execute left over batches (batch amount <
+                         * JDBC_BATCH_LIMIT)
                          */
                         connection.setAutoCommit(true);
                         preparedStatement.executeBatch();
@@ -249,8 +250,8 @@ public class PostgresJDBC {
                 System.err.println("SQLState: \t" + b.getSQLState());
                 System.err.println("Message: \t" + b.getMessage());
                 System.err.println("Vendor: \t" + b.getErrorCode());
-                System.err.println("Update counts: \t");
 
+                System.err.println("Update counts: \t");
                 int[] updateCounts = b.getUpdateCounts();
                 for (int i = 0; i < updateCounts.length; i++) {
                         System.err.print(updateCounts[i] + "   ");
@@ -262,7 +263,6 @@ public class PostgresJDBC {
                 final StringBuilder urlBuilder = new StringBuilder().append(DBMS_URL);
 
                 if (this.host == null) {
-
                         // No host
                         if (this.database == null) {
                                 // jdbc:postgresql:/
@@ -273,7 +273,6 @@ public class PostgresJDBC {
                         }
 
                 } else {
-
                         // jdbc:postgresql://host
                         urlBuilder.append("//").append(this.host);
 
@@ -287,7 +286,6 @@ public class PostgresJDBC {
                                         urlBuilder.append(":").append(this.port)
                                                         .append("/");
                                 }
-
                         } else {
                                 /* There is port */
                                 if (this.port == 0) {
@@ -371,19 +369,17 @@ public class PostgresJDBC {
                 }
         }
 
-
         /* Test */
         public static void main(String[] args) {
                 PostgresJDBC pg = new PostgresJDBC.Builder()
                                 .host("POSTGRES_HOST")
                                 .port(5432)
-                                .database("spatial_db")
+                                .database("spatial_dwh")
                                 .authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-
-                /* Vietnam */ 
+                /* Vietnam */
                 final Boundary vn_boundary = new Boundary(
                                 new Coordinates(102.133333, 8.033333),
                                 new Coordinates(109.466667, 23.383333));
@@ -395,30 +391,32 @@ public class PostgresJDBC {
 
                 final Coordinates vn_centroid = new Coordinates(106, 15);
 
-
-                /* 
+                /*
                  * Vietnam - Nominatim OpenStreetMap
-                 * - URL : https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=49915
-                 * - ID  : R49915
+                 * - URL :
+                 * https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=49915
+                 * - ID : R49915
                  */
                 final Coordinates vn_min_coords_osm = new Coordinates(102, 8);
                 final Coordinates vn_max_coords_osm = new Coordinates(109.9, 23.5);
-
                 final Coordinates vn_centroid_osm = new Coordinates(107.9650855, 15.9266657);
                 final Boundary vn_boundary_osm = new Boundary(vn_min_coords_osm, vn_max_coords_osm);
 
+                final Coordinates hcm_centroid_osm = new Coordinates(106.7011391, 10.7763897);
+                final Boundary hcm_boundary_osm = new Boundary(
+                                new Coordinates(106.35667121999998, 10.35422636000001),
+                                new Coordinates(107.02750646000003, 11.160309929999999));
 
-                /* 
+                /*
                  * Vietnam - spatial_db
-                 * - database   : spatial_db
-                 * - table      : vietnam_border
+                 * - database : spatial_db
+                 * - table : vietnam_border
                  */
                 final Coordinates vn_min_coords_internal = new Coordinates(102.14458466, 7.39143848);
                 final Coordinates vn_max_coords_internal = new Coordinates(117.81734467, 23.39243698);
 
                 final Coordinates vn_centroid_internal = new Coordinates(106.4063821609223, 16.57755915233502);
                 final Boundary vn_boundary_internal = new Boundary(vn_min_coords_internal, vn_max_coords_internal);
-
 
                 /* Ho Chi Minh City */
                 final Coordinates hcm_min_coords = new Coordinates(106.35667121999998, 10.35422636000001);
@@ -427,7 +425,6 @@ public class PostgresJDBC {
                 final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
                 final Boundary hcm_boundary = new Boundary(hcm_min_coords, hcm_max_coords);
 
-
                 /* Ha Noi City */
                 final Coordinates hanoi_min_coords = new Coordinates(105.28813170999999, 20.564474110000003);
                 final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
@@ -435,36 +432,31 @@ public class PostgresJDBC {
                 final Coordinates hanoi_centroid = new Coordinates(105.700030001506, 20.998981122751463);
                 final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
 
-                
-                /*
-                 * Tessellation configurations
-                 */
-                final int circumradius = 450;
-                final Coordinates centroid = vn_centroid_internal;
-                final Boundary boundary = vn_boundary_internal;
+
+                // Tessellation configurations
+                final int circumradius = 150;
+                final Coordinates centroid = hcm_centroid_osm;
+                final Boundary boundary = hcm_boundary;
 
                 // Don't modify this
                 final Hexagon hexagon = new Hexagon(centroid, circumradius);
                 final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
                 tessellation.tessellate(boundary);
 
-                /*
-                 * Database table name formats
-                 */ 
-                final String vn_table_name = String.format("vietnam_tessellation_%sm", circumradius);
-                final String hcm_table_name = String.format("hochiminh_tessellation_%sm", circumradius);
-                final String hanoi_table_name = String.format("hanoi_tessellation_%sm", circumradius);
+                // Database table name formats
+                final String TABLE_NAME_TEMPLATE = "%s_tessellation_%sm";
 
                 // Database configurations
                 System.out.println("\n------ Database configs ------");
-                final String table_name = vn_table_name;
+                final String table_name = String.format(TABLE_NAME_TEMPLATE,
+                                "hochiminh",
+                                circumradius);
                 System.out.println("Table name: " + table_name);
 
                 // pg.createTessellationTable(table_name);
                 // pg.batchInsertTessellation(table_name, tessellation);
+                JVMUtils.printMemoryUsages("MB");
 
-                JVMUtils.printMemories("MB");
-                
                 // Test query
                 pg.testQuery(table_name, 5);
         }
