@@ -70,11 +70,27 @@ public class Coordinates implements Serializable {
 		}
 	}
 
+	public final boolean isLargerOrEquals(Coordinates c) {
+		if (this.isLarger(c) || this.equals(c)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public final boolean isSmaller(Coordinates c) {
 		final double lat = c.getLatitude();
 		final double lng = c.getLongitude();
 
 		if (latitude < lat && longitude < lng) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public final boolean isSmallerOrEquals(Coordinates c) {
+		if (this.isSmaller(c) || this.equals(c)) {
 			return true;
 		} else {
 			return false;

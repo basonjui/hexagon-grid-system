@@ -1,26 +1,28 @@
 package com.masterisehomes.geometryapi.tessellation;
 
-import lombok.Getter;
-import lombok.ToString;
-
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.masterisehomes.geometryapi.geodesy.Harversine;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 
-/* Similar to setup() in Processing
- * However, due to abstraction, the setup data is hard-coded and not stored, so we cannot
- * retrieve those data to use as a Coordinate system to setup our Hexagon Grid Map.
+import lombok.Getter;
+import lombok.ToString;
+
+/* 
+ * Boundary
  * 
- * This class aims to serve as a formal management system for the boundary aspect:
- * - boundaries of canvas 
- * - boundaries of Processing shapes
+ * This class borrows the concept of Bounding Diagonal in PostGIS:
+ * 	- "The diagonal is a 2-point LineString with the minimum values of 
+ * each dimension in its start point and the maximum values in its end point".
+ * 
+ * Basically, Boundary contains 2 Coordinates: 
+ * 	1. minCoordinates: the smallest values of longitude, latitude that the
+ * Boundary is supposed to cover.
+ * 	2. maxCoordinates: the largest values of longitude latitude...
  */
 
 @ToString
 public class Boundary {
 	@Getter
-	@ToStringExclude
+	@ToString.Exclude
 	private final Coordinates minCoordinates, maxCoordinates;
 	@Getter
 	private final double minLongitude, minLatitude;
@@ -47,28 +49,20 @@ public class Boundary {
 	}
 
 	/* Comparison methods */
-	public boolean containsCentroid(Coordinates centroid) {
-		double centroidLat = centroid.getLatitude();
-		double centroidLng = centroid.getLongitude();
-
-		if (this.containsLat(centroidLat) && this.containsLng(centroidLng)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	// Internal methods
-	private boolean containsLat(double lat) {
-		if (lat >= this.minLatitude && lat <= this.maxLatitude) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private boolean containsLng(double lng) {
-		if (lng >= this.minLongitude && lng <= this.maxLongitude) {
+	public boolean contains(Coordinates c) {
+		/* 
+		 * To check if Boundary contains a pair of Coordinates c,
+		 * - we check if: `minCoordinates <= c <= maxCoordinates`
+		 * 
+		 * To do this, we use isSmallerOrEquals() and isLargerOrEquals methods from
+		 * Coordinates class. 
+		 * 
+		 * These methods simplify the comparison by handling the
+		 * processes of comparing longitude, latitude for each coordinate; as well as
+		 * handling the complexity of comparing "equality" of `double` data type in Java,
+		 * due to limitations in double precisions.
+		 */
+		if (minCoordinates.isSmallerOrEquals(c) && maxCoordinates.isLargerOrEquals(c)) {
 			return true;
 		} else {
 			return false;
