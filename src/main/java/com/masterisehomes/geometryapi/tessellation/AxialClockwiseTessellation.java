@@ -192,13 +192,13 @@ public class AxialClockwiseTessellation {
 
 			switch(result) {
 				case "Centroid":
-					value = this.rootHexagon.getCentroid().asWKT();
+					value = this.rootHexagon.getCentroid().toWKT();
 					break;
 				case "Circumradius":
 					value = Double.toString(this.circumradius);
 					break;
 				case "Boundary":
-					value = this.boundary.getMinCoordinates().asWKT() + ", " + this.boundary.getMaxCoordinates().asWKT();
+					value = this.boundary.getMinCoordinates().toWKT() + ", " + this.boundary.getMaxCoordinates().toWKT();
 					break;
 				case "Tessellation Inradius":
 					value = Double.toString(this.tessellationInradius);

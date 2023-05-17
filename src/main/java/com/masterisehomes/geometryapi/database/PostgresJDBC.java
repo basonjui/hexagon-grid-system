@@ -144,8 +144,7 @@ public class PostgresJDBC {
                                                                 + "ST_MakePoint(?, ?)])), 4326)");
 
                 try (Connection connection = getConnection();
-                                PreparedStatement preparedStatement = connection
-                                                .prepareStatement(INSERT_SQL_TEMPLATE)) {
+                                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL_TEMPLATE)) {
 
                         /* Set autocommit off */
                         connection.setAutoCommit(false);
@@ -215,8 +214,7 @@ public class PostgresJDBC {
                         }
 
                         /*
-                         * Set auto-commit back to normal and execute left over batches (batch amount <
-                         * JDBC_BATCH_LIMIT)
+                         * Set auto-commit back to normal and execute left over batches (batch amount < JDBC_BATCH_LIMIT)
                          */
                         connection.setAutoCommit(true);
                         preparedStatement.executeBatch();
