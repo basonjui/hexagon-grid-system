@@ -1,13 +1,15 @@
 package com.masterisehomes.geometryapi.utils;
 
 public class JVMUtils {
+        private static final Runtime RUNTIME = Runtime.getRuntime();
+
         private static final int MB = 1024 * 1024;
         private static final int GB = 1024 * 1024 * 1024;
 
-        private static final long usedMemory  = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
-        private static final long freeMemory  =  Runtime.getRuntime().freeMemory();
-        private static final long totalMemory =  Runtime.getRuntime().totalMemory();
-        private static final long maxMemory   =  Runtime.getRuntime().maxMemory();
+        private static final long maxMemory = RUNTIME.maxMemory();
+        private static final long freeMemory = RUNTIME.freeMemory();
+        private static final long totalMemory = RUNTIME.totalMemory();
+        private static final long usedMemory = totalMemory - freeMemory;
 
         public static final void printUsedMemory(String unit) {
                 final long convertedMemory;
@@ -65,7 +67,7 @@ public class JVMUtils {
 
         public static final void printMaxMemory(String unit) {
                 final long convertedMemory;
-
+                
                 switch(unit) {
                         case "MB":
                                 convertedMemory = maxMemory / MB;
@@ -81,7 +83,7 @@ public class JVMUtils {
                 System.out.println("Max Memory\t: " + convertedMemory  + unit);
         }
 
-        public static final void printMemories(String unit) {
+        public static final void printMemoryUsages(String unit) {
                 System.out.println("\n------ JVM's stats ------");
                 printMaxMemory(unit);
                 printTotalMemory(unit);

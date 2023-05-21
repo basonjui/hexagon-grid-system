@@ -8,20 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-/* So why the Vertex class instead of using the predefined Point class?
- *
- * Point is a really old class in Java, it can only work with Integer and Double.
- *
- * This is a problem because the vertex() function in processing can
- * only work with Float data type.
- *
- * Do we want to cast Double to Float for every point to draw on Processing?
- * So here we are. 
- */
-
-@ToString
 @Getter
 @Setter
+@ToString
 public class Coordinates implements Serializable {
 	@ToString.Exclude private double x;
 	@ToString.Exclude private double y;
@@ -39,10 +28,11 @@ public class Coordinates implements Serializable {
 		 * degrees using Trigonometry, but they cannot use to determine
 		 * points.
 		 * 
-		 * Conclusion: we use the same centroid coordinates for both 
+		 * --- Conclusion: 
+		 * 1. We use the same centroid coordinates for both 
 		 * Cartesian and Geographic coordinates. 
 		 * 
-		 * The radiuses can be convert to longitude/latitude using
+		 * 2. The radiuses can be convert to longitude/latitude using
 		 * SphericalMercatorProjection formulas.
 		 */
 		this.x = longitude;
@@ -52,46 +42,62 @@ public class Coordinates implements Serializable {
 	}
 
 	// Comparison methods
-	public boolean equals(Coordinates coordinates) {
-		final double longitude = coordinates.getLongitude();
-		final double latitude = coordinates.getLatitude();
+	public boolean equals(Coordinates c) {
+		final double longitude = c.getLongitude();
+		final double latitude = c.getLatitude();
 
-		final double x = coordinates.getX();
-		final double y = coordinates.getY();
+		final double x = c.getX();
+		final double y = c.getY();
 
-		if (equals_under_threshold(this.longitude, longitude)
-				&& equals_under_threshold(this.latitude, latitude)
-				&& equals_under_threshold(this.x, x)
-				&& equals_under_threshold(this.y, y)) {
+		if (equalsUnderThreshold(this.longitude, longitude)
+				&& equalsUnderThreshold(this.latitude, latitude)
+				&& equalsUnderThreshold(this.x, x)
+				&& equalsUnderThreshold(this.y, y)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public final boolean isLarger(Coordinates gisCoordinates) {
-		final double latitude = gisCoordinates.getLatitude();
-		final double longitude = gisCoordinates.getLongitude();
+	public final boolean isLarger(Coordinates c) {
+		final double lat = c.getLatitude();
+		final double lng = c.getLongitude();
 
-		if (this.latitude > latitude && this.longitude > longitude) {
+		if (latitude > lat && longitude > lng) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public final boolean isSmaller(Coordinates gisCoordinates) {
-		final double latitude = gisCoordinates.getLatitude();
-		final double longitude = gisCoordinates.getLongitude();
-
-		if (this.latitude < latitude && this.longitude < longitude) {
+	public final boolean isLargerOrEquals(Coordinates c) {
+		if (this.isLarger(c) || this.equals(c)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	/* GeoJSON stuff */
+	public final boolean isSmaller(Coordinates c) {
+		final double lat = c.getLatitude();
+		final double lng = c.getLongitude();
+
+		if (latitude < lat && longitude < lng) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public final boolean isSmallerOrEquals(Coordinates c) {
+		if (this.isSmaller(c) || this.equals(c)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* Various representations */
 
 	/*
 	 * Position
@@ -103,26 +109,31 @@ public class Coordinates implements Serializable {
 	 * GeoJSON describes an order for coordinates: they should go, in order:
 	 * [longitude, latitude, elevation]
 	 */
-	public final List<Double> toGeoJsonPosition() {
+	public final List<Double> toGeoJSON() {
 		/*
 		 * The order of elements must follow x, y, z order
 		 * 
-		 * (easting, northing, altitude for coordinates in a projected coordinate
+		 * - easting, northing, altitude for coordinates in a projected coordinate
 		 * reference system,
-		 * or longitude, latitude, altitude for coordinates in a geographic coordinate
-		 * reference system).
+		 * - or longitude, latitude, altitude for coordinates in a geographic coordinate
+		 * reference system.
 		 */
-		final List<Double> gisCoordinates = Arrays.asList(this.longitude, this.latitude);
-		return gisCoordinates;
+		final List<Double> geoJsonCoordinates = Arrays.asList(longitude, latitude);
+		return geoJsonCoordinates;
 	}
 
 	public final List<Double> toPixel() {
-		final List<Double> pixelCoordinates = Arrays.asList(this.x, this.y);
+		final List<Double> pixelCoordinates = Arrays.asList(x, y);
 		return pixelCoordinates;
 	}
 
+	public final String toWKT() {
+		final String wktCoordinates = String.format("%s %s", longitude, latitude);
+		return wktCoordinates;
+	}
+
 	/* Internal methods */
-	private final boolean equals_under_threshold(double numA, double numB) {
+	private final boolean equalsUnderThreshold(double numA, double numB) {
 		final double THRESHOLD = 0.000001;
 
 		final double difference = Math.abs(numA - numB);

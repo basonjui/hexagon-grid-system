@@ -40,7 +40,7 @@ public class SparkApplication {
 		System.out.println("Total rows: " + ds.count());
 		ds.show(10);
 
-		JVMUtils.printMemories("MB");
+		JVMUtils.printMemoryUsages("MB");
 
 		// try {
 		// 	System.out.print("\nPress enter to stop Spark: ");
