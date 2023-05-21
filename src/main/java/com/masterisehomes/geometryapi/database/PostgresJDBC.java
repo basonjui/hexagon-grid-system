@@ -106,6 +106,7 @@ public class PostgresJDBC {
                                 .append("    ccid_s             integer 		NOT NULL," + "\n")
                                 .append("    circumradius 	float8 			NOT NULL," + "\n")
                                 .append("    centroid	        geometry(POINT, 4326)   NOT NULL," + "\n")
+                                // .append("    geometry  	        geometry(POLYGON, 4326) NOT NULL" + "\n")
                                 .append("    geometry  	        geometry(POLYGON, 4326) NOT NULL," + "\n")
                                 .append("    PRIMARY KEY(ccid_q, ccid_r, ccid_s)" + "\n")
                                 .append(");" + " ")
@@ -152,7 +153,7 @@ public class PostgresJDBC {
                         /* JDBC batch configurations */
                         int batchCount = 0;
                         int batchExecutionCount = 0;
-                        final int BATCH_SIZE = 1000;
+                        final int BATCH_SIZE = 10000;
 
                         /* Start time of batch execution */
                         System.out.println("--- Batch execution begin..");
@@ -238,6 +239,28 @@ public class PostgresJDBC {
 
                 } catch (BatchUpdateException batchUpdateException) {
                         printBatchUpdateException(batchUpdateException);
+                } catch (SQLException e) {
+                        printSQLException(e);
+                }
+        }
+
+        public final void addPrimaryKeyIfNotExists(String tableName) {
+                final String checkPrimaryKeySQL = "SELECT constraint_name from information_schema.table_constraints"
+                                + " WHERE table_name = " + String.format("'%s'", tableName) 
+                                + " AND constraint_type = 'PRIMARY KEY'";
+                final String addPrimaryKeySQL = "ALTER TABLE " + tableName 
+                                + " ADD PRIMARY KEY (ccid_q, ccid_r, ccid_s)";
+
+                int status;
+                try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
+                        ResultSet rs = statement.executeQuery(checkPrimaryKeySQL);
+                        
+                        int currentRowNum = rs.getRow();
+                        if (currentRowNum == 0) {
+                                // Then no PRIMARY KEY exists
+                                status = statement.executeUpdate(addPrimaryKeySQL);
+                                System.out.println(addPrimaryKeySQL + " exit with status: " + status);
+                        }
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
@@ -432,9 +455,9 @@ public class PostgresJDBC {
 
 
                 // Tessellation configurations
-                final int circumradius = 150;
-                final Coordinates centroid = hcm_centroid_osm;
-                final Boundary boundary = hcm_boundary;
+                final int circumradius = 1350;
+                final Coordinates centroid = vn_centroid_internal;
+                final Boundary boundary = vn_boundary_internal;
 
                 // Don't modify this
                 final Hexagon hexagon = new Hexagon(centroid, circumradius);
@@ -442,20 +465,21 @@ public class PostgresJDBC {
                 tessellation.tessellate(boundary);
 
                 // Database table name formats
-                final String TABLE_NAME_TEMPLATE = "%s_tessellation_%sm";
+                final String TABLE_NAME_TEMPLATE = "%s_tessellation_%sm_test";
 
                 // Database configurations
                 System.out.println("\n------ Database configs ------");
                 final String table_name = String.format(TABLE_NAME_TEMPLATE,
-                                "hochiminh",
+                                "vietnam",
                                 circumradius);
                 System.out.println("Table name: " + table_name);
 
                 // pg.createTessellationTable(table_name);
                 // pg.batchInsertTessellation(table_name, tessellation);
+                pg.addPrimaryKeyIfNotExists(table_name);
                 JVMUtils.printMemoryUsages("MB");
 
                 // Test query
-                pg.testQuery(table_name, 5);
+                // pg.testQuery(table_name, 5);
         }
 }
