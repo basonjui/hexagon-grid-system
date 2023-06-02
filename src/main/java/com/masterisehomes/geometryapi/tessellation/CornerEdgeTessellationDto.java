@@ -15,7 +15,9 @@ import com.masterisehomes.geometryapi.hexagon.Hexagon;
 @Getter
 @Setter
 @ToString
-public class AxialClockwiseTessellationDto implements Serializable {
+public class CornerEdgeTessellationDto implements Serializable {
+        private CornerEdgeTessellation tessellation;
+
         private Coordinates rootCentroid;
 	private double circumradius;
 	private double inradius;
@@ -29,7 +31,10 @@ public class AxialClockwiseTessellationDto implements Serializable {
         private int totalRings;
         private int totalHexagons;
 
-        public AxialClockwiseTessellationDto(AxialClockwiseTessellation tessellation) {
+        public CornerEdgeTessellationDto(CornerEdgeTessellation tessellation) {
+                // Note that for this constructor, tessellation has already called .tessellate()
+                this.tessellation = tessellation;
+
                 this.rootHexagon = tessellation.getRootHexagon();
                 this.rootCentroid = tessellation.getRootHexagon().getCentroid();
                 this.circumradius = tessellation.getCircumradius();
@@ -38,37 +43,36 @@ public class AxialClockwiseTessellationDto implements Serializable {
 
                 this.hexagons = tessellation.getHexagons();
                 this.gisHexagons = tessellation.getGisHexagons();
-
                 this.totalRings = tessellation.getTotalRings();
                 this.totalHexagons = tessellation.getTotalHexagons();
         }
 
-        public AxialClockwiseTessellationDto(JsonObject payload) {
+        public CornerEdgeTessellationDto(JsonObject payload) {
                 /* Parse centroid data from payload */
                 final double rootLatitude = payload.get("latitude").getAsDouble();
 		final double rootLongitude = payload.get("longitude").getAsDouble();
 
 		this.rootCentroid = new Coordinates(rootLongitude, rootLatitude);
 		this.circumradius = payload.get("radius").getAsDouble();
-
-		this.rootHexagon = new Hexagon(this.rootCentroid, this.circumradius);
-                this.inradius = this.rootHexagon.getInradius();
+		this.rootHexagon = new Hexagon(rootCentroid, circumradius);
+                this.inradius = rootHexagon.getInradius();
 
                 /* Parse boundary data from payload */
-                final JsonObject boundaryObj = payload.get("boundary").getAsJsonObject();
+                final JsonObject boundaryJsonObject = payload.get("boundary").getAsJsonObject();
 
-                final double minLat = boundaryObj.get("min_latitude").getAsDouble();
-                final double minLng = boundaryObj.get("min_longitude").getAsDouble();
-                final double maxLat = boundaryObj.get("max_latitude").getAsDouble();
-                final double maxLng = boundaryObj.get("max_longitude").getAsDouble();
+                final double minLat = boundaryJsonObject.get("minLatitude").getAsDouble();
+                final double minLng = boundaryJsonObject.get("minLongitude").getAsDouble();
+                final double maxLat = boundaryJsonObject.get("maxLatitude").getAsDouble();
+                final double maxLng = boundaryJsonObject.get("maxLongitude").getAsDouble();
 
                 final Coordinates minCoordinates = new Coordinates(minLng, minLat);
                 final Coordinates maxCoordinates = new Coordinates(maxLng, maxLat);
                 this.boundary = new Boundary(minCoordinates, maxCoordinates);
 
                 /* Tessellation */
-                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(rootHexagon);
-                tessellation.tessellate(this.boundary);
+                final CornerEdgeTessellation tessellation = new CornerEdgeTessellation(rootHexagon);
+                tessellation.tessellate(boundary);
+                this.tessellation = tessellation;
 
                 this.hexagons = tessellation.getHexagons();
                 this.gisHexagons = tessellation.getGisHexagons();

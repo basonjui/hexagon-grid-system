@@ -16,10 +16,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
+import com.masterisehomes.geometryapi.neighbors.Neighbors;
+import com.google.gson.Gson;
+import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
+import com.masterisehomes.geometryapi.tessellation.CornerEdgeTessellation;
 import com.masterisehomes.geometryapi.utils.JVMUtils;
 
 @ToString
@@ -121,7 +124,7 @@ public class PostgresJDBC {
                 }
         }
 
-        public final void batchInsertTessellation(String tableName, AxialClockwiseTessellation tessellation) {
+        public final void batchInsertTessellation(String tableName, CornerEdgeTessellation tessellation) {
 
                 /* Tessellation data */
                 final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
@@ -348,7 +351,7 @@ public class PostgresJDBC {
                 private Properties properties = new Properties();
 
                 private final Dotenv dotenv = Dotenv.configure()
-                                .directory(System.getProperty("user.dir"))
+                                .directory("./geometryapi")
                                 .filename(".env")
                                 .load();
 
@@ -461,7 +464,7 @@ public class PostgresJDBC {
 
                 // Don't modify this
                 final Hexagon hexagon = new Hexagon(centroid, circumradius);
-                final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+                final CornerEdgeTessellation tessellation = new CornerEdgeTessellation(hexagon);
                 tessellation.tessellate(boundary);
 
                 // Database table name formats
@@ -476,10 +479,18 @@ public class PostgresJDBC {
 
                 // pg.createTessellationTable(table_name);
                 // pg.batchInsertTessellation(table_name, tessellation);
-                pg.addPrimaryKeyIfNotExists(table_name);
+                // pg.addPrimaryKeyIfNotExists(table_name);
                 JVMUtils.printMemoryUsages("MB");
 
                 // Test query
                 // pg.testQuery(table_name, 5);
+
+                Gson gson = new Gson();
+                Neighbors neighbors = new Neighbors(hexagon);
+                System.out.println(
+                        gson.toJson(
+                                new GeoJsonManager(neighbors).getFeatureCollection()
+                        )
+                );
         }
 }

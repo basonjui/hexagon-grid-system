@@ -17,25 +17,19 @@ public class Neighbors {
 	@Getter
 	private Hexagon rootHexagon;
 	@Getter
-	private List<Coordinates> centroids;
+	private List<Coordinates> centroids, gisCentroids;
 	@Getter
-	private List<Coordinates> gisCentroids;
-	@Getter
-	private List<Hexagon> hexagons;
-	@Getter
-	private List<Hexagon> gisHexagons;
+	private List<Hexagon> hexagons, gisHexagons;
 
 	/* Constants */
 	private static final double COS_30_DEG = Math.cos(Math.toRadians(30));
-	private static final double SQRT_3 = Math.sqrt(3); // cos(30 deg) = SQRT_3 / 2
+	private static final double SQRT_3 = Math.sqrt(3);
 
 	/* Constructor */
 	public Neighbors(Hexagon rootHexagon) {
 		this.rootHexagon = rootHexagon;
-
 		this.centroids = generateCentroids(rootHexagon);
 		this.hexagons = generateHexagons(this.centroids);
-
 		this.gisCentroids = generateGisCentroids(rootHexagon);
 		this.gisHexagons = generateGisHexagons(this.gisCentroids);
 	}

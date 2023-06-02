@@ -27,25 +27,25 @@ class GeoJsonCoordinates {
 	/* Hexagon */
 	final static List<List<List<Double>>> generatePolygonCoordinates(Hexagon hexagon) {
 		// Generate an Array of Array of Positions
-		final List<List<Double>> hexagonArrayPositions = generateArrayPositions(hexagon);
+		final List<List<Double>> hexagonPositions = generatePositions(hexagon);
 		/*
 		 * Wrap hexagon's vertices coordinates inside another array - this is the
 		 * GeoJSON coordinates structure for Polygon
 		 * Why? because in GeoJSON, Polygons can have polygons (as holes) within them.
 		 */
-		final List<List<List<Double>>> polygonCoordinates = Arrays.asList(hexagonArrayPositions);
+		final List<List<List<Double>>> polygonCoordinates = Arrays.asList(hexagonPositions);
 
 		return polygonCoordinates;
 	}
 
 	// Internal methods: handle data processing in this class (private)
-	private final static List<List<Double>> generateArrayPositions(Hexagon hexagon) {
+	private final static List<List<Double>> generatePositions(Hexagon hexagon) {
 		final List<Coordinates> gisVertices = hexagon.getGisVertices();
 		final List<List<Double>> positions = new ArrayList<List<Double>>();
 
 		gisVertices.forEach((gisVertex) -> {
 			// Convert vertex's Coordinates -> Position
-			positions.add(gisVertex.toGeoJSON());
+			positions.add(gisVertex.toGeoJsonPosition());
 		});
 
 		return positions;

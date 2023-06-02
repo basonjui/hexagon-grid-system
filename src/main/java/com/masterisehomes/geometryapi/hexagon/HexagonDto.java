@@ -16,29 +16,27 @@ public class HexagonDto {
 	private Coordinates centroid;
 	@Getter
 	private Hexagon hexagon;
-
+	
 	final static private Gson gson = new Gson();
 
 	public HexagonDto(Map<String, Object> lambdaEvent) {
 		/*
-		 * Lambda Event is a Json, which is converted to a Map in order to get values by
+		 * Lambda Event is a JSON, which is converted to a Map in order to get values by
 		 * keys
 		 * 
-		 * In general, a LambdaEvent JSON contains all the metadata about the Client
+		 * In general, a Lambda Event JSON contains all the metadata about the Client
 		 * that sends a HTTP Request -> API Gateway -> Lambda Function
 		 * 
 		 * In this Event (JSON), the "body" key contains actual data sent from the
-		 * Client, which
-		 * consists of the following keys (ordered - although does not matter in this
-		 * case):
+		 * Client, which consists of the following keys (ordered - although does not
+		 * matter in this case):
 		 * - latitude
 		 * - longitude
 		 * - radius
 		 */
 
 		// Get body contents as String & convert to a JsonObject (to get inner keys)
-		final String eventBodyJson = lambdaEvent.get("body").toString(); // lambdaEvent.get("body") returns a
-										// JsonPrimitive
+		final String eventBodyJson = lambdaEvent.get("body").toString(); // lambdaEvent.get("body") returns a JsonPrimitive
 		final JsonObject eventBody = gson.fromJson(eventBodyJson, JsonObject.class);
 
 		// Get latitude, longitude, and radius data (JsonPrimitive) from eventBody

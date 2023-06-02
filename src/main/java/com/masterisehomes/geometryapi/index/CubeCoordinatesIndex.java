@@ -17,12 +17,12 @@ public class CubeCoordinatesIndex implements Serializable {
 	private final int r;
 	private final int s;
 	
-	public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, NeighborPosition direction) {
+	public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, NeighborPosition position) {
 		/*
-		 * Flat-top orientation of Hexagon
-		 * For every Hexagonal Direction, 2 elements of set {q, r, s} will +/- 1
+		 * Flat-top orientation of Hexagon, order from left-right
+		 * For every NeighborPosition, 2 elements of set {q, r, s} will +/- 1
 		 */
-		switch (direction) {
+		switch (position) {
 			case ZERO:
 				assert previousCCI == null : "Expect previousCCI to be null, currently: " + previousCCI;
 				this.q = 0;
@@ -73,11 +73,7 @@ public class CubeCoordinatesIndex implements Serializable {
 				break;
 
 			default:
-				throw new InvalidParameterException("Invalid Hexagon direction: " + direction);
+				throw new InvalidParameterException("Invalid NeighborPosition: " + position);
 		}
-	}
-
-	public String getIndex() {
-		return String.format("(q=%s, r=%s, s=%s)", this.q, this.r, this.s);
 	}
 }

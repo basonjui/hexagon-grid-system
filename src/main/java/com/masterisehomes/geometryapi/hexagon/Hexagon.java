@@ -13,9 +13,9 @@ import com.masterisehomes.geometryapi.geodesy.SphericalMercatorProjection;
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
 import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 
-@ToString
 @Getter
 @Setter
+@ToString
 public class Hexagon implements Serializable {
 	private Coordinates centroid;
 	private double circumradius;
@@ -24,7 +24,6 @@ public class Hexagon implements Serializable {
 	private List<Coordinates> vertices;
 	private List<Coordinates> gisVertices;
 
-	// Cube Coordinates Indexing
 	private NeighborPosition position;
 	private CubeCoordinatesIndex previousCCI;
 	private CubeCoordinatesIndex CCI;
@@ -42,27 +41,35 @@ public class Hexagon implements Serializable {
 
 		this.position = NeighborPosition.ZERO;
 		this.previousCCI = null;
-		this.CCI = new CubeCoordinatesIndex(this.previousCCI, this.position);
+		this.CCI = new CubeCoordinatesIndex(previousCCI, position);
 	}
 
-	// Construct a new Hexagon from a rootHexagon
-	public Hexagon(Coordinates centroid, Hexagon rootHexagon, NeighborPosition position) {
+	// Construct a new Hexagon adjacent to parentHexagon in the respective NeighborPosition
+	public Hexagon(Coordinates centroid, Hexagon parentHexagon, NeighborPosition position) {
 		this.centroid = centroid;
-		this.circumradius = rootHexagon.getCircumradius();
+		this.circumradius = parentHexagon.getCircumradius();
 		this.inradius = this.circumradius * SQRT_3 / 2;
 
 		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		assert position != null : "Position cannot be null.";
+		// Check position of hexagon, should never be null
+		if (position == null) {
+			throw new IllegalArgumentException(
+				String.format("""
+					Position cannot be null, hexagon with %s has position=%s
+				""", CCI, position));
+		}
+
 		switch (position) {
 			case ZERO:
 				this.position = position;
 				this.previousCCI = null;
 				break;
+
 			default:
 				this.position = position;
-				this.previousCCI = rootHexagon.getCCI();
+				this.previousCCI = parentHexagon.getCCI();
 				break;
 		}
 
@@ -70,6 +77,7 @@ public class Hexagon implements Serializable {
 	}
 
 	/* Methods */
+	@Deprecated
 	private List<Coordinates> generateVertices(Coordinates centroid) {
 		final double centroidX = centroid.getX();
 		final double centroidY = centroid.getY();
@@ -122,14 +130,5 @@ public class Hexagon implements Serializable {
 		gisCoordinates.add(gisCoordinates.get(0));
 
 		return gisCoordinates;
-	}
-
-	// Getters
-	public String getIndex() {
-		// We use the Hexagon's position as its name when print out
-		String name = this.position.toString();
-
-		return String.format("Hexagon%s=(position=%s, previousCCI=%s, CCI=%s)",
-				name, this.position, this.previousCCI, this.CCI);
 	}
 }

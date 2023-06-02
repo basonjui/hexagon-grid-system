@@ -8,7 +8,7 @@ import com.masterisehomes.geometryapi.geojson.FeatureCollection;
 import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.*;
 import com.masterisehomes.geometryapi.neighbors.*;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto;
+import com.masterisehomes.geometryapi.tessellation.CornerEdgeTessellationDto;
 import com.masterisehomes.geometryapi.utils.JsonTransformer;
 
 public class GeometryApi {
@@ -59,8 +59,8 @@ public class GeometryApi {
 				// Parse request payload to a JSONObject with Gson
 				JsonObject tessellationPayload = gson.fromJson(request.body(), JsonObject.class);
 
-				AxialClockwiseTessellationDto tessellationDto = new AxialClockwiseTessellationDto(tessellationPayload);
-				GeoJsonManager manager = new GeoJsonManager(tessellationDto);
+				CornerEdgeTessellationDto tessellationDto = new CornerEdgeTessellationDto(tessellationPayload);
+				GeoJsonManager manager = new GeoJsonManager(tessellationDto.getTessellation());
 				
 				return manager.getFeatureCollection();
 

@@ -3,7 +3,7 @@ package com.masterisehomes.geometryapi.geojson;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -11,12 +11,29 @@ import lombok.ToString;
 @ToString
 @Getter
 class Feature {
+	// private final int ccid_q;
+	// private final int ccid_r;
+	// private final int ccid_s;
 	private final String type = "Feature";
 	private final Geometry geometry;
-	private final Map<String, Object> properties = new HashMap<String, Object>();
+	private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
 
 	Feature(Geometry geometry) {
 		this.geometry = geometry;
+
+		// Geometry is an abstract class, check concrete class to determine initialization logic
+		/* no longer used
+		if (geometry instanceof PolygonGeometry) {
+			this.ccid_q = ((PolygonGeometry) geometry).getHexagon().getCCI().getQ();
+			this.ccid_r = ((PolygonGeometry) geometry).getHexagon().getCCI().getR();
+			this.ccid_s = ((PolygonGeometry) geometry).getHexagon().getCCI().getS();
+		} else {
+			// TODO: handle logic for each Geometry
+			this.ccid_q = 0;
+			this.ccid_r = 0;
+			this.ccid_s = 0;
+		}
+		*/
 	}
 
 	// properties methods
