@@ -29,7 +29,7 @@ import com.masterisehomes.geometryapi.geodesy.Harversine;
  * - Ring 0: is a conceptual ring - it is just the Central Hexagon.
  * - Ring 1: is the first visible ring, where there are 7 hexagons wrapped around the Central Hexagon.
  * 
- * But from Ring 2 onward, we can see a consistent geometric property of the hexagon grid, 
+ * But from Ring 2 onward, we can see a consistent geometric pattern of the hexagon grid, 
  * where each ring always consist of: 6 Corner Hexagons and n Edge Hexagons.
  * 
  * --- CORNER & EDGE HEXAGONS
@@ -37,7 +37,7 @@ import com.masterisehomes.geometryapi.geodesy.Harversine;
  * that is tiled by smaller hexagons perfectly without gaps - this concept is Tessellation.
  * 
  * What interesting is, these direct Neighbors from the Central Hexagon, when extended:
- * 	1. always become the CORNERS of the Hexagon Grid Map (see the website above).
+ * 	1. always become the CORNERS of the Hexagon Grid (see the website above).
  * 	2. and the hexagons that fill the gaps between these Corner Hexagons, always become the EDGES of the Grid.
  * 
  * This n Edge Hexagon has a linear relationship with the n Rings, where:
@@ -48,7 +48,7 @@ import com.masterisehomes.geometryapi.geodesy.Harversine;
  * - at Ring 9, we have 9 - 2 = 7 Edge Hexagons
  * 
  * ---
- * So in order to create a Hexagon-shaped Tessellation, we need to:
+ * So in order to create a hexagon-shaped Tessellation, we need to:
  * 1. Calculate tessellationDistance (equals to largestBoundaryDistance)
  * 2. Calculate requiredCornerHexagons (given tessellationDistance &
  * hexagonMinimalDiameter)
@@ -56,7 +56,7 @@ import com.masterisehomes.geometryapi.geodesy.Harversine;
  */
 
 @ToString
-public class AxialClockwiseTessellation {
+public class CornerEdgeTessellation {
 	/* Initialization data */
 	@Getter
 	private final Hexagon rootHexagon;
@@ -83,14 +83,6 @@ public class AxialClockwiseTessellation {
 	@Getter
 	private final List<Hexagon> gisHexagons = new ArrayList<Hexagon>(100000);
 
-	/* Basic stats here */
-	@Getter
-	private int totalHexagons = 0;
-	@Getter
-	private double tessellationInradius = 0;
-	@Getter
-	private double tessellationCircumradius = 0;
-
 	/*
 	 * Corner Hexagons - used to find Edge Hexagons (based on nthRing)
 	 * - nthRing should equals any cornerHexagonList.size()
@@ -111,13 +103,21 @@ public class AxialClockwiseTessellation {
 
 	/* Updaters */
 	@Getter
-	private int totalRings = 0; // keep track of hexagon rings generated
-	/* The below updaters are used internally only */
-	private int requiredRings = 0; // maximum layers of hexagons in a ring required to tessellate
-	private int nthRing = 0; // the latest nth rings that tessellate generated
+	private int totalRings = 0; 	// keep track of hexagon rings generated
+	// Internal
+	private int requiredRings = 0; 	// maximum layers of hexagons in a ring required to tessellate
+	private int currentRing = 0; 	// the current/latest tessellation ring created
+
+	/* Basic stats here */
+	@Getter
+	private int totalHexagons = 0;
+	@Getter
+	private double tessellationInradius = 0;
+	@Getter
+	private double tessellationCircumradius = 0;
 
 	/* Constructors */
-	public AxialClockwiseTessellation(Hexagon rootHexagon) {
+	public CornerEdgeTessellation(Hexagon rootHexagon) {
 		this.rootHexagon = rootHexagon;
 		this.circumradius = rootHexagon.getCircumradius();
 		this.inradius = rootHexagon.getInradius();
@@ -130,7 +130,7 @@ public class AxialClockwiseTessellation {
 	 * AxialClockwiseTessellation before tessellate.
 	 */
 	public final void tessellate(Boundary boundary) {
-		/* Set boundary to instance */
+		// Set boundary to instance
 		this.boundary = boundary;
 
 		/*
@@ -149,16 +149,16 @@ public class AxialClockwiseTessellation {
 		this.requiredRings = calculateRequiredRings(boundary);
 
 		/* Populate hexagons */
-		while (this.nthRing < this.requiredRings) {
+		while (this.currentRing < this.requiredRings) {
 			// GIS Hexagons
-			populateGisHexagons(this.nthRing);
+			populateGisHexagons(this.currentRing);
 
 			// Pixel Hexagons
 			// TODO: not yet implemented
 
 			// Update rings
 			this.totalRings++;
-			this.nthRing++;
+			this.currentRing++;
 		}
 
 		/* Calculate results */
@@ -174,7 +174,7 @@ public class AxialClockwiseTessellation {
 			this.totalHexagons = (hexSize + gisHexSize) / 2;
 		}
 
-                /* Print tessellation results */
+		/* Print tessellation results */
 		List<String> TESSELLATION_RESULTS = Arrays.asList(
 			"Centroid",
 			"Circumradius",
@@ -188,8 +188,8 @@ public class AxialClockwiseTessellation {
 		int padding = 26;
 		for (int i = 0; i < TESSELLATION_RESULTS.size(); i++) {
 			String result = TESSELLATION_RESULTS.get(i);
-			String value;
 
+			String value;
 			switch(result) {
 				case "Centroid":
 					value = this.rootHexagon.getCentroid().toWKT();
@@ -305,119 +305,118 @@ public class AxialClockwiseTessellation {
 		this.gisHexagons.addAll(neighborGisHexagons.subList(1, 7)); // 7 is exclusive, why? ask Java doc :)
 	}
 
-	private final void populateGisRingN(int nthRing) {
+	private final void populateGisRingN(int currentRing) {
 		/* Validate nthRing */
-		assert nthRing > 1 : "nthRing must be > 1, current nthRing: " + nthRing;
-		assert nthRing < this.requiredRings
-				: String.format("nthRing must be < requiredRings (%s), current nthRing: %s",
-						this.requiredRings, nthRing);
-
-                /*
-                * Calculate latestCornerHexagonIndex and requiredEdgeHexagons
-                * 
-                * --- latestCornerHexagonIndex
-                * only starts when nthRing=2 (Since ring 0 & ring 1 have a different geometric
-                * pattern to tessellate)
-                * 
-                * --- requiredEdgeHexagons
-                * For every hexagon ring after ring 1, the requiredEdgeHexagons to fill the
-                * grid is equal to nthRing - 1
-                */
-		final int latestCornerHexagonIndex = nthRing - 2;
-		final int requiredEdgeHexagons = nthRing - 1;
+		assert currentRing > 1 : "nthRing must be > 1, current nthRing: " + currentRing;
+		assert currentRing < this.requiredRings : String.format("nthRing must be < requiredRings (%s), current nthRing: %s",
+				this.requiredRings, currentRing);
 
 		/*
-		 * Generate Corner Hexagons (1-6),
-		 * 	then for each Corner, 
-		 * 		generate n of Edge Hexagons (where n = requiredEdgeHexagons) 
+		 * Calculate previousCornerHexagonIndex and requiredEdgeHexagons
+		 * 
+		 * --- previousCornerHexagonIndex
+		 * only starts when nthRing=2 (Since ring 0 & ring 1 have a different geometric
+		 * pattern to tessellate)
+		 * 
+		 * --- requiredEdgeHexagons
+		 * For every hexagon ring after ring 1, the requiredEdgeHexagons to fill the
+		 * grid is equal to nthRing - 1
 		 */
-		for (NeighborPosition cornerPosition : NeighborPosition.values()) {
-			// Declare local variables for Corner and Edge hexagons
-			Hexagon latestGisCornerHexagon;
-			Hexagon nextGisCornerHexagon;
+		final int previousCornerHexagonIndex = currentRing - 2;
+		final int requiredEdgeHexagons = currentRing - 1;
+
+		/*
+		 * Generate Corner Hexagons (1-6)
+		 * 		For each Corner, generate n Edge Hexagons (where n = requiredEdgeHexagons) 
+		 */
+		for (NeighborPosition position : NeighborPosition.values()) { // Iterate through all Neighbors Positions
+			// Corner & Edge hexagons variables
+			Hexagon previousCornerHexagon;
+			Hexagon nextCornerHexagon;
 			List<Hexagon> edgeHexagons;
 
-			switch (cornerPosition) {
+			// Assign iterating position to the next cornerHexagonPosition
+			NeighborPosition nextCornerHexagonPosition = position;
+			switch (nextCornerHexagonPosition) {
 				case ZERO:
 					/*
-					 * Skipping position ZERO, since that is just root...
-					 * TODO: We might need to get rid of ZERO :-s
+					 * Skip default position ZERO, only Root Hexagon has position ZERO
 					 */
 					break;
 
 				case ONE:
 					// Get the latestHexagon in Corner List
-					latestGisCornerHexagon = c1GisHexagons.get(latestCornerHexagonIndex); 
+					previousCornerHexagon = c1GisHexagons.get(previousCornerHexagonIndex); 
 
 					// Generate and add nextGisCornerHexagon
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c1GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c1GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
 					// Generate gisEdgeHexagons from Corner Hexagon, Corner Position & requiredEdgeHexagons
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 					
 				case TWO:
-					latestGisCornerHexagon = c2GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c2GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c2GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c2GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case THREE:
-					latestGisCornerHexagon = c3GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c3GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c3GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c3GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FOUR:
-					latestGisCornerHexagon = c4GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c4GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c4GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c4GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FIVE:
-					latestGisCornerHexagon = c5GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c5GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c5GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c5GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case SIX:
-					latestGisCornerHexagon = c6GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c6GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerPosition);
-					c6GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c6GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				default:
 					throw new IllegalStateException(
-							"cornerPosition should never reach this state, current position: "
-							+ cornerPosition);
+							"nextCornerHexagonPosition should never reach this state, current position: "
+							+ nextCornerHexagonPosition);
 			}
 		}
 	}
@@ -431,7 +430,7 @@ public class AxialClockwiseTessellation {
 		assert gisEdgeHexagons.isEmpty():
 			"gisEdgeHexagons List must be empty when initialized, current size: " + gisEdgeHexagons.size();
 
-		/* Determine edgePosition base on cornerPosition */
+		/* Determine edgePosition based on cornerPosition */
 		final NeighborPosition edgePosition;
 		switch(cornerPosition) {
 			case ONE:
@@ -465,7 +464,7 @@ public class AxialClockwiseTessellation {
 		switch (quantity) {
 			case 1:
 				gisEdgeHexagons.add(
-					Neighbors.generateNextGisHexagon(gisCornerHexagon, edgePosition));
+					Neighbors.generateNeighborGisHexagon(gisCornerHexagon, edgePosition));
 
 				return gisEdgeHexagons;
 
@@ -480,12 +479,12 @@ public class AxialClockwiseTessellation {
 					 */
 					if (gisEdgeHexagons.isEmpty()) {
 						gisEdgeHexagons.add(
-							Neighbors.generateNextGisHexagon(gisCornerHexagon, edgePosition));
+							Neighbors.generateNeighborGisHexagon(gisCornerHexagon, edgePosition));
 					} else {
 						// Get previous edge hexagon in List
 						Hexagon previousGisEdgeHexagon = gisEdgeHexagons.get(gisEdgeHexagons.size() - 1);
 
-						Hexagon nextGisEdgeHexagon = Neighbors.generateNextGisHexagon(previousGisEdgeHexagon, edgePosition);
+						Hexagon nextGisEdgeHexagon = Neighbors.generateNeighborGisHexagon(previousGisEdgeHexagon, edgePosition);
 						gisEdgeHexagons.add(nextGisEdgeHexagon);
 					}
 				}
@@ -535,8 +534,10 @@ public class AxialClockwiseTessellation {
 		// this.tessellationDistance = largestBoundaryDistance;
 
 		/*
-		 * Hexagon Minimal Diameter - the distance from a hexagon edge to the 
-		 * opposite edge (basically neighbor distance: 2 * inradius).
+		 * Hexagon Minimal Diameter
+		 * 
+		 * The distance from a hexagon edge to the opposite edge 
+		 * (basically neighbor distance: 2 * inradius).
 		 * 
 		 * Since hexagons tile on edges in Tessellation, this is the coverage 
 		 * length of a single hexagon in a grid map.
@@ -547,9 +548,9 @@ public class AxialClockwiseTessellation {
 		 * --- PROBLEM
 		 * However, keep in mind that the Grid itself is Hexagon-shaped!
 		 * Therefore, it inherits all the geometric properties of a hexagon as the followings:
-		 * - Centroid		: the Central Hexagon of the grid.
-		 * - Circumradius	: the sum of the Minimal Diameters from Central Hexagon to the outer-most Corner Hexagon.
-		 * - Inradius		: can be calculated with: r = R * √3/2
+		 * - Hexagon Grid Centroid			: the Central Hexagon of the grid.
+		 * - Hexagon Grid Circumradius (R)	: the sum of the Minimal Diameters from Central Hexagon to the outer-most Corner Hexagon.
+		 * - Hexagon Grid Inradius (r)		: can be calculated with: r = R * √3/2
 		 * 
 		 * Because our Grid is hexagon-shaped, and a hexagon has 2 radiuses, therefore, 
 		 * our grid will always cover less boundary distance at where the Edge Hexagons are 
@@ -565,8 +566,8 @@ public class AxialClockwiseTessellation {
 		 * - because: Circumradius > Inradius
 		 *  
 		 * To solve this, we will CONSIDER the largestBoundaryDistance to be the Inradius of the grid - 
-		 * which is the MINIMUM DISTANCE that the grid has to be able to COVER! 
-		 * Previously, we considered  it to be the Circumradius of the grid - which is the 
+		 * which is the MINIMUM DISTANCE that the grid has to be ABLE TO COVER! 
+		 * Previously, we considered it to be the Circumradius of the grid - which is the 
 		 * MAXIMUM DISTANCE that the grid can cover. 
 		 * 
 		 * Now, given that the largestBoundaryDistance is the Inradius of the tessellation,
@@ -615,7 +616,7 @@ public class AxialClockwiseTessellation {
 	private final void resetRings() {
 		totalRings = 0;
 		requiredRings = 0;
-		nthRing = 0;
+		currentRing = 0;
 	}
 
 	private final void clearCornerHexagons() {

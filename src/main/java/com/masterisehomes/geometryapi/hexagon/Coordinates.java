@@ -12,8 +12,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Coordinates implements Serializable {
-	@ToString.Exclude private double x;
-	@ToString.Exclude private double y;
+	@ToString.Exclude private transient double x;
+	@ToString.Exclude private transient double y;
 	private double longitude;
 	private double latitude;
 
@@ -109,7 +109,7 @@ public class Coordinates implements Serializable {
 	 * GeoJSON describes an order for coordinates: they should go, in order:
 	 * [longitude, latitude, elevation]
 	 */
-	public final List<Double> toGeoJSON() {
+	public final List<Double> toGeoJsonPosition() {
 		/*
 		 * The order of elements must follow x, y, z order
 		 * 
@@ -118,8 +118,8 @@ public class Coordinates implements Serializable {
 		 * - or longitude, latitude, altitude for coordinates in a geographic coordinate
 		 * reference system.
 		 */
-		final List<Double> geoJsonCoordinates = Arrays.asList(longitude, latitude);
-		return geoJsonCoordinates;
+		final List<Double> positionCoordinates = Arrays.asList(longitude, latitude);
+		return positionCoordinates;
 	}
 
 	public final List<Double> toPixel() {

@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto;
+import com.masterisehomes.geometryapi.tessellation.CornerEdgeTessellation;
 
 @ToString
 public class GeoJsonManager {
@@ -17,44 +17,39 @@ public class GeoJsonManager {
 	public GeoJsonManager(Hexagon hexagon) {
 		Feature feature = new Feature(new PolygonGeometry(hexagon));
 
-		feature.addProperty("id", 0);
 		feature.addProperty("ccid", hexagon.getCCI());
-		feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-		feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+		feature.addProperty("centroid", hexagon.getCentroid());
 		feature.addProperty("circumradius", hexagon.getCircumradius());
+		feature.addProperty("inradius", hexagon.getInradius());
 
 		this.featureCollection.addFeature(feature);
 	}
 
 	public GeoJsonManager(Neighbors neighbors) {
-		List<Hexagon> gisHexagons = neighbors.getGisHexagons();
+		List<Hexagon> neighborsHexagons = neighbors.getGisHexagons();
 
-		for (int i = 0; i < gisHexagons.size(); i++) {
-			Hexagon hexagon = gisHexagons.get(i);
-
+		for (Hexagon hexagon : neighborsHexagons) {
 			Feature feature = new Feature(new PolygonGeometry(hexagon));
-			feature.addProperty("id", i);
+
 			feature.addProperty("ccid", hexagon.getCCI());
-			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-			feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+			feature.addProperty("centroid", hexagon.getCentroid());
 			feature.addProperty("circumradius", hexagon.getCircumradius());
+			feature.addProperty("inradius", hexagon.getInradius());
 
 			this.featureCollection.addFeature(feature);
 		};
 	}
 
-	public GeoJsonManager(AxialClockwiseTessellationDto dto) {
-		final List<Hexagon> gisHexagons = dto.getGisHexagons();
+	public GeoJsonManager(CornerEdgeTessellation tessellation) {
+		final List<Hexagon> tessellationHexagons = tessellation.getGisHexagons();
 
-		for (int i = 0; i < gisHexagons.size(); i++) {
-			Hexagon hexagon = gisHexagons.get(i);
-
+		for (Hexagon hexagon : tessellationHexagons) {
 			Feature feature = new Feature(new PolygonGeometry(hexagon));
-			feature.addProperty("id", i);
+
 			feature.addProperty("ccid", hexagon.getCCI());
-			feature.addProperty("latitude", hexagon.getCentroid().getLatitude());
-			feature.addProperty("longitude", hexagon.getCentroid().getLongitude());
+			feature.addProperty("centroid", hexagon.getCentroid());
 			feature.addProperty("circumradius", hexagon.getCircumradius());
+			feature.addProperty("inradius", hexagon.getInradius());
 
 			this.featureCollection.addFeature(feature);
 		};

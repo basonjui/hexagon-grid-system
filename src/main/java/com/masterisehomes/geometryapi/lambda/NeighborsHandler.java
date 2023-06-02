@@ -29,7 +29,6 @@ public class NeighborsHandler implements RequestHandler<Map<String, Object>, Str
 
 		// Parse event map to DTO to extract and store data
 		NeighborsDto dto = new NeighborsDto(event);
-
 		GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
 
 		return gson.toJson(manager.getFeatureCollection());

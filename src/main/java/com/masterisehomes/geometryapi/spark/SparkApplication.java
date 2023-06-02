@@ -11,8 +11,8 @@ import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
 
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation;
-import com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellationDto;
+import com.masterisehomes.geometryapi.tessellation.CornerEdgeTessellation;
+import com.masterisehomes.geometryapi.tessellation.CornerEdgeTessellationDto;
 
 import com.masterisehomes.geometryapi.utils.JVMUtils;
 
@@ -29,10 +29,10 @@ public class SparkApplication {
 				new Coordinates(102.133333, 8.033333),
 				new Coordinates(109.466667, 23.383333));
 
-		final AxialClockwiseTessellation tessellation = new AxialClockwiseTessellation(hexagon);
+		final CornerEdgeTessellation tessellation = new CornerEdgeTessellation(hexagon);
 		tessellation.tessellate(boundary);
 
-		final AxialClockwiseTessellationDto dto = new AxialClockwiseTessellationDto(tessellation);
+		final CornerEdgeTessellationDto dto = new CornerEdgeTessellationDto(tessellation);
 
 		Encoder<Hexagon> hexagonEncoder = Encoders.bean(Hexagon.class);
 		Dataset<Hexagon> ds = spark.createDataset(dto.getGisHexagons(), hexagonEncoder);
