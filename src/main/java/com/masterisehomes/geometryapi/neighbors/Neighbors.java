@@ -181,50 +181,49 @@ public class Neighbors {
 		}
 	}
 
-	public static final Hexagon generateNextGisHexagon(Hexagon previousHexagon, NeighborPosition position) {
-		// Get rootHexagon's centroid & inradius
-		final Coordinates previousCentroid = previousHexagon.getCentroid();
-		final double previousInradius = previousHexagon.getInradius();
+	public static final Hexagon generateNeighborGisHexagon(Hexagon parentHexagon, NeighborPosition position) {
+		// Get parentHexagon's centroid & inradius
+		final Coordinates parentCentroid = parentHexagon.getCentroid();
+		final double parentInradius = parentHexagon.getInradius();
 		
-		final Coordinates nextGisCentroid;
-		final Hexagon nextGisHexagon;
-
+		final Coordinates neighborGisCentroid;
+		final Hexagon neighborGisHexagon;
 		switch (position) {
 			case ONE:
-				nextGisCentroid = generateP1GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP1GisCentroid(parentCentroid, parentInradius);
 
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case TWO:
-				nextGisCentroid = generateP2GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP2GisCentroid(parentCentroid, parentInradius);
 
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case THREE:
-				nextGisCentroid = generateP3GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP3GisCentroid(parentCentroid, parentInradius);
 
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case FOUR:
-				nextGisCentroid = generateP4GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP4GisCentroid(parentCentroid, parentInradius);
 
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case FIVE:
-				nextGisCentroid = generateP5GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP5GisCentroid(parentCentroid, parentInradius);
 
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case SIX:
-				nextGisCentroid = generateP6GisCentroid(previousCentroid, previousInradius);
+				neighborGisCentroid = generateP6GisCentroid(parentCentroid, parentInradius);
 				
-				nextGisHexagon = new Hexagon(nextGisCentroid, previousHexagon, position);
-				return nextGisHexagon;
+				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				return neighborGisHexagon;
 
 			case ZERO:
 			default: {
@@ -425,7 +424,7 @@ public class Neighbors {
 		final double centroidLat = rootHexagon.getCentroid().getLatitude();
 		final double inradius = rootHexagon.getInradius();
 
-		/* Convert inradius (which is currently in Meter unit) to Degrees unit */
+		/* Convert inradius (which is currently in Meter unit) to Degree unit */
 		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius); // x
 		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
 

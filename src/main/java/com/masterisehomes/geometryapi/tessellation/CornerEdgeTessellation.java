@@ -312,9 +312,9 @@ public class CornerEdgeTessellation {
 				this.requiredRings, currentRing);
 
 		/*
-		 * Calculate latestCornerHexagonIndex and requiredEdgeHexagons
+		 * Calculate previousCornerHexagonIndex and requiredEdgeHexagons
 		 * 
-		 * --- latestCornerHexagonIndex
+		 * --- previousCornerHexagonIndex
 		 * only starts when nthRing=2 (Since ring 0 & ring 1 have a different geometric
 		 * pattern to tessellate)
 		 * 
@@ -322,101 +322,101 @@ public class CornerEdgeTessellation {
 		 * For every hexagon ring after ring 1, the requiredEdgeHexagons to fill the
 		 * grid is equal to nthRing - 1
 		 */
-		final int latestCornerHexagonIndex = currentRing - 2;
+		final int previousCornerHexagonIndex = currentRing - 2;
 		final int requiredEdgeHexagons = currentRing - 1;
 
 		/*
-		 * Generate Corner Hexagons (1-6),
-		 * 	then for each Corner, 
-		 * 		generate n of Edge Hexagons (where n = requiredEdgeHexagons) 
+		 * Generate Corner Hexagons (1-6)
+		 * 		For each Corner, generate n Edge Hexagons (where n = requiredEdgeHexagons) 
 		 */
-		for (NeighborPosition cornerHexagonPosition : NeighborPosition.values()) {
-			// Declare local variables for Corner and Edge hexagons
-			Hexagon latestGisCornerHexagon;
-			Hexagon nextGisCornerHexagon;
+		for (NeighborPosition position : NeighborPosition.values()) { // Iterate through all Neighbors Positions
+			// Corner & Edge hexagons variables
+			Hexagon previousCornerHexagon;
+			Hexagon nextCornerHexagon;
 			List<Hexagon> edgeHexagons;
 
-			switch (cornerHexagonPosition) {
+			// Assign iterating position to the next cornerHexagonPosition
+			NeighborPosition nextCornerHexagonPosition = position;
+			switch (nextCornerHexagonPosition) {
 				case ZERO:
 					/*
-					 * Skipping position ZERO, since that is just root...
-					 * TODO: We might need to get rid of ZERO :-s
+					 * Skip default position ZERO, only Root Hexagon has position ZERO
 					 */
 					break;
 
 				case ONE:
 					// Get the latestHexagon in Corner List
-					latestGisCornerHexagon = c1GisHexagons.get(latestCornerHexagonIndex); 
+					previousCornerHexagon = c1GisHexagons.get(previousCornerHexagonIndex); 
 
 					// Generate and add nextGisCornerHexagon
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c1GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c1GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
 					// Generate gisEdgeHexagons from Corner Hexagon, Corner Position & requiredEdgeHexagons
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 					
 				case TWO:
-					latestGisCornerHexagon = c2GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c2GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c2GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c2GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case THREE:
-					latestGisCornerHexagon = c3GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c3GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c3GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c3GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FOUR:
-					latestGisCornerHexagon = c4GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c4GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c4GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c4GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case FIVE:
-					latestGisCornerHexagon = c5GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c5GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c5GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c5GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				case SIX:
-					latestGisCornerHexagon = c6GisHexagons.get(latestCornerHexagonIndex);
+					previousCornerHexagon = c6GisHexagons.get(previousCornerHexagonIndex);
 
-					nextGisCornerHexagon = Neighbors.generateNextGisHexagon(latestGisCornerHexagon, cornerHexagonPosition);
-					c6GisHexagons.add(nextGisCornerHexagon);
-					gisHexagons.add(nextGisCornerHexagon);
+					nextCornerHexagon = Neighbors.generateNeighborGisHexagon(previousCornerHexagon, nextCornerHexagonPosition);
+					c6GisHexagons.add(nextCornerHexagon);
+					gisHexagons.add(nextCornerHexagon);
 
-					edgeHexagons = generateGisEdgeHexagons(nextGisCornerHexagon, cornerHexagonPosition, requiredEdgeHexagons);
+					edgeHexagons = generateGisEdgeHexagons(nextCornerHexagon, nextCornerHexagonPosition, requiredEdgeHexagons);
 					gisHexagons.addAll(edgeHexagons);
 					break;
 
 				default:
 					throw new IllegalStateException(
-							"cornerPosition should never reach this state, current position: "
-							+ cornerHexagonPosition);
+							"nextCornerHexagonPosition should never reach this state, current position: "
+							+ nextCornerHexagonPosition);
 			}
 		}
 	}
@@ -464,7 +464,7 @@ public class CornerEdgeTessellation {
 		switch (quantity) {
 			case 1:
 				gisEdgeHexagons.add(
-					Neighbors.generateNextGisHexagon(gisCornerHexagon, edgePosition));
+					Neighbors.generateNeighborGisHexagon(gisCornerHexagon, edgePosition));
 
 				return gisEdgeHexagons;
 
@@ -479,12 +479,12 @@ public class CornerEdgeTessellation {
 					 */
 					if (gisEdgeHexagons.isEmpty()) {
 						gisEdgeHexagons.add(
-							Neighbors.generateNextGisHexagon(gisCornerHexagon, edgePosition));
+							Neighbors.generateNeighborGisHexagon(gisCornerHexagon, edgePosition));
 					} else {
 						// Get previous edge hexagon in List
 						Hexagon previousGisEdgeHexagon = gisEdgeHexagons.get(gisEdgeHexagons.size() - 1);
 
-						Hexagon nextGisEdgeHexagon = Neighbors.generateNextGisHexagon(previousGisEdgeHexagon, edgePosition);
+						Hexagon nextGisEdgeHexagon = Neighbors.generateNeighborGisHexagon(previousGisEdgeHexagon, edgePosition);
 						gisEdgeHexagons.add(nextGisEdgeHexagon);
 					}
 				}
