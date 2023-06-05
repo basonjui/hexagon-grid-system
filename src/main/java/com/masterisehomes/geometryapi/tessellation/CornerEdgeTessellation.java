@@ -157,8 +157,8 @@ public class CornerEdgeTessellation {
 			// TODO: not yet implemented
 
 			// Update rings
-			this.totalRings++;
 			this.currentRing++;
+			this.totalRings++;
 		}
 
 		/* Calculate results */

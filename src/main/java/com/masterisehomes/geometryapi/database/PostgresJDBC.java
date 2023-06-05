@@ -120,44 +120,47 @@ public class PostgresJDBC {
         }
 
         public final void batchInsertTessellation(String tableName, CornerEdgeTessellation tessellation) {
+                // Get hexagons
+                final List<Hexagon> hexagons = tessellation.getGisHexagons();
 
-                /* Tessellation data */
-                final List<Hexagon> gisHexagons = tessellation.getGisHexagons();
-                final int TOTAL_HEXAGONS = gisHexagons.size();
+                // Prepare SQL
+                final String insertTessellationQuery = String.format("""
+                                INSERT INTO %s (ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry)
+                                VALUES (?,
+                                        ?,
+                                        ?,
+                                        ?,
+                                        ST_SetSRID(ST_MakePoint(?, ?), 4326),
+                                        ST_SetSRID(ST_MakePolygon(ST_MakeLine(ARRAY[
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?),
+                                                        ST_MakePoint(?, ?)
+                                                ])), 4326));
+                                """, tableName);
 
-                final String INSERT_SQL_TEMPLATE = "INSERT INTO " + tableName + " "
-                                + "(ccid_q, ccid_r, ccid_s, circumradius, centroid, geometry)" + " "
-                                + String.format("VALUES (%s, %s, %s, %s, %s, %s);",
-                                                "?",
-                                                "?",
-                                                "?",
-                                                "?",
-                                                "ST_SetSRID(ST_MakePoint(?, ?), 4326)",
-                                                "ST_SetSRID(ST_MakePolygon(ST_MakeLine(ARRAY["
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?), "
-                                                                + "ST_MakePoint(?, ?)])), 4326)");
-
+                // Prepare dynamic queries to insert Hexagons to PostGIS
                 try (Connection connection = getConnection();
-                                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL_TEMPLATE)) {
-
-                        /* Set autocommit off */
+                                PreparedStatement preparedStatement = connection
+                                                .prepareStatement(insertTessellationQuery)) {
+                        // Set autocommit off
                         connection.setAutoCommit(false);
 
-                        /* JDBC batch configurations */
+                        // JDBC batch configurations
+                        final int BATCH_SIZE_LIMIT = 5000;
+
+                        // Counters
                         int batchCount = 0;
                         int batchExecutionCount = 0;
-                        final int BATCH_SIZE = 10000;
 
-                        /* Start time of batch execution */
+                        // Start time
                         System.out.println("--- Batch execution begin..");
                         final long startTime = System.currentTimeMillis();
 
-                        for (Hexagon hexagon : gisHexagons) {
+                        for (Hexagon hexagon : hexagons) {
                                 CubeCoordinatesIndex cci = hexagon.getCCI();
                                 preparedStatement.setInt(1, cci.getQ());
                                 preparedStatement.setInt(2, cci.getR());
@@ -192,18 +195,16 @@ public class PostgresJDBC {
                                 preparedStatement.setDouble(19, gisVertices.get(6).getLongitude());
                                 preparedStatement.setDouble(20, gisVertices.get(6).getLatitude());
 
-                                // Add INSERT statement into JDBC batch
+                                // Add statement into batch
                                 preparedStatement.addBatch();
-
-                                // Count total batches added
                                 batchCount++;
 
                                 // Commit to DB every BATCH_SIZE (default: 1000)
-                                if (batchCount % BATCH_SIZE == 0) {
+                                if (batchCount % BATCH_SIZE_LIMIT == 0) {
                                         try {
                                                 preparedStatement.executeBatch();
                                                 connection.commit();
-                                                batchExecutionCount++; // update batchExecutionCount
+                                                batchExecutionCount++;
                                                 System.out.println("- Batch " + batchExecutionCount + "th.");
                                         } catch (SQLException e) {
                                                 connection.rollback();
@@ -213,7 +214,8 @@ public class PostgresJDBC {
                         }
 
                         /*
-                         * Set auto-commit back to normal and execute left over batches (batch amount < JDBC_BATCH_LIMIT)
+                         * Set auto-commit back to normal and execute left over batches (batch amount <
+                         * JDBC_BATCH_LIMIT)
                          */
                         connection.setAutoCommit(true);
                         preparedStatement.executeBatch();
@@ -229,10 +231,10 @@ public class PostgresJDBC {
 
                         System.out.println("\n------ Batch insert results ------");
                         System.out.println("Table name             : " + tableName);
-                        System.out.println("Total hexagons         : " + TOTAL_HEXAGONS);
+                        System.out.println("Total hexagons         : " + hexagons.size());
                         System.out.println("Total batch executions : " + batchExecutionCount);
                         System.out.println("Elapsed time           : " + elapsedSeconds + " s");
-                        System.out.println("Hexagons per batch     : " + BATCH_SIZE);
+                        System.out.println("Hexagons per batch     : " + BATCH_SIZE_LIMIT);
                         System.out.println("Hexagons inserted      : " + batchCount);
 
                 } catch (BatchUpdateException batchUpdateException) {
@@ -280,7 +282,7 @@ public class PostgresJDBC {
         }
 
         public static void printBatchUpdateException(BatchUpdateException b) {
-                System.err.println("--- BatchUpdateException:");
+                System.err.println("--- BatchUpdateException");
                 System.err.println("SQLState: \t" + b.getSQLState());
                 System.err.println("Message: \t" + b.getMessage());
                 System.err.println("Vendor: \t" + b.getErrorCode());
@@ -468,7 +470,7 @@ public class PostgresJDBC {
 
 
                 // Tessellation configurations
-                final int circumradius = 5000;
+                final int circumradius = 2500;
                 final Coordinates centroid = vn_centroid_internal;
                 final Boundary boundary = vn_boundary_internal;
 
@@ -487,12 +489,12 @@ public class PostgresJDBC {
                                 circumradius);
                 System.out.println("Table name: " + table_name);
 
-                // pg.createTessellationTable(table_name);
-                // pg.batchInsertTessellation(table_name, tessellation);
-                // pg.addPrimaryKeyIfNotExists(table_name);
+                pg.createTessellationTable(table_name);
+                pg.batchInsertTessellation(table_name, tessellation);
+                pg.addPrimaryKeyIfNotExists(table_name);
                 JVMUtils.printMemoryUsages("MB");
 
                 // Test query
-                // pg.testQuery(table_name, 5);
+                pg.testQuery(table_name, 5);
         }
 }
