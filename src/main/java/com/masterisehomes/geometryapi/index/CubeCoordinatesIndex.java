@@ -24,10 +24,15 @@ public class CubeCoordinatesIndex implements Serializable {
 		 */
 		switch (position) {
 			case ZERO:
-				assert previousCCI == null : "Expect previousCCI to be null, currently: " + previousCCI;
-				this.q = 0;
-				this.r = 0;
-				this.s = 0;
+				// Position ZERO is ONLY acceptable when previousCCI == null
+				if (previousCCI == null) {
+					this.q = 0;
+					this.r = 0;
+					this.s = 0;
+				} else {
+					throw new IllegalArgumentException(
+							"Expect previousCCI to be null, currently: " + previousCCI);
+				}
 				break;
 
 			case ONE:

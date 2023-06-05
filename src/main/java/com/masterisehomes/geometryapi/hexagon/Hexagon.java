@@ -17,16 +17,16 @@ import com.masterisehomes.geometryapi.neighbors.NeighborPosition;
 @Setter
 @ToString
 public class Hexagon implements Serializable {
-	private Coordinates centroid;
-	private double circumradius;
-	private double inradius;
+	private final Coordinates centroid;
+	private final double circumradius;
+	private final double inradius;
 
-	private List<Coordinates> vertices;
-	private List<Coordinates> gisVertices;
+	// private List<Coordinates> vertices;
+	private final List<Coordinates> gisVertices;
 
-	private NeighborPosition position;
-	private CubeCoordinatesIndex previousCCI;
-	private CubeCoordinatesIndex CCI;
+	private final NeighborPosition position;
+	private final CubeCoordinatesIndex previousCCI;
+	private final CubeCoordinatesIndex CCI;
 
 	private final static double SQRT_3 = Math.sqrt(3);
 
@@ -44,36 +44,27 @@ public class Hexagon implements Serializable {
 		this.CCI = new CubeCoordinatesIndex(previousCCI, position);
 	}
 
-	// Construct a new Hexagon adjacent to parentHexagon in the respective NeighborPosition
-	public Hexagon(Coordinates centroid, Hexagon parentHexagon, NeighborPosition position) {
+	// Construct a new Hexagon adjacent to previousHexagon in the respective NeighborPosition
+	public Hexagon(Hexagon previousHexagon, Coordinates centroid, NeighborPosition position) {
 		this.centroid = centroid;
-		this.circumradius = parentHexagon.getCircumradius();
-		this.inradius = this.circumradius * SQRT_3 / 2;
-
+		this.circumradius = previousHexagon.getCircumradius();
+		this.inradius = circumradius * SQRT_3 / 2;
 		// this.vertices = generateVertices(centroid);
 		this.gisVertices = generateGisVertices(centroid);
 
-		// Check position of hexagon, should never be null
-		if (position == null) {
-			throw new IllegalArgumentException(
-				String.format("""
-					Position cannot be null, hexagon with %s has position=%s
-				""", CCI, position));
+		// Check position of hexagon, should never be null or ZERO
+		if (position == null || position == NeighborPosition.ZERO) {
+			String errMsg = """
+					Hexagon position argument cannot be null or ZERO. Provided arguments:
+					previousHexagon=%s, centroid=%s, position=%s
+					""";
+			throw new IllegalArgumentException(String.format(errMsg, previousHexagon, centroid, position));
 		}
-
-		switch (position) {
-			case ZERO:
-				this.position = position;
-				this.previousCCI = null;
-				break;
-
-			default:
-				this.position = position;
-				this.previousCCI = parentHexagon.getCCI();
-				break;
-		}
-
-		this.CCI = new CubeCoordinatesIndex(this.previousCCI, position);
+		
+		this.position = position;
+		this.previousCCI = previousHexagon.getCCI();
+		// Calculate new Hexagon CCI
+		this.CCI = new CubeCoordinatesIndex(previousCCI, position);
 	}
 
 	/* Methods */
@@ -88,16 +79,15 @@ public class Hexagon implements Serializable {
 		 * 5   .   2
 		 *   4   3
 		 */
-		List<Coordinates> coordinates = new ArrayList<Coordinates>();
+		List<Coordinates> vertices = new ArrayList<Coordinates>();
+		vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY - inradius));
+		vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY - inradius));
+		vertices.add(new Coordinates(centroidX + circumradius, centroidY));
+		vertices.add(new Coordinates(centroidX + circumradius / 2, centroidY + inradius));
+		vertices.add(new Coordinates(centroidX - circumradius / 2, centroidY + inradius));
+		vertices.add(new Coordinates(centroidX - circumradius, centroidY));
 
-		coordinates.add(new Coordinates(centroidX - circumradius / 2, centroidY - inradius));
-		coordinates.add(new Coordinates(centroidX + circumradius / 2, centroidY - inradius));
-		coordinates.add(new Coordinates(centroidX + circumradius, centroidY));
-		coordinates.add(new Coordinates(centroidX + circumradius / 2, centroidY + inradius));
-		coordinates.add(new Coordinates(centroidX - circumradius / 2, centroidY + inradius));
-		coordinates.add(new Coordinates(centroidX - circumradius, centroidY));
-
-		return coordinates;
+		return vertices;
 	}
 
 	private List<Coordinates> generateGisVertices(Coordinates centroid) {
@@ -119,16 +109,16 @@ public class Hexagon implements Serializable {
 		 * - The first and last positions are equivalent, and they MUST contain
 		 * identical values; their representation SHOULD also be identical.
 		 */
-		final List<Coordinates> gisCoordinates = new ArrayList<Coordinates>();
-		gisCoordinates.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat - inradiusLat));
-		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat - inradiusLat));
-		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng, centroidLat));
-		gisCoordinates.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat + inradiusLat));
-		gisCoordinates.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat + inradiusLat));
-		gisCoordinates.add(new Coordinates(centroidLng - circumradiusLng, centroidLat));
-		// Closing coordinate in GeoJSON, it is the same as first vertex, which is indexed 0
-		gisCoordinates.add(gisCoordinates.get(0));
+		final List<Coordinates> gisVertices = new ArrayList<Coordinates>();
+		gisVertices.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat - inradiusLat));
+		gisVertices.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat - inradiusLat));
+		gisVertices.add(new Coordinates(centroidLng + circumradiusLng, centroidLat));
+		gisVertices.add(new Coordinates(centroidLng + circumradiusLng / 2, centroidLat + inradiusLat));
+		gisVertices.add(new Coordinates(centroidLng - circumradiusLng / 2, centroidLat + inradiusLat));
+		gisVertices.add(new Coordinates(centroidLng - circumradiusLng, centroidLat));
+		// Closing coordinate in GeoJSON, it is the same as first vertex, which is index 0
+		gisVertices.add(gisVertices.get(0));
 
-		return gisCoordinates;
+		return gisVertices;
 	}
 }
