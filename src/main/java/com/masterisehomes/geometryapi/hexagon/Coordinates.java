@@ -14,8 +14,8 @@ import lombok.ToString;
 public class Coordinates implements Serializable {
 	@ToString.Exclude private transient double x;
 	@ToString.Exclude private transient double y;
-	private double longitude;
-	private double latitude;
+	private final double longitude;
+	private final double latitude;
 
 	/* Constructors */
 	public Coordinates(double longitude, double latitude) {

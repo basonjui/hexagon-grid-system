@@ -15,11 +15,11 @@ import lombok.ToString;
 public class Neighbors {
 	/* Fields */
 	@Getter
-	private Hexagon rootHexagon;
+	private final Hexagon rootHexagon;
 	@Getter
-	private List<Coordinates> centroids, gisCentroids;
+	private final List<Coordinates> centroids, gisCentroids;
 	@Getter
-	private List<Hexagon> hexagons, gisHexagons;
+	private final List<Hexagon> hexagons, gisHexagons;
 
 	/* Constants */
 	private static final double COS_30_DEG = Math.cos(Math.toRadians(30));
@@ -29,9 +29,9 @@ public class Neighbors {
 	public Neighbors(Hexagon rootHexagon) {
 		this.rootHexagon = rootHexagon;
 		this.centroids = generateCentroids(rootHexagon);
-		this.hexagons = generateHexagons(this.centroids);
 		this.gisCentroids = generateGisCentroids(rootHexagon);
-		this.gisHexagons = generateGisHexagons(this.gisCentroids);
+		this.hexagons = generateHexagons(centroids);
+		this.gisHexagons = generateGisHexagons(gisCentroids);
 	}
 
 	/* Public methods */
@@ -140,37 +140,37 @@ public class Neighbors {
 			case ONE:
 				nextCentroid = generateP1Centroid(previousCentroid, previousInradius);
 
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case TWO:
 				nextCentroid = generateP2Centroid(previousCentroid, previousInradius);
 
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case THREE:
 				nextCentroid = generateP3Centroid(previousCentroid, previousInradius);
 
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case FOUR:
 				nextCentroid = generateP4Centroid(previousCentroid, previousInradius);
 
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case FIVE:
 				nextCentroid = generateP5Centroid(previousCentroid, previousInradius);
 
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case SIX:
 				nextCentroid = generateP6Centroid(previousCentroid, previousInradius);
 				
-				nextHexagon = new Hexagon(nextCentroid, previousHexagon, position);
+				nextHexagon = new Hexagon(previousHexagon, nextCentroid, position);
 				return nextHexagon;
 
 			case ZERO:
@@ -181,48 +181,42 @@ public class Neighbors {
 		}
 	}
 
-	public static final Hexagon generateNeighborGisHexagon(Hexagon parentHexagon, NeighborPosition position) {
+	public static final Hexagon generateNeighborGisHexagon(Hexagon previousHexagon, NeighborPosition position) {
 		// Get parentHexagon's centroid & inradius
-		final Coordinates parentCentroid = parentHexagon.getCentroid();
-		final double parentInradius = parentHexagon.getInradius();
+		final Coordinates previousCentroid = previousHexagon.getCentroid();
+		final double inradius = previousHexagon.getInradius();
 		
 		final Coordinates neighborGisCentroid;
 		final Hexagon neighborGisHexagon;
 		switch (position) {
 			case ONE:
-				neighborGisCentroid = generateP1GisCentroid(parentCentroid, parentInradius);
-
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP1GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case TWO:
-				neighborGisCentroid = generateP2GisCentroid(parentCentroid, parentInradius);
-
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP2GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case THREE:
-				neighborGisCentroid = generateP3GisCentroid(parentCentroid, parentInradius);
-
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP3GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case FOUR:
-				neighborGisCentroid = generateP4GisCentroid(parentCentroid, parentInradius);
-
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP4GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case FIVE:
-				neighborGisCentroid = generateP5GisCentroid(parentCentroid, parentInradius);
-
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP5GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case SIX:
-				neighborGisCentroid = generateP6GisCentroid(parentCentroid, parentInradius);
-				
-				neighborGisHexagon = new Hexagon(neighborGisCentroid, parentHexagon, position);
+				neighborGisCentroid = generateP6GisCentroid(previousCentroid, inradius);
+				neighborGisHexagon = new Hexagon(previousHexagon, neighborGisCentroid, position);
 				return neighborGisHexagon;
 
 			case ZERO:
@@ -376,8 +370,8 @@ public class Neighbors {
 		 * 5\___/3
 		 *    4
 		 * 
-		 * *Update:
-		 * - Neighbors will now include the centroids of rootHexagon
+		 * --- Update:
+		 * Neighbors will now include the centroids of rootHexagon
 		 * which is at key 0 in centroids hashmap.
 		 * 
 		 * We calculate neighbor coordinates using their relationship to Hexagon
@@ -420,18 +414,21 @@ public class Neighbors {
 	}
 
 	private List<Coordinates> generateGisCentroids(Hexagon rootHexagon) {
+		// Get rootHexagon data
+		final Coordinates centroid = rootHexagon.getCentroid();
 		final double centroidLng = rootHexagon.getCentroid().getLongitude();
 		final double centroidLat = rootHexagon.getCentroid().getLatitude();
 		final double inradius = rootHexagon.getInradius();
 
 		/* Convert inradius (which is currently in Meter unit) to Degree unit */
-		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius); // x
-		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius); // y
+		final double inradiusLng = SphericalMercatorProjection.xToLongitude(inradius);	// x
+		final double inradiusLat = SphericalMercatorProjection.yToLatitude(inradius);	// y
 
 		/* Generate gisCentroids 0 - 6 and add to List */
 		List<Coordinates> gisCentroids = new ArrayList<Coordinates>();
+
 		// Root hexagon
-		gisCentroids.add(0, rootHexagon.getCentroid());
+		gisCentroids.add(0, centroid);
 
 		// Neighbors
 		gisCentroids.add(1, new Coordinates(
@@ -472,30 +469,30 @@ public class Neighbors {
 			 */
 			switch (i) {
 				case 0:
-					hexagons.add(this.rootHexagon);
+					hexagons.add(rootHexagon);
 					break;
 				case 1:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.ONE));
 					break;
 				case 2:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.TWO));
 					break;
 				case 3:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.THREE));
 					break;
 				case 4:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.FOUR));
 					break;
 				case 5:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.FIVE));
 					break;
 				case 6:
-					hexagons.add(new Hexagon(centroids.get(i), this.rootHexagon,
+					hexagons.add(new Hexagon(rootHexagon, centroids.get(i),
 							NeighborPosition.SIX));
 					break;
 				default:
@@ -512,34 +509,36 @@ public class Neighbors {
 		List<Hexagon> gisHexagons = new ArrayList<Hexagon>();
 
 		for (int i = 0; i < gisCentroids.size(); i++) {
-			// We use switch - case statement on key of gisCentroids Map to determine
-			// HexagonDirection
+			// Get gisCentroid by index
+			Coordinates gisCentroid = gisCentroids.get(i);
+
+			// We use switch - case statement on key of gisCentroids Map to determine position
 			switch (i) {
 				case 0:
-					gisHexagons.add(this.rootHexagon);
+					gisHexagons.add(rootHexagon);
 					break;
 				case 1:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.ONE));
 					break;
 				case 2:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.TWO));
 					break;
 				case 3:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.THREE));
 					break;
 				case 4:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.FOUR));
 					break;
 				case 5:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.FIVE));
 					break;
 				case 6:
-					gisHexagons.add(new Hexagon(gisCentroids.get(i), this.rootHexagon,
+					gisHexagons.add(new Hexagon(rootHexagon, gisCentroid,
 							NeighborPosition.SIX));
 					break;
 				default:

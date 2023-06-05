@@ -326,8 +326,8 @@ public class CornerEdgeTessellation {
 		final int requiredEdgeHexagons = currentRing - 1;
 
 		/*
-		 * Generate Corner Hexagons (1-6)
-		 * 		For each Corner, generate n Edge Hexagons (where n = requiredEdgeHexagons) 
+		 * --- Generate Corner Hexagons (1-6)
+		 * For each Corner, generate n Edge Hexagons (where n = requiredEdgeHexagons) 
 		 */
 		for (NeighborPosition position : NeighborPosition.values()) { // Iterate through all Neighbors Positions
 			// Corner & Edge hexagons variables
