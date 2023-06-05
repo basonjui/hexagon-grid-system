@@ -11,16 +11,11 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.spark.sql.catalyst.parser.SqlBaseParser.AddTableColumnsContext;
-
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.ToString;
 
 import com.masterisehomes.geometryapi.index.CubeCoordinatesIndex;
-import com.masterisehomes.geometryapi.neighbors.Neighbors;
-import com.google.gson.Gson;
-import com.masterisehomes.geometryapi.geojson.GeoJsonManager;
 import com.masterisehomes.geometryapi.hexagon.Coordinates;
 import com.masterisehomes.geometryapi.hexagon.Hexagon;
 import com.masterisehomes.geometryapi.tessellation.Boundary;
@@ -492,20 +487,12 @@ public class PostgresJDBC {
                                 circumradius);
                 System.out.println("Table name: " + table_name);
 
-                pg.createTessellationTable(table_name);
-                pg.batchInsertTessellation(table_name, tessellation);
-                pg.addPrimaryKeyIfNotExists(table_name);
+                // pg.createTessellationTable(table_name);
+                // pg.batchInsertTessellation(table_name, tessellation);
+                // pg.addPrimaryKeyIfNotExists(table_name);
                 JVMUtils.printMemoryUsages("MB");
 
                 // Test query
                 // pg.testQuery(table_name, 5);
-
-                // Gson gson = new Gson();
-                // Neighbors neighbors = new Neighbors(hexagon);
-                // System.out.println(
-                //         gson.toJson(
-                //                 new GeoJsonManager(neighbors).getFeatureCollection()
-                //         )
-                // );
         }
 }

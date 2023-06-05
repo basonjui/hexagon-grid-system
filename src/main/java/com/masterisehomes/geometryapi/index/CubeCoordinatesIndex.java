@@ -33,7 +33,6 @@ public class CubeCoordinatesIndex implements Serializable {
 					throw new IllegalArgumentException(
 							"Expect previousCCI to be null, currently: " + previousCCI);
 				}
-
 				break;
 
 			case ONE:
