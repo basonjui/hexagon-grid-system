@@ -217,7 +217,7 @@ public class CornerEdgeTessellation {
 		}
 
 		// Print results
-		System.out.println("------ Tessellation results ------");
+		System.out.println("\n--- Tessellation Results");
 		for (String result : TESSELLATION_RESULTS) {
 			System.out.println(result);
 		}

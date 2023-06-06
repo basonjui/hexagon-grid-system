@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "PostgresJDBC",
+      "request": "launch",
+      "mainClass": "com.geospatial.geometryapi.database.PostgresJDBC",
+      "projectName": "geometryapi"
+    },
+    {
+      "type": "java",
       "name": "GeometryApi",
       "request": "launch",
       "mainClass": "com.geospatial.geometryapi.GeometryApi",

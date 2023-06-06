@@ -205,7 +205,7 @@ public class PostgresJDBC {
                                                 preparedStatement.executeBatch();
                                                 connection.commit();
                                                 batchExecutionCount++;
-                                                System.out.println("- Batch " + batchExecutionCount + "th.");
+                                                System.out.println("- Batch " + batchExecutionCount + "th");
                                         } catch (SQLException e) {
                                                 connection.rollback();
                                                 printSQLException(e);
@@ -220,7 +220,7 @@ public class PostgresJDBC {
                         connection.setAutoCommit(true);
                         preparedStatement.executeBatch();
                         batchExecutionCount++;
-                        System.out.println("- Batch " + batchExecutionCount + "th executed.");
+                        System.out.println("- Batch " + batchExecutionCount + "th (final) executed.");
 
                         // End time when finished batch inserts
                         final long endTime = System.currentTimeMillis();
@@ -229,7 +229,7 @@ public class PostgresJDBC {
                         final double elapsedMillisecs = endTime - startTime;
                         final double elapsedSeconds = elapsedMillisecs / 1000;
 
-                        System.out.println("\n------ Batch insert results ------");
+                        System.out.println("\n--- Batch Insert Tessellation Results");
                         System.out.println("Table name             : " + tableName);
                         System.out.println("Total hexagons         : " + hexagons.size());
                         System.out.println("Total batch executions : " + batchExecutionCount);
@@ -470,7 +470,7 @@ public class PostgresJDBC {
 
 
                 // Tessellation configurations
-                final int circumradius = 2500;
+                final int circumradius = 1000;
                 final Coordinates centroid = vn_centroid_internal;
                 final Boundary boundary = vn_boundary_internal;
 
