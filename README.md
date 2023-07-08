@@ -25,7 +25,6 @@ GeometryApi is a Hexagonal Grid Geospatial Data System that is capable of genera
 
 The API returns hexagons/grid data in GeoJSON format (RFC 7946), which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
-* 
 
 ## Installation (Maven)
 
