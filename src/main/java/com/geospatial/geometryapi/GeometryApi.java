@@ -162,7 +162,10 @@ public class GeometryApi {
 					batchInsertStatus = pg.batchInsertTessellation(tableName, tessellation);
 					status.add("batchInsertTessellation", batchInsertStatus);
 
-					pg.addPrimaryKeyIfNotExists(tableName);
+					JsonObject addPrimaryKeyStatus;
+					addPrimaryKeyStatus = pg.addPrimaryKeyIfNotExists(tableName);
+					status.add("addPrimaryKeyIfNotExists", addPrimaryKeyStatus);
+
 					JVMUtils.printMemoryUsages("MB");
 				}
 
