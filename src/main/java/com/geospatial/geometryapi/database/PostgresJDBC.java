@@ -136,7 +136,6 @@ public class PostgresJDBC {
                 // Prepare response
                 JsonObject response = new JsonObject();
                 JsonObject message = new JsonObject();
-                response.add("message", message);
 
                 // JDBC batch configurations
                 final int BATCH_SIZE_LIMIT = 5000;
@@ -251,6 +250,7 @@ public class PostgresJDBC {
                          * Prepare batchInsertTessellation response
                          */
                         response.addProperty("status", "SUCCESS");
+                        response.add("message", message);
                         
                         message.addProperty("tableName", tableName);
                         message.addProperty("totalHexagons", hexagons.size());

@@ -155,7 +155,7 @@ Raw JSON response (compacted to reduce file size).
 }
 ```
 
-### Response
+#### Response
 
 Raw JSON response (compacted to reduce file size).
 
