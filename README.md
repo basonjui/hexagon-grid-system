@@ -53,7 +53,7 @@ GeometryApi is a local API that can be used to generate Hexagon's coordinates an
 
 #### Response
 
-The JSON is prettified to help you visualize the GeoJSON structure.
+The JSON is prettified to help you visualize the GeoJSON structure of a single hexagon.
 
 ```json
 {
@@ -114,7 +114,7 @@ The JSON is prettified to help you visualize the GeoJSON structure.
 }
 ```
 
-### /api/neighbors
+### `/api/neighbors`
 
 #### Request
 
