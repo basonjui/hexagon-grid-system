@@ -1,12 +1,14 @@
 # GeometryApi
 
+![Hexagon Grid (Tessellation) - Radius: 1000 meters](https://github.com/basonjui/geometryapi/assets/60636087/5e905f9c-7316-4517-a888-a52edd512f2b)
+
+*Tessellation at Vincom Dong Khoi, radius (of hexagon) = 5000 meters.*
+
 GeometryApi is a microservice API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters, which will be used to produce one of the below patterns of hexagonal grids and return the output in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or PostGIS ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats:
 
 1. Hexagon - a single regular hexagon.
 2. Neighbors - a group of 7 adjacent regular hexagons.
 3. Tessellation - a grid of regular hexagons that tile over a Boundary. 
-
-![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/geometryapi/assets/60636087/5e905f9c-7316-4517-a888-a52edd512f2b)
 
 
 ## Architecture
@@ -23,7 +25,7 @@ GeometryApi is a Hexagonal Grid Geospatial Data System that is capable of genera
 
 The API returns hexagons/grid data in GeoJSON format (RFC 7946), which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
-* Hexagon Grid (Tessellation) - Radius: 1000 meters
+* 
 
 ## Installation (Maven)
 
