@@ -1,11 +1,12 @@
-# Geometry API
+# GeometryApi
 
-Geometry API is a Microservice API that takes in WGS84 coordinates (projected) and a radius parameters, which then will be used as the input centroid and radius for the to-be-generated hexagons inside the program. 
+GeometryApi is a microservice API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters, which will be used to produce one of the below patterns of hexagonal grids and return the output in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or PostGIS ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats:
 
-The program may use the provided input to generate a Hexagon, a Hexagon with 6 Neighbors, or a full Tessellation of Hexagons for a specific chosen boundary (not yet implemented).
+1. Hexagon - a single regular hexagon.
+2. Neighbors - a group of 7 adjacent regular hexagons.
+3. Tessellation - a grid of regular hexagons that tile over a Boundary. 
 
-Finally, this microservice will return data in GeoJSON format - which is implemented following the The GeoJSON Specification (RFC 7946).
-https://datatracker.ietf.org/doc/html/rfc7946
+![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/geometryapi/assets/60636087/5e905f9c-7316-4517-a888-a52edd512f2b)
 
 
 ## Architecture
