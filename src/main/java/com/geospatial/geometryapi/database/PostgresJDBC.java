@@ -17,7 +17,6 @@ import com.geospatial.geometryapi.index.CubeCoordinatesIndex;
 import com.geospatial.geometryapi.tessellation.Boundary;
 import com.geospatial.geometryapi.tessellation.CornerEdgeTessellation;
 import com.geospatial.geometryapi.utils.JVMUtils;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -115,7 +114,7 @@ public class PostgresJDBC {
 
                 try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
                         String createTableQuery = String.format(sql, tableName);
-                        
+
                         int statusCode = statement.executeUpdate(createTableQuery);
                         if (statusCode == 0) {
                                 response.addProperty("status", "SUCCESS");
@@ -124,7 +123,7 @@ public class PostgresJDBC {
                                 response.addProperty("status", "FAILED");
                                 System.out.println("Failed to execute createTessellationTable.");
                         }
-                        
+
                 } catch (SQLException e) {
                         response.addProperty("error", e.toString());
                         printSQLException(e);
@@ -134,8 +133,9 @@ public class PostgresJDBC {
         }
 
         public final JsonObject batchInsertTessellation(String tableName, CornerEdgeTessellation tessellation) {
-                // Handle execution response
+                // Prepare response
                 JsonObject response = new JsonObject();
+                JsonObject message = new JsonObject();
 
                 // JDBC batch configurations
                 final int BATCH_SIZE_LIMIT = 5000;
@@ -175,7 +175,7 @@ public class PostgresJDBC {
 
                         // Start time
                         final long startTime = System.currentTimeMillis();
-                        
+
                         System.out.println("--- Batch execution begin..");
                         for (Hexagon hexagon : hexagons) {
                                 CubeCoordinatesIndex cci = hexagon.getCCI();
@@ -235,7 +235,7 @@ public class PostgresJDBC {
                          * JDBC_BATCH_LIMIT)
                          */
                         connection.setAutoCommit(true);
-                        int[] statuses = preparedStatement.executeBatch();
+                        preparedStatement.executeBatch();
                         batchExecutionCount++;
                         System.out.println("- Batch " + batchExecutionCount + "th (final) executed.");
 
@@ -246,25 +246,24 @@ public class PostgresJDBC {
                         final double elapsedMillisecs = endTime - startTime;
                         final double elapsedSeconds = elapsedMillisecs / 1000;
 
-                        /* 
+                        /*
                          * Prepare batchInsertTessellation response
                          */
-                        JsonObject results = new JsonObject();
-                        
                         response.addProperty("status", "SUCCESS");
-                        response.add("results", results);
-
-                        results.addProperty("tableName", tableName);
-                        results.addProperty("totalHexagons", hexagons.size());
-                        results.addProperty("totalBatchExecutions", batchExecutionCount);
-                        results.addProperty("elapsedSeconds", elapsedSeconds);
-                        results.addProperty("rowsPerBatch", BATCH_SIZE_LIMIT);
-                        results.addProperty("rowsInserted", batchCount);
+                        response.add("message", message);
+                        
+                        message.addProperty("tableName", tableName);
+                        message.addProperty("totalHexagons", hexagons.size());
+                        message.addProperty("totalBatchExecutions", batchExecutionCount);
+                        message.addProperty("elapsedSeconds", elapsedSeconds);
+                        message.addProperty("rowsPerBatch", BATCH_SIZE_LIMIT);
+                        message.addProperty("rowsInserted", batchCount);
 
                 } catch (BatchUpdateException batchUpdateException) {
                         response.addProperty("status", "FAILED");
                         response.addProperty("error", batchUpdateException.toString());
                         printBatchUpdateException(batchUpdateException);
+
                 } catch (SQLException sqlException) {
                         response.addProperty("error", sqlException.toString());
                         printSQLException(sqlException);
@@ -273,7 +272,9 @@ public class PostgresJDBC {
                 return response;
         }
 
-        public final void addPrimaryKeyIfNotExists(String tableName) {
+        public final JsonObject addPrimaryKeyIfNotExists(String tableName) {
+                JsonObject response = new JsonObject();
+
                 final String checkPrimaryKeySql = String.format("""
                                 SELECT constraint_name from information_schema.table_constraints
                                 WHERE table_name = '%s'
@@ -286,7 +287,7 @@ public class PostgresJDBC {
 
                 try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
                         ResultSet rs = statement.executeQuery(checkPrimaryKeySql);
-                        
+
                         boolean hasPrimaryKey = rs.next(); // Return `false` if there is no more row (means no PK)
                         if (hasPrimaryKey) {
                                 // Query PRIMARY KEY name
@@ -298,17 +299,27 @@ public class PostgresJDBC {
                         } else {
                                 statement.executeUpdate(addPrimaryKeySql);
                                 rs = statement.executeQuery(checkPrimaryKeySql);
-                                rs.next();
 
-                                System.out.println(String.format(
-                                                "PRIMARY KEY '%s' added to table '%s'.",
-                                                rs.getString("constraint_name"),
-                                                tableName));
+                                boolean hasNextRow = rs.next();
+                                if (hasNextRow) {
+                                        response.addProperty("status", "SUCCESS");
+                                        response.addProperty("message", String.format(
+                                                        "PRIMARY KEY '%s' added to table '%s'.",
+                                                        rs.getString("constraint_name"),
+                                                        tableName));
+                                } else {
+                                        response.addProperty("status", "FAILED");
+                                        response.addProperty("message", String.format(
+                                                        "Failed to add PRIMARY KEY to table '%s'.",
+                                                        tableName));
+                                }
                         }
 
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
+
+                return response;
         }
 
         public static void printBatchUpdateException(BatchUpdateException b) {
@@ -445,18 +456,6 @@ public class PostgresJDBC {
                                 .reWriteBatchedInserts(true)
                                 .build();
 
-                /* Vietnam */
-                final Boundary vn_boundary = new Boundary(
-                                new Coordinates(102.133333, 8.033333),
-                                new Coordinates(109.466667, 23.383333));
-
-                // Still missing some wards at the top, check missing_wards.csv
-                final Boundary oct_17_vn_boundary = new Boundary(
-                                new Coordinates(102.050278, 23.583612),
-                                new Coordinates(109.666945, 8));
-
-                final Coordinates vn_centroid = new Coordinates(106, 15);
-
                 /*
                  * Vietnam - Nominatim OpenStreetMap
                  * - URL :
@@ -468,11 +467,6 @@ public class PostgresJDBC {
                 final Coordinates vn_centroid_osm = new Coordinates(107.9650855, 15.9266657);
                 final Boundary vn_boundary_osm = new Boundary(vn_min_coords_osm, vn_max_coords_osm);
 
-                final Coordinates hcm_centroid_osm = new Coordinates(106.7011391, 10.7763897);
-                final Boundary hcm_boundary_osm = new Boundary(
-                                new Coordinates(106.35667121999998, 10.35422636000001),
-                                new Coordinates(107.02750646000003, 11.160309929999999));
-
                 /*
                  * Vietnam - spatial_db
                  * - database : spatial_db
@@ -482,19 +476,6 @@ public class PostgresJDBC {
                 final Coordinates vn_max_coords_internal = new Coordinates(117.81734467, 23.39243698);
                 final Coordinates vn_centroid_internal = new Coordinates(106.4063821609223, 16.57755915233502);
                 final Boundary vn_boundary_internal = new Boundary(vn_min_coords_internal, vn_max_coords_internal);
-
-                /* Ho Chi Minh City */
-                final Coordinates hcm_min_coords = new Coordinates(106.35667121999998, 10.35422636000001);
-                final Coordinates hcm_max_coords = new Coordinates(107.02750646000003, 11.160309929999999);
-                final Coordinates hcm_centroid = new Coordinates(106.70475886133208, 10.73530289102618);
-                final Boundary hcm_boundary = new Boundary(hcm_min_coords, hcm_max_coords);
-
-                /* Ha Noi City */
-                final Coordinates hanoi_min_coords = new Coordinates(105.28813170999999, 20.564474110000003);
-                final Coordinates hanoi_max_coords = new Coordinates(106.02005767999997, 21.385208129999985);
-                final Coordinates hanoi_centroid = new Coordinates(105.700030001506, 20.998981122751463);
-                final Boundary hanoi_boundary = new Boundary(hanoi_min_coords, hanoi_max_coords);
-
 
                 // Tessellation configurations
                 final int circumradius = 1000;

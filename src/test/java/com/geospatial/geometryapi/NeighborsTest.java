@@ -1,4 +1,4 @@
-package com.geospatial.geometryapi.neighbors;
+package com.geospatial.geometryapi;
 
 import java.util.List;
 
