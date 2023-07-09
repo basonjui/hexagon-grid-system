@@ -16,7 +16,7 @@ The API returns geospatial data output in GeoJSON ([RFC 7946](https://datatracke
 
 ### Cube Coordinate Index
 
-The `CubeCoordinatesIndex` ckass was inspired by Red Blob Game's [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
+The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
 
 Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assign a unique index (CCI) based on its position within the grid system.
 
@@ -31,10 +31,10 @@ A regular hexagon is a polygon with six edges (sides) of equal length (also equa
 
 In geometryapi, the class Hexagon holds several properties, however, the most important ones are:
 
-- centroid: the center of the hexagon, which represent a pair of WGS84 coordinates (longitude, latitude).
-- circumradius: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
-- inradius: the radius of the incircle, which is the radius of the circle that is tangent to each of the sides of the hexagon.
-- CCI: the index of the hexagon in the grid system defined by `CubeCoordinatesIndex` class.
+- `centroid`: the center of the hexagon, which represent a pair of WGS84 coordinates (longitude, latitude).
+- `circumradius`: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
+- `inradius`: the radius of the incircle, which is the radius of the circle that is tangent to each of the sides of the hexagon.
+- `CCI`: the index of the hexagon in the grid system defined by `CubeCoordinatesIndex` class.
 
 ### Neighbors
 
