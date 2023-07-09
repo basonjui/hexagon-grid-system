@@ -1,8 +1,8 @@
 # GeometryApi
 
-![Hexagon Grid (Tessellation) - Radius: 1000 meters](https://github.com/basonjui/geometryapi/assets/60636087/5e905f9c-7316-4517-a888-a52edd512f2b)
+![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/geometryapi/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
 
-*Tessellation at Vincom Dong Khoi, radius (of hexagon) = 5000 meters.*
+*Tessellation at Vincom Dong Khoi, radius (of the hexagon) = 5000 meters.*
 
 GeometryApi is a Hexagonal Grid System API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the below patterns of hexagonal grids:
 
@@ -18,11 +18,16 @@ The API returns geospatial data output in GeoJSON ([RFC 7946](https://datatracke
 
 The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
 
-Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assign a unique index (CCI) based on its position within the grid system.
+Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) based on its position within the grid system.
+
+<img width="417" alt="Screenshot 2023-07-09 at 4 51 33 PM" src="https://github.com/basonjui/geometryapi/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11">
 
 #### How it works
 
 1. Each direction on the hex grid is a combination of two directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to s and subtracting 1 from `r`.
+
+    <img width="534" alt="Screenshot 2023-07-09 at 4 50 09 PM" src="https://github.com/basonjui/geometryapi/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791">
+
 2. `q + r + s = 0` - the constraint of this coordinate system to preserve its algorithmic properties.
 
 ### Hexagon
@@ -46,7 +51,7 @@ In geometryapi, `Neighbors` is a group of 7 adjacent regular hexagons - the hexa
 
 Tessellation is the process of creating a two-dimensional plane using the repetition of a geometric shape with no overlaps and no gaps. In geometryapi, tessellation is done by tiling over a specified `Boundary`.
 
-A sample JSON request that specify the boundary of a Tessellation:
+A sample JSON request that specifies the boundary of a Tessellation:
 
 ```json
 {
