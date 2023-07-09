@@ -4,25 +4,13 @@
 
 *Tessellation at Vincom Dong Khoi, radius (of hexagon) = 5000 meters.*
 
-GeometryApi is a microservice API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters, which will be used to produce one of the below patterns of hexagonal grids and return the output in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or PostGIS ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats:
+GeometryApi is a Hexagonal Grid System API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the below patterns of hexagonal grids:
 
 1. Hexagon - a single regular hexagon.
 2. Neighbors - a group of 7 adjacent regular hexagons.
 3. Tessellation - a grid of regular hexagons that tile over a Boundary.
 
-## Architecture
-
-### Packages diagram
-
-![Geometry API - Package UML (1)](https://user-images.githubusercontent.com/60636087/181493724-9a59b863-7264-4930-99dd-2d8e0f6a5363.png)
-
-## Dependencies
-
-## About GeometryApi v1 release
-
-GeometryApi is a Hexagonal Grid Geospatial Data System that is capable of generating a single Hexagon, Neighbors (7 adjacent hexagons), and Tessellation (a full grid of regular hexagons) for a specific boundary.
-
-The API returns hexagons/grid data in GeoJSON format (RFC 7946), which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
+The API returns geospatial data output in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or PostGIS ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats, which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
 ## Installation (Maven)
 
