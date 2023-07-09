@@ -17,7 +17,7 @@ import com.geospatial.geometryapi.utils.JsonTransformer;
 
 import com.google.gson.*;
 
-public class GeometryApi {
+public class App {
 	public final static Gson gson = new Gson();
 
 	public static void main(String[] args) {
@@ -83,14 +83,15 @@ public class GeometryApi {
 			try {
 				// Parse request payload to a JSONObject with Gson
 				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
-				
+
 				// Check payload for required keys
 				boolean validTessellationPayload = false;
 				boolean validBoundaryPayload = false;
 				boolean validPayload = false;
-				
+
 				// Required keys for the request payload
-				Set<String> requiredKeys = Set.of("administrativeName", "latitude", "longitude", "radius", "boundary");
+				Set<String> requiredKeys = Set.of("administrativeName", "latitude", "longitude",
+						"radius", "boundary");
 				if (payload.keySet().equals(requiredKeys)) {
 					validTessellationPayload = true;
 
@@ -116,7 +117,7 @@ public class GeometryApi {
 							.authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
 							.reWriteBatchedInserts(true) // Optional
 							.build();
-					
+
 					// Extract Hexagon data from payload
 					final double longitude = payload.get("longitude").getAsDouble();
 					final double latitude = payload.get("latitude").getAsDouble();
@@ -136,17 +137,18 @@ public class GeometryApi {
 					// Create Boundary
 					final Coordinates minBoundaryCoordinates = new Coordinates(minLng, minLat);
 					final Coordinates maxBoundaryCoordinates = new Coordinates(maxLng, maxLat);
-					final Boundary boundary = new Boundary(minBoundaryCoordinates, maxBoundaryCoordinates);
+					final Boundary boundary = new Boundary(minBoundaryCoordinates,
+							maxBoundaryCoordinates);
 
 					// Create Tessellation
 					final CornerEdgeTessellation tessellation = new CornerEdgeTessellation(hexagon);
 					tessellation.tessellate(boundary);
 
-					
 					// Create table name
 					System.out.println("--- Database Configs ---");
 					final String TESSELLATION_TABLE_NAME = "%s_tessellation_%sm";
-					final String administrativeName = payload.get("administrativeName").getAsString();
+					final String administrativeName = payload.get("administrativeName")
+							.getAsString();
 					final String tableName = String.format(
 							TESSELLATION_TABLE_NAME,
 							administrativeName,
@@ -176,7 +178,7 @@ public class GeometryApi {
 			}
 
 			return status;
-			
+
 		}, new JsonTransformer());
 
 	}

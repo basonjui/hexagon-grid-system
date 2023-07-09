@@ -8,14 +8,13 @@ GeometryApi is a microservice API that takes in a pair of WGS84 coordinates (lon
 
 1. Hexagon - a single regular hexagon.
 2. Neighbors - a group of 7 adjacent regular hexagons.
-3. Tessellation - a grid of regular hexagons that tile over a Boundary. 
-
+3. Tessellation - a grid of regular hexagons that tile over a Boundary.
 
 ## Architecture
 
 ### Packages diagram
-![Geometry API - Package UML (1)](https://user-images.githubusercontent.com/60636087/181493724-9a59b863-7264-4930-99dd-2d8e0f6a5363.png)
 
+![Geometry API - Package UML (1)](https://user-images.githubusercontent.com/60636087/181493724-9a59b863-7264-4930-99dd-2d8e0f6a5363.png)
 
 ## Dependencies
 
@@ -25,23 +24,33 @@ GeometryApi is a Hexagonal Grid Geospatial Data System that is capable of genera
 
 The API returns hexagons/grid data in GeoJSON format (RFC 7946), which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
-
 ## Installation (Maven)
 
-Lorem ipsum ...
+In the root directory (`../geometryapi`) of the project, run the following commands to build the project:
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+1. Clean the `/target` directory, build the project, and package it into a JAR file
 
-```bash
-pip install foobar
-```
+    ```bash
+    mvn clean package
+    ```
 
+2. Build the project into your local Maven repository
+
+    ```bash
+    mvn install
+    ```
+
+3. Run geometryapi
+
+    ```bash
+    java -jar target/geometryapi-1.1.0.jar
+    ```
 
 ## Usages
 
-GeometryApi is a local API that can be used to generate Hexagon's coordinates and return data in GeoJSON format. You can test the GeoJSON data output on https://geojson.io/.
+GeometryApi is a local API that can be used to generate Hexagon's coordinates and return data in GeoJSON format. You can test the GeoJSON data output on <https://geojson.io/>.
 
-### `/api/hexagon`
+### /api/hexagon
 
 #### Request
 
