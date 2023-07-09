@@ -1,10 +1,10 @@
-# GeometryApi
+# HexagonGrid
 
-![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/geometryapi/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
+![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/hexagongrid/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
 
 *Tessellation at Vincom Dong Khoi, radius (of the hexagon) = 5000 meters.*
 
-GeometryApi is a Hexagonal Grid System API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the below patterns of hexagonal grids:
+HexagonGrid is a Hexagonal Grid System API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the below patterns of hexagonal grids:
 
 1. Hexagon - a single regular hexagon.
 2. Neighbors - a group of 7 adjacent regular hexagons.
@@ -20,13 +20,13 @@ The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordin
 
 Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) based on its position within the grid system.
 
-<img width="417" alt="Screenshot 2023-07-09 at 4 51 33 PM" src="https://github.com/basonjui/geometryapi/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11">
+<img width="417" alt="Screenshot 2023-07-09 at 4 51 33 PM" src="https://github.com/basonjui/hexagongrid/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11">
 
 #### How it works
 
 1. Each direction on the hex grid is a combination of two directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to s and subtracting 1 from `r`.
 
-    <img width="534" alt="Screenshot 2023-07-09 at 4 50 09 PM" src="https://github.com/basonjui/geometryapi/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791">
+    <img width="534" alt="Screenshot 2023-07-09 at 4 50 09 PM" src="https://github.com/basonjui/hexagongrid/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791">
 
 2. `q + r + s = 0` - the constraint of this coordinate system to preserve its algorithmic properties.
 
@@ -34,7 +34,7 @@ Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assig
 
 A regular hexagon is a polygon with six edges (sides) of equal length (also equals circumradius) and six vertices (corners).
 
-In geometryapi, the class Hexagon holds several properties, however, the most important ones are:
+In hexagongrid, the class Hexagon holds several properties, however, the most important ones are:
 
 - `centroid`: the center of the hexagon, which represent a pair of WGS84 coordinates (longitude, latitude).
 - `circumradius`: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
@@ -45,11 +45,11 @@ In geometryapi, the class Hexagon holds several properties, however, the most im
 
 Given a hex, which 6 hexes are neighboring it? The answer is the 6 hexes that share an edge with it.
 
-In geometryapi, `Neighbors` is a group of 7 adjacent regular hexagons - the hexagon itself and its 6 neighbors.
+In hexagongrid, `Neighbors` is a group of 7 adjacent regular hexagons - the hexagon itself and its 6 neighbors.
 
 ### CornerEdgeTessellation (Tessellation)
 
-Tessellation is the process of creating a two-dimensional plane using the repetition of a geometric shape with no overlaps and no gaps. In geometryapi, tessellation is done by tiling over a specified `Boundary`.
+Tessellation is the process of creating a two-dimensional plane using the repetition of a geometric shape with no overlaps and no gaps. In hexagongrid, tessellation is done by tiling over a specified `Boundary`.
 
 A sample JSON request that specifies the boundary of a Tessellation:
 
@@ -64,7 +64,7 @@ A sample JSON request that specifies the boundary of a Tessellation:
 }
 ```
 
-The specific algorithm used in geometryapi is named `CornerEdgeTessellation`, which relies on the linear relationship between the Corner and Edge of the hexagonal grid to generate the tessellation. Details of the algorithm is commented in the source code of CornerEdgeTessellation class.
+The specific algorithm used in hexagongrid is named `CornerEdgeTessellation`, which relies on the linear relationship between the Corner and Edge of the hexagonal grid to generate the tessellation. Details of the algorithm is commented in the source code of CornerEdgeTessellation class.
 
 ## Installation
 
@@ -72,7 +72,7 @@ The specific algorithm used in geometryapi is named `CornerEdgeTessellation`, wh
 
 This is only required when you want to save Tessellation data into your PostgreSQL database (using the endpoint `/database/tessellation`).
 
-To set up your environment variables, create a `.env` file in the root directory (`../geometryapi`) of the project and add the following variables:
+To set up your environment variables, create a `.env` file in the root directory (`../hexagongrid`) of the project and add the following variables:
 
 ```text
 POSTGRES_HOST=
@@ -83,7 +83,7 @@ POSTGRES_DATABASE=
 
 ### Maven
 
-In the root directory (`../geometryapi`) of the project, run the following commands to build the project:
+In the root directory (`../hexagongrid`) of the project, run the following commands to build the project:
 
 1. Clean the `/target` directory, build the project, and package it into a JAR file, and install the JAR file into your local Maven repository
 
@@ -91,15 +91,15 @@ In the root directory (`../geometryapi`) of the project, run the following comma
     mvn clean package && mvn clean install
     ```
 
-2. Run geometryapi
+2. Run hexagongrid
 
     ```console
-    java -cp target/geometryapi-1.1.2.jar com.geospatial.geometryapi.App
+    java -cp target/hexagongrid-1.1.3.jar com.geospatial.hexagongrid.Api
     ```
 
 ## Usages
 
-GeometryApi is a local API that can be used to generate Hexagon's coordinates and return data in GeoJSON format. You can test the GeoJSON data output on <https://geojson.io/>.
+HexagonGrid is a local API that can be used to generate Hexagon's coordinates and return data in GeoJSON format. You can test the GeoJSON data output on <https://geojson.io/>.
 
 ### /api/hexagon
 
@@ -228,7 +228,7 @@ Raw JSON response (compacted to reduce file size).
 
 ```json
 {   
-    "administrativeName": "geometryapi_local_test",
+    "administrativeName": "hexagongrid_local_test",
     "latitude": 10.7755,
     "longitude": 106.7021,
     "radius": 1000,
@@ -251,7 +251,7 @@ Raw JSON response (compacted to reduce file size).
     "batchInsertTessellation": {
         "status": "SUCCESS",
         "message": {
-            "tableName": "geometryapi_local_test_tessellation_1000m",
+            "tableName": "hexagongrid_local_test_tessellation_1000m",
             "totalHexagons": 5419,
             "totalBatchExecutions": 2,
             "elapsedSeconds": 0.672,
@@ -261,7 +261,7 @@ Raw JSON response (compacted to reduce file size).
     },
     "addPrimaryKeyIfNotExists": {
         "status": "SUCCESS",
-        "message": "PRIMARY KEY 'geometryapi_local_test_tessellation_1000m_pkey' added to table 'geometryapi_local_test_tessellation_1000m'."
+        "message": "PRIMARY KEY 'hexagongrid_local_test_tessellation_1000m_pkey' added to table 'hexagongrid_local_test_tessellation_1000m'."
     }
 }
 ```
