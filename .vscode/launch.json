@@ -20,47 +20,9 @@
     },
     {
       "type": "java",
-      "name": "GeometryApi",
-      "request": "launch",
-      "mainClass": "com.geospatial.geometryapi.GeometryApi",
-      "projectName": "geometryapi"
-    },
-    {
-      "type": "java",
-      "name": "Launch PostgresJDBC",
-      "request": "launch",
-      "mainClass": "com.masterisehomes.geometryapi.database.PostgresJDBC",
-      "projectName": "geometryapi",
-      "vmArgs": "-Xms1G -Xmx13G"
-    },
-    {
-      "type": "java",
       "name": "Launch Current File",
       "request": "launch",
       "mainClass": "${file}"
-    },
-    {
-      "type": "java",
-      "name": "Launch GeometryApi",
-      "request": "launch",
-      "mainClass": "com.masterisehomes.geometryapi.GeometryApi",
-      "projectName": "geometryapi"
-    },
-    {
-      "type": "java",
-      "name": "Launch AxialClockwiseTessellation",
-      "request": "launch",
-      "mainClass": "com.masterisehomes.geometryapi.tessellation.AxialClockwiseTessellation",
-      "projectName": "geometryapi",
-      "vmArgs": "-Xms1G -Xmx13G"
-    },
-    {
-      "type": "java",
-      "name": "Launch SparkApplication",
-      "request": "launch",
-      "mainClass": "com.masterisehomes.geometryapi.spark.SparkApplication",
-      "projectName": "geometryapi",
-      "vmArgs": "--add-exports java.base/sun.nio.ch=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true -DXms4G -Xmx14G"
     }
   ]
 }

@@ -48,10 +48,19 @@ public class PostgresJDBC {
         public final Connection getConnection() {
                 Connection connection = null;
                 try {
+                        // https://stackoverflow.com/questions/62426544/no-suitable-driver-found-for-jdbcpostgresql-but-i-have-install-driver
+                        try {
+                                Class.forName("org.postgresql.Driver");
+                        } catch (ClassNotFoundException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                        }
+
                         connection = DriverManager.getConnection(pgjdbcUrl, properties);
                         System.out.println("\n"
                                         + "Connected to the PostgreSQL server as user: "
                                         + connection.getMetaData().getUserName());
+
                 } catch (SQLException e) {
                         printSQLException(e);
                 }
@@ -403,10 +412,7 @@ public class PostgresJDBC {
                 private String database;
                 private Properties properties = new Properties();
 
-                private final Dotenv dotenv = Dotenv.configure()
-                                // .directory("./geometryapi")
-                                .filename(".env")
-                                .load();
+                private final Dotenv dotenv = Dotenv.load();
 
                 public Builder() {
                 }
@@ -480,7 +486,7 @@ public class PostgresJDBC {
                 final Boundary vn_boundary_internal = new Boundary(vn_min_coords_internal, vn_max_coords_internal);
 
                 // Tessellation configurations
-                final int circumradius = 1000;
+                final int circumradius = 1350;
                 final Coordinates centroid = vn_centroid_internal;
                 final Boundary boundary = vn_boundary_internal;
 
@@ -490,7 +496,7 @@ public class PostgresJDBC {
                 tessellation.tessellate(boundary);
 
                 // Database table name formats
-                final String TABLE_NAME_TEMPLATE = "%s_tessellation_%sm_test";
+                final String TABLE_NAME_TEMPLATE = "%s_tessellation_%sm";
 
                 // Database configurations
                 System.out.println("\n------ Database configs ------");

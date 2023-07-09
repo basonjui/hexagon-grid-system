@@ -85,22 +85,16 @@ POSTGRES_DATABASE=
 
 In the root directory (`../geometryapi`) of the project, run the following commands to build the project:
 
-1. Clean the `/target` directory, build the project, and package it into a JAR file
+1. Clean the `/target` directory, build the project, and package it into a JAR file, and install the JAR file into your local Maven repository
 
-    ```bash
-    mvn clean package
+    ```console
+    mvn clean package && mvn clean install
     ```
 
-2. Build the project into your local Maven repository
+2. Run geometryapi
 
-    ```bash
-    mvn install
-    ```
-
-3. Run geometryapi
-
-    ```bash
-    java -jar target/geometryapi-1.1.0.jar
+    ```console
+    java -cp target/geometryapi-1.1.2.jar com.geospatial.geometryapi.App
     ```
 
 ## Usages

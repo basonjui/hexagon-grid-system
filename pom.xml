@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.geospatial.geometryapi</groupId>
   <artifactId>geometryapi</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <name>geometryapi</name>
   <url>https://github.com/basonjui/geometryapi</url>
   <properties>
@@ -23,6 +23,7 @@
       <groupId>com.sparkjava</groupId>
       <artifactId>spark-core</artifactId>
       <version>2.9.4</version>
+      <scope>compile</scope>
     </dependency>    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -44,6 +45,7 @@
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.6.0</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
@@ -53,7 +55,7 @@
     <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>dotenv-java</artifactId>
-      <version>2.2.4</version>
+      <version>3.0.0</version>
     </dependency>    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->    <!-- <dependency><groupId>com.google.guava</groupId><artifactId>guava</artifactId><version>31.1-jre</version></dependency> --></dependencies>
   <build>    <!-- This section defines version of plugins, but does not actually invoke them -->
     <pluginManagement>      <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
@@ -82,15 +84,6 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <classpathPrefix>lib/</classpathPrefix>
-                <mainClass>com.geospatial.geometryapi.App</mainClass>
-              </manifest>
-            </archive>
-          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -121,9 +114,9 @@
               <goals>
                 <goal>shade</goal>
               </goals>
-              <configuration>
+              <!-- <configuration>
                 <minimizeJar>true</minimizeJar>
-              </configuration>
+              </configuration> -->
             </execution>
           </executions>
         </plugin>

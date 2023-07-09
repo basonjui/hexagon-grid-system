@@ -1,8 +1,8 @@
 package com.geospatial.geometryapi;
 
-import static spark.Spark.*;
-
 import java.util.Set;
+import com.google.gson.*;
+import static spark.Spark.*;
 
 import com.geospatial.geometryapi.database.PostgresJDBC;
 import com.geospatial.geometryapi.geojson.FeatureCollection;
@@ -15,12 +15,14 @@ import com.geospatial.geometryapi.tessellation.CornerEdgeTessellationDto;
 import com.geospatial.geometryapi.utils.JVMUtils;
 import com.geospatial.geometryapi.utils.JsonTransformer;
 
-import com.google.gson.*;
-
 public class App {
 	public final static Gson gson = new Gson();
 
+	// Default port for Spark, you can change this if you want
+	public final static int port = 4567;
+
 	public static void main(String[] args) {
+		port(port);
 		before((request, response) -> response.type("application/json"));
 
 		post("/api/hexagon", "application/json", (request, response) -> {
@@ -30,10 +32,9 @@ public class App {
 
 				// Initialize a HexagonDto with payload to get all required data
 				HexagonDto dto = new HexagonDto(payload);
-
-				// GeoJsonManager handles all GeoJSON operations
 				GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
 				FeatureCollection collection = manager.getFeatureCollection();
+				
 				return collection;
 
 			} catch (Exception e) {
@@ -49,9 +50,9 @@ public class App {
 
 				// Initialize a HexagonDto with payload to store all required data
 				NeighborsDto dto = new NeighborsDto(payload);
-
 				GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
 				FeatureCollection collection = manager.getFeatureCollection();
+
 				return collection;
 
 			} catch (Exception e) {
@@ -85,29 +86,28 @@ public class App {
 				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
 				// Check payload for required keys
-				boolean validTessellationPayload = false;
-				boolean validBoundaryPayload = false;
+				boolean validKeys = false;
+				boolean validBoundary = false;
 				boolean validPayload = false;
 
 				// Required keys for the request payload
-				Set<String> requiredKeys = Set.of("administrativeName", "latitude", "longitude",
-						"radius", "boundary");
+				Set<String> requiredKeys = Set.of("administrativeName", "latitude", "longitude", "radius", "boundary");
 				if (payload.keySet().equals(requiredKeys)) {
-					validTessellationPayload = true;
+					// If payload has all required keys, then validKeys
+					validKeys = true;
 
-					// Continue to check members of sub-key `boundary`
+					// Continue to check members of payload key `boundary`
 					JsonObject boundary = payload.get("boundary").getAsJsonObject();
-					Set<String> requiredBoundaryKeys = Set.of("minLatitude", "minLongitude",
-							"maxLatitude", "maxLongitude");
+					Set<String> requiredBoundaryKeys = Set.of("minLatitude", "minLongitude", "maxLatitude", "maxLongitude");
 					if (boundary.keySet().equals(requiredBoundaryKeys)) {
-						validBoundaryPayload = true;
+						validBoundary = true;
 					}
 				} else {
 					System.out.println("Invalid payload keys: " + payload.keySet());
 				}
 
-				// If both tessellation and boundary are valid, then the request is valid
-				validPayload = validTessellationPayload && validBoundaryPayload;
+				// If both keys and boundary's members are valid, then the payload is valid
+				validPayload = validKeys && validBoundary;
 				if (validPayload) {
 					// Start PostgresJDBC connection
 					PostgresJDBC pg = new PostgresJDBC.Builder()
