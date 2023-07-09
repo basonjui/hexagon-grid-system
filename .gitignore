@@ -28,3 +28,6 @@ target/
 
 # sensitive files
 .env
+
+# .DS_Store (Mac)
+.DS_Store
