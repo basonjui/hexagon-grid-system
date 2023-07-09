@@ -1,4 +1,4 @@
-# HexagonGrid
+# Hexagon Grid System
 
 ![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/hexagongrid/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
 
