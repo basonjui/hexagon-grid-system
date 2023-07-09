@@ -421,8 +421,10 @@ public class PostgresJDBC {
                         return this;
                 }
 
-                public final Builder database(String database) {
+                public final Builder database(String databaseKey) {
+                        final String database = dotenv.get(databaseKey);
                         this.database = database;
+
                         return this;
                 }
 
@@ -451,7 +453,7 @@ public class PostgresJDBC {
                 PostgresJDBC pg = new PostgresJDBC.Builder()
                                 .host("POSTGRES_HOST")
                                 .port(5432)
-                                .database("spatial_dwh")
+                                .database("POSTGRES_DATABASE")
                                 .authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
                                 .reWriteBatchedInserts(true)
                                 .build();

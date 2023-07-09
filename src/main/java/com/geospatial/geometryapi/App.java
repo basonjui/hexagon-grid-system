@@ -113,7 +113,7 @@ public class App {
 					PostgresJDBC pg = new PostgresJDBC.Builder()
 							.host("POSTGRES_HOST")
 							.port(5432)
-							.database("spatial_dwh")
+							.database("POSTGRES_DATABASE")
 							.authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
 							.reWriteBatchedInserts(true) // Optional
 							.build();
@@ -172,9 +172,7 @@ public class App {
 				}
 
 			} catch (Exception e) {
-				JsonObject errorStatus = new JsonObject();
-				errorStatus.addProperty("error", e.toString());
-				status.add("error", errorStatus);
+				status.addProperty("error", e.toString());
 			}
 
 			return status;
