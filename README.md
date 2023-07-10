@@ -1,4 +1,10 @@
-# Hexagon Grid System
+![image](https://github.com/basonjui/hexagon-grid-system/assets/60636087/5ac3b5b2-3820-41f2-a1d0-395238f1b697)# Hexagon Grid System
+
+![GitHub](https://img.shields.io/github/license/basonjui/hexagon-grid-system)
+![GitHub repo size](https://img.shields.io/github/repo-size/basonjui/hexagon-grid-system)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/basonjui/hexagon-grid-system)
+![Maven Central - spark-core](https://img.shields.io/maven-central/v/com.sparkjava/spark-core?versionSuffix=2.9.4&label=spark-core)
+![Maven Central - postgresql](https://img.shields.io/maven-central/v/org.postgresql/postgresql?versionSuffix=42.6.0&label=postgresql)
 
 ![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/hexagon-grid-system/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
 
@@ -47,7 +53,7 @@ Given a hex, which 6 hexes are neighboring it? The answer is the 6 hexes that sh
 
 In Hexagon Grid System, `Neighbors` is a group of 7 adjacent regular hexagons - the hexagon itself and its 6 neighbors.
 
-### CornerEdgeTessellation (Tessellation)
+### Tessellation
 
 Tessellation is the process of creating a two-dimensional plane using the repetition of a geometric shape with no overlaps and no gaps. In Hexagon Grid System, tessellation is done by tiling over a specified `Boundary`.
 
@@ -64,11 +70,20 @@ A sample JSON request that specifies the boundary of a Tessellation:
 }
 ```
 
-The specific algorithm used in Hexagon Grid System is named `CornerEdgeTessellation`, which relies on the linear relationship between the Corner and Edge of the hexagonal grid to generate the tessellation. Details of the algorithm are commented in the source code of CornerEdgeTessellation class.
+#### CornerEdgeTessellation
+
+The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellation`, which breaks down the hexagonal grid into 3 important components that can be used as variables for the tessellation algorithm: **Corner**, **Edge**, and **Rings**.
+
+**Rings** are the "hollow-rings" of hexagons wrapped around the center hexagon of the grid (the origin) to form a tessellation. The rings are used to calculate & define the extent of the hexagon grid that is required to fully cover a specific boundary (based on its coverage distance in meters).
+![Loops](https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0)
+
+Next, the algorithm relies on the linear relationship between the Corner and Edge of the hexagonal grid to generate the tessellation correctly using identical pieces of regular hexagons - which are equal in size, with the same hexagon orientation, and fill the entire specified coverage boundary without any gaps or overlaps. 
+
+Details of the algorithm are explained within the source code of the CornerEdgeTessellation class.
 
 ## Installation
 
-### Environment Variables (Optional)
+### Set up environment variables (Optional)
 
 This is only required when you want to save Tessellation data into your PostgreSQL database (using the endpoint `/database/tessellation`).
 
@@ -81,7 +96,7 @@ POSTGRES_PASSWORD=
 POSTGRES_DATABASE=
 ```
 
-### Maven
+### Install the project using Maven
 
 In the root directory (`../hexagongrid`) of the project, run the following commands to build the project:
 
@@ -97,9 +112,9 @@ In the root directory (`../hexagongrid`) of the project, run the following comma
     java -cp target/hexagongrid-1.1.3.jar com.geospatial.hexagongrid.Api
     ```
 
-## Usages
+## API Usages
 
-HexagonGrid is a local API that can be used to generate Hexagon's coordinates and return data in GeoJSON format. You can test the GeoJSON data output on <https://geojson.io/>.
+Hexagon Grid System is currently being implemented as a simple API that can be used to generate hexagon grid data in GeoJSON format given some valid grid configurations in the form of a request payload. You can directly test the API's GeoJSON data response on <https://geojson.io/>.
 
 ### /api/hexagon
 
