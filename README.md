@@ -16,7 +16,9 @@ Hexagon Grid System is an API that takes in a pair of WGS84 coordinates (longitu
 2. Neighbors - a group of 7 adjacent regular hexagons.
 3. Tessellation - a tiling of regular hexagons over a geographic Boundary without gaps or overlaps.
 
-The API returns geospatial data output in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or PostGIS ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats, which can be used for multiple purposes in geospatial computing such as visualization, analytics, and data aggregation.
+The API returns geospatial data response in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or can save the generated geospatial data directly into PostgreSQL database in ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats (supported by PostGIS).
+
+The generated hexagonal grid can then be used for various purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
 ## Main Concepts
 
