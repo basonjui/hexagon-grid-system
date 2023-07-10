@@ -70,7 +70,7 @@ A sample JSON request that specifies the boundary of a Tessellation:
 }
 ```
 
-#### CornerEdgeTessellation
+#### Algorithm
 
 The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellation`, which breaks down the hexagonal grid into 3 important components that can be used as variables for the tessellation algorithm: **Corner**, **Edge**, and **Rings**.
 
