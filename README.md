@@ -1,4 +1,4 @@
-![image](https://github.com/basonjui/hexagon-grid-system/assets/60636087/5ac3b5b2-3820-41f2-a1d0-395238f1b697)# Hexagon Grid System
+# Hexagon Grid System
 
 ![GitHub](https://img.shields.io/github/license/basonjui/hexagon-grid-system)
 ![GitHub repo size](https://img.shields.io/github/repo-size/basonjui/hexagon-grid-system)
@@ -75,9 +75,10 @@ A sample JSON request that specifies the boundary of a Tessellation:
 The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellation`, which breaks down the hexagonal grid into 3 important components that can be used as variables for the tessellation algorithm: **Corner**, **Edge**, and **Rings**.
 
 **Rings** are the "hollow-rings" of hexagons wrapped around the center hexagon of the grid (the origin) to form a tessellation. The rings are used to calculate & define the extent of the hexagon grid that is required to fully cover a specific boundary (based on its coverage distance in meters).
+
 ![Loops](https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0)
 
-Next, the algorithm relies on the linear relationship between the Corner and Edge of the hexagonal grid to generate the tessellation correctly using identical pieces of regular hexagons - which are equal in size, with the same hexagon orientation, and fill the entire specified coverage boundary without any gaps or overlaps. 
+Next, the algorithm relies on the linear relationship between the **Corner** and **Edge** of the hexagonal grid to generate the tessellation correctly using identical pieces of _regular hexagons_ - which are equal in size, having the same hexagon orientation, and fill the entire specified coverage boundary without gaps and overlaps. 
 
 Details of the algorithm are explained within the source code of the CornerEdgeTessellation class.
 
