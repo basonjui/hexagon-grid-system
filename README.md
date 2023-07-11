@@ -53,7 +53,9 @@ The class `Hexagon` has many properties to store a hexagon's information. Some o
 
 ### Neighbors
 
-Given a hexagon, which 6 hexaogns are neighboring it? The answer is the 6 hexagons that share an edge with it.
+Given a hexagon, which 6 hexagons are neighboring it?
+
+* The answer is the 6 hexagons that share an edge with it.
 
 In Hexagon Grid System, `Neighbors` is a group of 7 adjacent regular hexagons - the origin hexagon itself and its 6 nearest neighbors.
 
