@@ -7,59 +7,65 @@
 ![Maven Central - postgresql](https://img.shields.io/maven-central/v/org.postgresql/postgresql?versionSuffix=42.6.0&label=postgresql)
 
 ![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/hexagon-grid-system/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
-
-*Tessellation at Vincom Dong Khoi, radius (of the hexagon) = 5000 meters.*
+*Hexagon grid generated at Vincom Dong Khoi, Ho Chi Minh (circumradius=5000 meters)*
 
 Hexagon Grid System is an API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the several patterns of a hexagonal grid below:
 
 1. Hexagon - a single regular hexagon.
-2. Neighbors - a group of 7 adjacent regular hexagons.
-3. Tessellation - a tiling of regular hexagons over a geographic Boundary without gaps or overlaps.
+2. Neighbors - a regular hexagon and its 6 nearest neighbors (a group of 7 hexagons).
+3. Tessellation - a tiling of regular hexagons over a geographic boundary without gaps or overlaps.
 
-The API returns geospatial data response in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or can save the generated geospatial data directly into PostgreSQL database in ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats (supported by PostGIS).
+The API can return geospatial data response in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or save the generated geospatial data directly into PostgreSQL database in ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats (supported by PostGIS).
 
 The generated hexagonal grid can then be used for various purposes in geospatial computing such as visualization, analytics, and data aggregation.
 
 ## Main Concepts
 
-### Cube Coordinate Index
+### Cube Coordinate Index (CCI)
 
 The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
 
-Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) based on its position within the grid system.
+Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) for each hexagon based on its position within the grid system.
 
-<img width="417" alt="Screenshot 2023-07-09 at 4 51 33 PM" src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11">
+![Cube Coordinates - Primary Axes](https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11)
 
-#### How it works
+#### Algorithm
 
 1. Each direction on the hex grid is a combination of two directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to s and subtracting 1 from `r`.
 
-    <img width="534" alt="Screenshot 2023-07-09 at 4 50 09 PM" src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791">
+    ![Cube Coordinates - Directions](https://github.com/basonjui/hexagon-grid-system/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791)
 
-2. `q + r + s = 0` - the constraint of this coordinate system to preserve its algorithmic properties.
+2. `q + r + s = 0` - the constraint of this coordinate system to preserve its algorithms.
 
 ### Hexagon
 
-A regular hexagon is a polygon with six edges (sides) of equal length (also equals circumradius) and six vertices (corners).
+A regular hexagon is a polygon with 6 equal-length edges (or sides) and six vertices (corners).
 
-In Hexagon Grid System, the class Hexagon holds several properties, however, the most important ones are:
+* sides also equals the circumradius of the hexagon.
 
-- `centroid`: the center of the hexagon, which represents a pair of WGS84 coordinates (longitude, latitude).
-- `circumradius`: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
-- `inradius`: the radius of the incircle, which is the radius of the circle that is tangent to each of the sides of the hexagon.
-- `CCI`: the index of the hexagon in the grid system defined by `CubeCoordinatesIndex` class.
+The class `Hexagon` has many properties to store a hexagon's information. Some of the important properties are:
+
+* `centroid`: the center of the hexagon, which represents a pair of WGS84 coordinates (longitude, latitude).
+* `circumradius`: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
+* `inradius`: the radius of the incircle, which is the radius of the circle that is tangent to each of the sides of the hexagon.
+& `vertices`: the 6 vertices (Coordinates) of the hexagon.
+* `CCI`: the Cube Coordinates Index of the hexagon in the grid system defined by `CubeCoordinatesIndex` class.
 
 ### Neighbors
 
-Given a hex, which 6 hexes are neighboring it? The answer is the 6 hexes that share an edge with it.
+Given a hexagon, which 6 hexaogns are neighboring it? The answer is the 6 hexagons that share an edge with it.
 
-In Hexagon Grid System, `Neighbors` is a group of 7 adjacent regular hexagons - the hexagon itself and its 6 neighbors.
+In Hexagon Grid System, `Neighbors` is a group of 7 adjacent regular hexagons - the origin hexagon itself and its 6 nearest neighbors.
 
-### Tessellation
+### Tessellation (regular)
 
-Tessellation is the process of creating a two-dimensional plane using the repetition of a geometric shape with no overlaps and no gaps. In Hexagon Grid System, tessellation is done by tiling over a specified `Boundary`.
+A **tessellation** or **tiling** is the covering of a surface, often a plane, using one or more geometric shapes, called tiles, with no overlaps and no gaps.
 
-A sample JSON request that specifies the boundary of a Tessellation:
+In grid systems, the type of tessellation being used is Regular Tessellation - a highly symmetric tessellation made up of congruent regular polygons. Only three regular tessellations exist: those made up of equilateral **triangles**, **squares**, or **hexagons**.
+
+In Hexagon Grid System, we use regular tessellation to tile over a specified geographic `Boundary`.
+
+#### Sample `Boundary` structure in hexagon-grid-system
 
 ```json
 {
@@ -80,13 +86,19 @@ The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellat
 
 ![Loops](https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0)
 
-Next, the algorithm relies on the linear relationship between the **Corner** and **Edge** of the hexagonal grid to generate the tessellation correctly using identical pieces of _regular hexagons_ - which are equal in size, having the same hexagon orientation, and fill the entire specified coverage boundary without gaps and overlaps. 
+Next, the algorithm relies on the linear relationship between the **Corner** and **Edge** with respects to the current Ring of the tessellation, to create a tessellation (by filling up the grid iteratively, one Ring at a time).
+
+For each Ring of the tessellation, the algorithm will:
+
+1. Generate 6 Corner hexagons
+2. Calculate the required number (n) of Edge hexagons to fill up between the Corner hexagons
+3. Generate n Edge hexagons (to form a complete Ring)
 
 Details of the algorithm are explained within the source code of the CornerEdgeTessellation class.
 
 ## Installation
 
-### Set up environment variables (Optional)
+### Set up environment variables (optional)
 
 This is only required when you want to save Tessellation data into your PostgreSQL database (using the endpoint `/database/tessellation`).
 
@@ -208,7 +220,7 @@ The JSON is prettified to help you visualize the GeoJSON structure of a single h
 
 #### Response
 
-Raw JSON response (compacted to reduce file size).
+JSON is compacted to reduce file size.
 
 ```json
 {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.70072420589484,10.772596990358737],[106.70296999410515,10.772596990358737],[106.7040928882103,10.7745419],[106.70296999410515,10.776486809641261],[106.70072420589484,10.776486809641261],[106.69960131178969,10.7745419],[106.70072420589484,10.772596990358737]]]},"properties":{"ccid":{"q":0,"r":0,"s":0},"centroid":{"longitude":106.7018471,"latitude":10.7745419},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.70072420589484,10.768707171076214],[106.70296999410515,10.768707171076214],[106.7040928882103,10.770652080717475],[106.70296999410515,10.772596990358737],[106.70072420589484,10.772596990358737],[106.69960131178969,10.770652080717475],[106.70072420589484,10.768707171076214]]]},"properties":{"ccid":{"q":0,"r":-1,"s":1},"centroid":{"longitude":106.7018471,"latitude":10.770652080717475},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.7040928882103,10.770652080717475],[106.7063386764206,10.770652080717475],[106.70746157052575,10.772596990358737],[106.7063386764206,10.7745419],[106.7040928882103,10.7745419],[106.70296999410515,10.772596990358737],[106.7040928882103,10.770652080717475]]]},"properties":{"ccid":{"q":1,"r":-1,"s":0},"centroid":{"longitude":106.70521578231545,"latitude":10.772596990358737},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.7040928882103,10.7745419],[106.7063386764206,10.7745419],[106.70746157052575,10.776486809641261],[106.7063386764206,10.778431719282523],[106.7040928882103,10.778431719282523],[106.70296999410515,10.776486809641261],[106.7040928882103,10.7745419]]]},"properties":{"ccid":{"q":1,"r":0,"s":-1},"centroid":{"longitude":106.70521578231545,"latitude":10.776486809641261},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.70072420589484,10.776486809641261],[106.70296999410515,10.776486809641261],[106.7040928882103,10.778431719282523],[106.70296999410515,10.780376628923785],[106.70072420589484,10.780376628923785],[106.69960131178969,10.778431719282523],[106.70072420589484,10.776486809641261]]]},"properties":{"ccid":{"q":0,"r":1,"s":-1},"centroid":{"longitude":106.7018471,"latitude":10.778431719282523},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.69735552357939,10.7745419],[106.69960131178969,10.7745419],[106.70072420589484,10.776486809641261],[106.69960131178969,10.778431719282523],[106.69735552357939,10.778431719282523],[106.69623262947424,10.776486809641261],[106.69735552357939,10.7745419]]]},"properties":{"ccid":{"q":-1,"r":1,"s":0},"centroid":{"longitude":106.69847841768454,"latitude":10.776486809641261},"circumradius":250.0,"inradius":216.50635094610965}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.69735552357939,10.770652080717475],[106.69960131178969,10.770652080717475],[106.70072420589484,10.772596990358737],[106.69960131178969,10.7745419],[106.69735552357939,10.7745419],[106.69623262947424,10.772596990358737],[106.69735552357939,10.770652080717475]]]},"properties":{"ccid":{"q":-1,"r":0,"s":1},"centroid":{"longitude":106.69847841768454,"latitude":10.772596990358737},"circumradius":250.0,"inradius":216.50635094610965}}]}
@@ -234,7 +246,7 @@ Raw JSON response (compacted to reduce file size).
 
 #### Response
 
-Raw JSON response (compacted to reduce file size).
+JSON is compacted to reduce file size.
 
 ```json
 {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.67964211789702,10.736601810155294],[106.72455788210299,10.736601810155294],[106.74701576420598,10.7755],[106.72455788210299,10.814398189844704],[106.67964211789702,10.814398189844704],[106.65718423579402,10.7755],[106.67964211789702,10.736601810155294]]]},"properties":{"ccid":{"q":0,"r":0,"s":0},"centroid":{"longitude":106.7021,"latitude":10.7755},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.67964211789702,10.658805430465884],[106.72455788210299,10.658805430465884],[106.74701576420598,10.69770362031059],[106.72455788210299,10.736601810155294],[106.67964211789702,10.736601810155294],[106.65718423579402,10.69770362031059],[106.67964211789702,10.658805430465884]]]},"properties":{"ccid":{"q":0,"r":-1,"s":1},"centroid":{"longitude":106.7021,"latitude":10.69770362031059},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.74701576420598,10.69770362031059],[106.79193152841195,10.69770362031059],[106.81438941051495,10.736601810155294],[106.79193152841195,10.7755],[106.74701576420598,10.7755],[106.72455788210299,10.736601810155294],[106.74701576420598,10.69770362031059]]]},"properties":{"ccid":{"q":1,"r":-1,"s":0},"centroid":{"longitude":106.76947364630897,"latitude":10.736601810155294},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.74701576420598,10.7755],[106.79193152841195,10.7755],[106.81438941051495,10.814398189844704],[106.79193152841195,10.853296379689409],[106.74701576420598,10.853296379689409],[106.72455788210299,10.814398189844704],[106.74701576420598,10.7755]]]},"properties":{"ccid":{"q":1,"r":0,"s":-1},"centroid":{"longitude":106.76947364630897,"latitude":10.814398189844704},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.67964211789702,10.814398189844704],[106.72455788210299,10.814398189844704],[106.74701576420598,10.853296379689409],[106.72455788210299,10.892194569534114],[106.67964211789702,10.892194569534114],[106.65718423579402,10.853296379689409],[106.67964211789702,10.814398189844704]]]},"properties":{"ccid":{"q":0,"r":1,"s":-1},"centroid":{"longitude":106.7021,"latitude":10.853296379689409},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.61226847158805,10.7755],[106.65718423579402,10.7755],[106.67964211789702,10.814398189844704],[106.65718423579402,10.853296379689409],[106.61226847158805,10.853296379689409],[106.58981058948505,10.814398189844704],[106.61226847158805,10.7755]]]},"properties":{"ccid":{"q":-1,"r":1,"s":0},"centroid":{"longitude":106.63472635369104,"latitude":10.814398189844704},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.61226847158805,10.69770362031059],[106.65718423579402,10.69770362031059],[106.67964211789702,10.736601810155294],[106.65718423579402,10.7755],[106.61226847158805,10.7755],[106.58981058948505,10.736601810155294],[106.61226847158805,10.69770362031059]]]},"properties":{"ccid":{"q":-1,"r":0,"s":1},"centroid":{"longitude":106.63472635369104,"latitude":10.736601810155294},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.67964211789702,10.581009050776474],[106.72455788210299,10.581009050776474],[106.74701576420598,10.61990724062118],[106.72455788210299,10.658805430465884],[106.67964211789702,10.658805430465884],[106.65718423579402,10.61990724062118],[106.67964211789702,10.581009050776474]]]},"properties":{"ccid":{"q":0,"r":-2,"s":2},"centroid":{"longitude":106.7021,"latitude":10.61990724062118},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.74701576420598,10.61990724062118],[106.79193152841195,10.61990724062118],[106.81438941051495,10.658805430465884],[106.79193152841195,10.69770362031059],[106.74701576420598,10.69770362031059],[106.72455788210299,10.658805430465884],[106.74701576420598,10.61990724062118]]]},"properties":{"ccid":{"q":1,"r":-2,"s":1},"centroid":{"longitude":106.76947364630897,"latitude":10.658805430465884},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.81438941051495,10.658805430465884],[106.85930517472092,10.658805430465884],[106.88176305682391,10.69770362031059],[106.85930517472092,10.736601810155294],[106.81438941051495,10.736601810155294],[106.79193152841195,10.69770362031059],[106.81438941051495,10.658805430465884]]]},"properties":{"ccid":{"q":2,"r":-2,"s":0},"centroid":{"longitude":106.83684729261793,"latitude":10.69770362031059},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.81438941051495,10.736601810155294],[106.85930517472092,10.736601810155294],[106.88176305682391,10.7755],[106.85930517472092,10.814398189844704],[106.81438941051495,10.814398189844704],[106.79193152841195,10.7755],[106.81438941051495,10.736601810155294]]]},"properties":{"ccid":{"q":2,"r":-1,"s":-1},"centroid":{"longitude":106.83684729261793,"latitude":10.7755},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.81438941051495,10.814398189844704],[106.85930517472092,10.814398189844704],[106.88176305682391,10.853296379689409],[106.85930517472092,10.892194569534114],[106.81438941051495,10.892194569534114],[106.79193152841195,10.853296379689409],[106.81438941051495,10.814398189844704]]]},"properties":{"ccid":{"q":2,"r":0,"s":-2},"centroid":{"longitude":106.83684729261793,"latitude":10.853296379689409},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.74701576420598,10.853296379689409],[106.79193152841195,10.853296379689409],[106.81438941051495,10.892194569534114],[106.79193152841195,10.931092759378819],[106.74701576420598,10.931092759378819],[106.72455788210299,10.892194569534114],[106.74701576420598,10.853296379689409]]]},"properties":{"ccid":{"q":1,"r":1,"s":-2},"centroid":{"longitude":106.76947364630897,"latitude":10.892194569534114},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.67964211789702,10.892194569534114],[106.72455788210299,10.892194569534114],[106.74701576420598,10.931092759378819],[106.72455788210299,10.969990949223524],[106.67964211789702,10.969990949223524],[106.65718423579402,10.931092759378819],[106.67964211789702,10.892194569534114]]]},"properties":{"ccid":{"q":0,"r":2,"s":-2},"centroid":{"longitude":106.7021,"latitude":10.931092759378819},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.61226847158805,10.853296379689409],[106.65718423579402,10.853296379689409],[106.67964211789702,10.892194569534114],[106.65718423579402,10.931092759378819],[106.61226847158805,10.931092759378819],[106.58981058948505,10.892194569534114],[106.61226847158805,10.853296379689409]]]},"properties":{"ccid":{"q":-1,"r":2,"s":-1},"centroid":{"longitude":106.63472635369104,"latitude":10.892194569534114},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.54489482527909,10.814398189844704],[106.58981058948505,10.814398189844704],[106.61226847158805,10.853296379689409],[106.58981058948505,10.892194569534114],[106.54489482527909,10.892194569534114],[106.52243694317609,10.853296379689409],[106.54489482527909,10.814398189844704]]]},"properties":{"ccid":{"q":-2,"r":2,"s":0},"centroid":{"longitude":106.56735270738207,"latitude":10.853296379689409},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.54489482527909,10.736601810155294],[106.58981058948505,10.736601810155294],[106.61226847158805,10.7755],[106.58981058948505,10.814398189844704],[106.54489482527909,10.814398189844704],[106.52243694317609,10.7755],[106.54489482527909,10.736601810155294]]]},"properties":{"ccid":{"q":-2,"r":1,"s":1},"centroid":{"longitude":106.56735270738207,"latitude":10.7755},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.54489482527909,10.658805430465884],[106.58981058948505,10.658805430465884],[106.61226847158805,10.69770362031059],[106.58981058948505,10.736601810155294],[106.54489482527909,10.736601810155294],[106.52243694317609,10.69770362031059],[106.54489482527909,10.658805430465884]]]},"properties":{"ccid":{"q":-2,"r":0,"s":2},"centroid":{"longitude":106.56735270738207,"latitude":10.69770362031059},"circumradius":5000.0,"inradius":4330.127018922193}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[106.61226847158805,10.61990724062118],[106.65718423579402,10.61990724062118],[106.67964211789702,10.658805430465884],[106.65718423579402,10.69770362031059],[106.61226847158805,10.69770362031059],[106.58981058948505,10.658805430465884],[106.61226847158805,10.61990724062118]]]},"properties":{"ccid":{"q":-1,"r":-1,"s":2},"centroid":{"longitude":106.63472635369104,"latitude":10.658805430465884},"circumradius":5000.0,"inradius":4330.127018922193}}]}
