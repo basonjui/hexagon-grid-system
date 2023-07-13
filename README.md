@@ -27,7 +27,11 @@ The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordin
 
 Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) for each hexagon based on its position within the grid system.
 
-![Cube Coordinates - Primary Axes](https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11)
+<!-- ![Cube Coordinates - Primary Axes](https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11) -->
+
+<p align="center">
+    <img src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11" width="50%" height="50%">
+</p>
 
 #### Algorithm
 
@@ -86,7 +90,9 @@ The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellat
 
 **Rings** are the "hollow-rings" of hexagons wrapped around the center hexagon of the grid (the origin) to form a tessellation. The rings are used to calculate & define the extent of the hexagon grid that is required to fully cover a specific boundary (based on its coverage distance in meters).
 
-![Loops](https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0)
+<p align="center">
+    <img src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0">
+</p>
 
 Next, the algorithm relies on the linear relationship between the **Corner** and **Edge** with respects to the current Ring of the tessellation, to create a tessellation (by filling up the grid iteratively, one Ring at a time).
 
