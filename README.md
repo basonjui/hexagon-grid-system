@@ -102,6 +102,8 @@ For each Ring of the tessellation, the algorithm will:
 2. Calculate the required number (n) of Edge hexagons to fill up between the Corner hexagons
 3. Generate n Edge hexagons (to form a complete Ring)
 
+![Tessellation - Corner & Edge](https://github.com/basonjui/hexagon-grid-system/assets/60636087/1c57e385-43c4-4fe2-98e9-a95a10722783)
+
 Details of the algorithm are explained within the source code of the CornerEdgeTessellation class.
 
 ## Installation
