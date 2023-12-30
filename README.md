@@ -1,53 +1,59 @@
 # Hexagon Grid System
 
-![GitHub](https://img.shields.io/github/license/basonjui/hexagon-grid-system)
-![GitHub repo size](https://img.shields.io/github/repo-size/basonjui/hexagon-grid-system)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/basonjui/hexagon-grid-system)
-![Maven Central - spark-core](https://img.shields.io/maven-central/v/com.sparkjava/spark-core?versionSuffix=2.9.4&label=spark-core)
-![Maven Central - postgresql](https://img.shields.io/maven-central/v/org.postgresql/postgresql?versionSuffix=42.6.0&label=postgresql)
+![License](https://img.shields.io/github/license/basonjui/hexagon-grid-system)
+![Repo Size](https://img.shields.io/github/repo-size/basonjui/hexagon-grid-system)
+![Release](https://img.shields.io/github/v/release/basonjui/hexagon-grid-system)
+![spark-core](https://img.shields.io/maven-central/v/com.sparkjava/spark-core?versionSuffix=2.9.4&label=spark-core)
+![postgresql](https://img.shields.io/maven-central/v/org.postgresql/postgresql?versionSuffix=42.6.0&label=postgresql)
 
 ![Screenshot 2023-07-08 at 6 36 16 PM](https://github.com/basonjui/hexagon-grid-system/assets/60636087/8222111b-f5ae-44d7-b1e3-931f3e788295)
-*Hexagon grid generated at Vincom Dong Khoi, Ho Chi Minh (circumradius=5000 meters)*
+*Hexagon Grid generated at Vincom Dong Khoi, Ho Chi Minh City (circumradius: 5000 meters)*
 
-Hexagon Grid System is an API that takes in a pair of WGS84 coordinates (longitude, latitude) and a hexagon's radius parameters to produce one of the several patterns of a hexagonal grid below:
+## About
 
-1. Hexagon - a single regular hexagon.
-2. Neighbors - a regular hexagon and its 6 nearest neighbors (a group of 7 hexagons).
-3. Tessellation - a tiling of regular hexagons over a geographic boundary without gaps or overlaps.
+*Hexagon Grid System* is an API that can generate several forms of a hexagonal grid using 02 primary parameter types: **geographical coordinates** (longitude, latitude) and a **hexagon's radius** (meters).
 
-The API can return geospatial data response in GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) or save the generated geospatial data directly into PostgreSQL database in ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats (supported by PostGIS).
+> Notes: all hexagons generated are *regular hexagons*.
 
-The generated hexagonal grid can then be used for various purposes in geospatial computing such as visualization, analytics, and data aggregation.
+Currently, it supports the following **grid types**:
+
+1. *Hexagon* - a single hexagon.
+2. *Neighbors* - a hexagon and its 6 nearest neighbors (a group of 7 hexagons).
+3. *Tessellation* - a tiling of hexagons over a geographic boundary without gaps or overlaps.
+
+The API can return geospatial data in **GeoJSON** ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)) format or save the generated hexagons' data directly into a **PostgreSQL database** in ([geometries](http://postgis.net/workshops/postgis-intro/geometries.html)) data formats (supported by PostGIS) using JDBC.
+
+The generated grid then can be used for various purposes in geospatial computing such as **visualizations**, **analytics**, or **data aggregation**.
 
 ## Main Concepts
 
 ### Cube Coordinate Index (CCI)
 
-The `CubeCoordinatesIndex` class was inspired by Red Blob Game's - [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
+The `CubeCoordinatesIndex` concept was borrowed from Red Blob Game's - [Cube Coordinates](https://www.redblobgames.com/grids/hexagons/#coordinates-cube) concept.
 
-Basically, it divides the hexagonal grid into 3 primary axes (q, r, s) and assigns a unique index (CCI) for each hexagon based on its position within the grid system.
+Basically, it divides a hexagonal grid into 3 primary axes (`q`, `r`, `s`) and assigns an **unique index** (CCI) for each hexagon based on its **relative position** on the generated hexagonal grid.
 
 <!-- ![Cube Coordinates - Primary Axes](https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11) -->
 
 <p align="center">
-    <img src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11" width="50%" height="50%">
+    <img src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/6f6bf2b0-f9b4-446a-8640-4f95c96cfd11" width="80%" height="80%">
 </p>
 
 #### Algorithm
 
-1. Each direction on the hex grid is a combination of two directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to s and subtracting 1 from `r`.
+1. Each **direction** on the hexagonal grid is a combination of two directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to s and subtracting 1 from `r`.
 
     ![Cube Coordinates - Directions](https://github.com/basonjui/hexagon-grid-system/assets/60636087/e003a907-a090-47b4-9da4-17b5ae7fa791)
 
-2. `q + r + s = 0` - the constraint of this coordinate system to preserve its algorithms.
+2. `q + r + s = 0` - the constraint of this algorithm to preserve its geometric property.
 
 ### Hexagon
 
-A regular hexagon is a polygon with 6 equal-length edges (or sides) and six vertices (corners).
+A [regular hexagons](https://en.wikipedia.org/wiki/Hexagon#Regular_hexagon) is a polygon with 6 equal-length edges (or sides) and six vertices (corners).
 
-* sides also equals the circumradius of the hexagon.
+> *side* is equal to the *circumradius* of the hexagon.
 
-The class `Hexagon` has many properties to store a hexagon's information. Some of the important properties are:
+The class `Hexagon` contains properties that store geometric and location information of a hexagon. Some of the important properties are:
 
 * `centroid`: the center of the hexagon, which represents a pair of WGS84 coordinates (longitude, latitude).
 * `circumradius`: the radius of the circumcircle, which is the radius of the circle that passes through all of the vertices of the hexagon.
@@ -57,19 +63,19 @@ The class `Hexagon` has many properties to store a hexagon's information. Some o
 
 ### Neighbors
 
-Given a hexagon, which 6 hexagons are neighboring it?
+> Given a hexagon, which are the immediate 6 hexagons that neighboring it?
 
-* The answer is the 6 hexagons that share an edge with it.
+The answer is the 6 hexagons that share an edge with it.
 
-In Hexagon Grid System, `Neighbors` is a group of 7 adjacent regular hexagons - the origin hexagon itself and its 6 nearest neighbors.
+The class `Neighbors` represent a group of 7 adjacent regular hexagons - the center hexagon (origin) and its 6 nearest neighbors.
 
 ### Tessellation (regular)
 
-A **tessellation** or **tiling** is the covering of a surface, often a plane, using one or more geometric shapes, called tiles, with no overlaps and no gaps.
+A **tessellation** is the covering (or tiling) of a surface (often a plane) using one or more geometric shapes with **no overlaps** and **no gaps**.
 
-In grid systems, the type of tessellation being used is Regular Tessellation - a highly symmetric tessellation made up of congruent regular polygons. Only three regular tessellations exist: those made up of equilateral **triangles**, **squares**, or **hexagons**.
+In grid systems, the type of tessellation being used is *Regular Tessellation* - a highly symmetric tessellation made up of congruent (exact equal in shape and size) regular polygons. Mathematically, there are only 3 regular tessellations - made up of regular **triangles**, **squares**, or **hexagons**.
 
-In Hexagon Grid System, we use regular tessellation to tile over a specified geographic `Boundary`.
+In Hexagon Grid System, we use regular tessellation to tile over a specified geographic `Boundary` - a [bounding box](https://postgis.net/workshops/postgis-intro/introduction.html#spatial-indexes-and-bounding-boxes) of a geometry (or geographic) entity.
 
 #### Sample `Boundary` structure in hexagon-grid-system
 
@@ -86,7 +92,7 @@ In Hexagon Grid System, we use regular tessellation to tile over a specified geo
 
 #### Algorithm
 
-The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellation`, which breaks down the hexagonal grid into 3 important components that can be used as variables for the tessellation algorithm: **Corner**, **Edge**, and **Rings**.
+The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellation`, which breaks down the hexagonal grid into **3 important components** that can be used as parameters for the tessellation algorithm: **Corner**, **Edge**, and **Rings**.
 
 **Rings** are the "hollow-rings" of hexagons wrapped around the center hexagon of the grid (the origin) to form a tessellation. The rings are used to calculate & define the extent of the hexagon grid that is required to fully cover a specific boundary (based on its coverage distance in meters).
 
@@ -94,17 +100,17 @@ The tessellation algorithm in Hexagon Grid System is called `CornerEdgeTessellat
     <img src="https://github.com/basonjui/hexagon-grid-system/assets/60636087/83c06f0c-55fb-4dab-b8ac-7420672f0ad0">
 </p>
 
-Next, the algorithm relies on the linear relationship between the **Corner** and **Edge** with respects to the current Ring of the tessellation, to create a tessellation (by filling up the grid iteratively, one Ring at a time).
+Next, the algorithm relies on the **linear relationship** between the *Corner* and the *Edge* - with respects to the current *Ring* of the tessellation. Basically, the tessellation is being generated by **filling up the grid iteratively** - one Ring at a time.
 
-For each Ring of the tessellation, the algorithm will:
+For each *Ring* of the tessellation, the algorithm will:
 
-1. Generate 6 Corner hexagons
-2. Calculate the required number (n) of Edge hexagons to fill up between the Corner hexagons
+1. Generate 6 *Corner* hexagons
+2. Calculate the required number (n) of *Edge* hexagons - to fill up between 2 Corner hexagons
 3. Generate n Edge hexagons (to form a complete Ring)
 
 ![Tessellation - Corner & Edge](https://github.com/basonjui/hexagon-grid-system/assets/60636087/1c57e385-43c4-4fe2-98e9-a95a10722783)
 
-Details of the algorithm are explained within the source code of the CornerEdgeTessellation class.
+More details are explained in the source code of the `CornerEdgeTessellation` class.
 
 ## Installation
 
@@ -114,7 +120,7 @@ This is only required when you want to save Tessellation data into your PostgreS
 
 To set up your environment variables, create a `.env` file in the root directory (`../hexagongrid`) of the project and add the following variables:
 
-```text
+```properties
 POSTGRES_HOST=
 POSTGRES_USERNAME=
 POSTGRES_PASSWORD=
@@ -137,9 +143,11 @@ In the root directory (`../hexagongrid`) of the project, run the following comma
     java -cp target/hexagongrid-1.1.3.jar com.geospatial.hexagongrid.Api
     ```
 
-## API Usages
+## API endpoints
 
-Hexagon Grid System is currently being implemented as a simple API that can be used to generate hexagon grid data in GeoJSON format given some valid grid configurations in the form of a request payload. You can directly test the API's GeoJSON data response on <https://geojson.io/>.
+Hexagon Grid System is currently being implemented as a simple API that can be used to generate hexagon grid data in GeoJSON format. You can configure your hexagonal grid in the form of a request payload.
+
+To quickly **visualize** the generated hexagonal grid, copy the GeoJSON from the API's response and paste it to <https://geojson.io/>.
 
 ### /api/hexagon
 
