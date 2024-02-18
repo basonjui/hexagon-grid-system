@@ -290,40 +290,38 @@ public class PostgresJDBC {
                         """,
                         tableName);
 
-                final String addPrimaryKeySql = String.format(
-                        """
-                        ALTER TABLE %s
-                        ADD PRIMARY KEY (ccid_q, ccid_r, ccid_s)
-                        """,
-                        tableName);
+                final String addPrimaryKeySql = String.format("""
+                                ALTER TABLE %s
+                                ADD PRIMARY KEY (ccid_q, ccid_r, ccid_s)
+                                """,
+                                tableName);
 
-                try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
-                        ResultSet rs = statement.executeQuery(checkPrimaryKeySql);
+                try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
+                        ResultSet rs = stmt.executeQuery(checkPrimaryKeySql);
 
                         boolean hasPrimaryKey = rs.next(); // Return `false` if there is no more row (means no PK)
                         if (hasPrimaryKey) {
                                 // Query PRIMARY KEY name
                                 String constraintName = rs.getString("constraint_name");
-                                System.out.println(String.format(
-                                                "PRIMARY KEY '%s' already exists for table '%s'.",
+                                System.out.println(String.format("PRIMARY KEY '%s' already exists for table '%s'.",
                                                 constraintName,
                                                 tableName));
                         } else {
-                                statement.executeUpdate(addPrimaryKeySql);
-                                rs = statement.executeQuery(checkPrimaryKeySql);
+                                stmt.executeUpdate(addPrimaryKeySql);
+                                rs = stmt.executeQuery(checkPrimaryKeySql);
 
                                 boolean hasNextRow = rs.next();
                                 if (hasNextRow) {
                                         response.addProperty("status", "SUCCESS");
-                                        response.addProperty("message", String.format(
-                                                        "PRIMARY KEY '%s' added to table '%s'.",
-                                                        rs.getString("constraint_name"),
-                                                        tableName));
+                                        response.addProperty("message",
+                                                        String.format("PRIMARY KEY '%s' added to table '%s'.",
+                                                                        rs.getString("constraint_name"),
+                                                                        tableName));
                                 } else {
                                         response.addProperty("status", "FAILED");
-                                        response.addProperty("message", String.format(
-                                                        "Failed to add PRIMARY KEY to table '%s'.",
-                                                        tableName));
+                                        response.addProperty("message",
+                                                        String.format("Failed to add PRIMARY KEY to table '%s'.",
+                                                                        tableName));
                                 }
                         }
 

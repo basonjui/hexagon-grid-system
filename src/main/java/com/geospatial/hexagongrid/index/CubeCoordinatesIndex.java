@@ -16,7 +16,7 @@ public class CubeCoordinatesIndex implements Serializable {
 	private final int q;
 	private final int r;
 	private final int s;
-	
+
 	public CubeCoordinatesIndex(CubeCoordinatesIndex previousCCI, NeighborPosition position) {
 		/*
 		 * Flat-top orientation of Hexagon, order from left-right

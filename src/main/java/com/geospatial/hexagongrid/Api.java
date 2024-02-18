@@ -17,12 +17,10 @@ import static spark.Spark.*;
 
 public class Api {
 	public final static Gson gson = new Gson();
-
-	// Default port for Spark, you can change this if you want
-	public final static int port = 4567;
+	public final static int DEFAULT_PORT = 4567; // Default port for Spark
 
 	public static void main(String[] args) {
-		port(port);
+		port(DEFAULT_PORT);
 		before((request, response) -> response.type("application/json"));
 
 		post("/api/hexagon", "application/json", (request, response) -> {
@@ -64,11 +62,10 @@ public class Api {
 				// Parse request payload to a JSONObject with Gson
 				JsonObject tessellationPayload = gson.fromJson(request.body(), JsonObject.class);
 
-				CornerEdgeTessellationDto tessellationDto = new CornerEdgeTessellationDto(
-						tessellationPayload);
+				CornerEdgeTessellationDto tessellationDto = new CornerEdgeTessellationDto(tessellationPayload);
 				GeoJsonManager manager = new GeoJsonManager(tessellationDto.getTessellation());
-
-				return manager.getFeatureCollection();
+				FeatureCollection collection = manager.getFeatureCollection();
+				return collection;
 
 			} catch (Exception e) {
 				return "Invalid JSON data provided: " + e;
@@ -153,16 +150,13 @@ public class Api {
 					System.out.println("Table name: " + tableName);
 
 					// Database executions
-					JsonObject createTableStatus;
-					createTableStatus = pg.createTessellationTable(tableName);
+					JsonObject createTableStatus = pg.createTessellationTable(tableName);
 					status.add("createTessellationTable", createTableStatus);
 
-					JsonObject batchInsertStatus;
-					batchInsertStatus = pg.batchInsertTessellation(tableName, tessellation);
+					JsonObject batchInsertStatus = pg.batchInsertTessellation(tableName, tessellation);
 					status.add("batchInsertTessellation", batchInsertStatus);
 
-					JsonObject addPrimaryKeyStatus;
-					addPrimaryKeyStatus = pg.addPrimaryKeyIfNotExists(tableName);
+					JsonObject addPrimaryKeyStatus = pg.addPrimaryKeyIfNotExists(tableName);
 					status.add("addPrimaryKeyIfNotExists", addPrimaryKeyStatus);
 
 					JVMUtils.printMemoryUsages("MB");

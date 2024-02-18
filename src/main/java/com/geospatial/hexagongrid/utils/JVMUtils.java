@@ -1,14 +1,13 @@
 package com.geospatial.hexagongrid.utils;
 
 public class JVMUtils {
-        private static final Runtime RUNTIME = Runtime.getRuntime();
-
         private static final int MB = 1024 * 1024;
         private static final int GB = 1024 * 1024 * 1024;
-
-        private static final long maxMemory = RUNTIME.maxMemory();
-        private static final long freeMemory = RUNTIME.freeMemory();
-        private static final long totalMemory = RUNTIME.totalMemory();
+        
+        private static final Runtime runtime = Runtime.getRuntime();
+        private static final long maxMemory = runtime.maxMemory();
+        private static final long freeMemory = runtime.freeMemory();
+        private static final long totalMemory = runtime.totalMemory();
         private static final long usedMemory = totalMemory - freeMemory;
 
         public static final void printUsedMemory(String unit) {
@@ -84,7 +83,7 @@ public class JVMUtils {
         }
 
         public static final void printMemoryUsages(String unit) {
-                System.out.println("\n------ JVM's stats ------");
+                System.out.println("\n------ Memory Usages ------");
                 printMaxMemory(unit);
                 printTotalMemory(unit);
                 printUsedMemory(unit);
