@@ -27,6 +27,7 @@ import lombok.ToString;
 public class PostgresJDBC {
         private static final String DBMS_URL = "jdbc:postgresql:";
         private final String pgjdbcUrl;
+
         @Getter
         private final String host;
         @Getter
@@ -57,9 +58,7 @@ public class PostgresJDBC {
                         }
 
                         connection = DriverManager.getConnection(pgjdbcUrl, properties);
-                        System.out.println("\n"
-                                        + "Connected to the PostgreSQL server as user: "
-                                        + connection.getMetaData().getUserName());
+                        System.out.println("Connected to the PostgreSQL server as user: " + connection.getMetaData().getUserName());
 
                 } catch (SQLException e) {
                         printSQLException(e);
@@ -70,23 +69,23 @@ public class PostgresJDBC {
 
         public final void fetchTable(String tableName, int rowsLimit) {
                 final String sql = """
-                                SELECT * FROM %s
-                                LIMIT %s
-                                """;
+                        SELECT * FROM %s
+                        LIMIT %s
+                """;
 
                 final String query = String.format(sql, tableName, rowsLimit);
-                try (final Connection connection = getConnection();
-                                final Statement statement = connection.createStatement();
-                                final ResultSet rs = statement.executeQuery(query)) {
+                try (final Connection conn = getConnection();
+                                final Statement stmt = conn.createStatement();
+                                final ResultSet rs = stmt.executeQuery(query)) {
 
                         final ResultSetMetaData rsMetadata = rs.getMetaData();
-                        final int columnsCount = rsMetadata.getColumnCount();
+                        final int columnCount = rsMetadata.getColumnCount();
 
                         // Iterate through the data in the result set and display it.
                         System.out.println("--- Query results");
                         while (rs.next()) {
                                 // Print one row
-                                for (int i = 1; i <= columnsCount; i++) {
+                                for (int i = 1; i <= columnCount; i++) {
                                         String tabs;
                                         if (rsMetadata.getColumnName(i).length() < 8) {
                                                 tabs = "\t\t\t";
@@ -110,21 +109,20 @@ public class PostgresJDBC {
         public final JsonObject createTessellationTable(String tableName) {
                 final JsonObject response = new JsonObject();
 
-                final String sql = """
-                                CREATE TABLE IF NOT EXISTS %s (
-                                        ccid_q          integer                 NOT NULL,
-                                        ccid_r          integer                 NOT NULL,
-                                        ccid_s          integer                 NOT NULL,
-                                        circumradius    float8                  NOT NULL,
-                                        centroid        geometry(POINT, 4326)   NOT NULL,
-                                        geometry        geometry(POLYGON, 4326) NOT NULL
-                                );
-                                """;
+                try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
+                        String createTableSql = String.format("""
+                                                CREATE TABLE IF NOT EXISTS %s (
+                                                        ccid_q          integer                         NOT NULL,
+                                                        ccid_r          integer                         NOT NULL,
+                                                        ccid_s          integer                         NOT NULL,
+                                                        circumradius    float8                          NOT NULL,
+                                                        centroid        geometry(POINT, 4326)           NOT NULL,
+                                                        geometry        geometry(POLYGON, 4326)         NOT NULL
+                                                );
+                                        """,
+                                        tableName);
 
-                try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
-                        String createTableQuery = String.format(sql, tableName);
-
-                        int statusCode = statement.executeUpdate(createTableQuery);
+                        int statusCode = stmt.executeUpdate(createTableSql);
                         if (statusCode == 0) {
                                 response.addProperty("status", "SUCCESS");
                                 System.out.println("Executed createTessellationTable successfully.");
@@ -142,10 +140,6 @@ public class PostgresJDBC {
         }
 
         public final JsonObject batchInsertTessellation(String tableName, CornerEdgeTessellation tessellation) {
-                // Prepare response
-                JsonObject response = new JsonObject();
-                JsonObject message = new JsonObject();
-
                 // JDBC batch configurations
                 final int BATCH_SIZE_LIMIT = 5000;
 
@@ -160,80 +154,84 @@ public class PostgresJDBC {
                                         ?,
                                         ?,
                                         ST_SetSRID(ST_MakePoint(?, ?), 4326),
-                                        ST_SetSRID(ST_MakePolygon(ST_MakeLine(ARRAY[
+                                        ST_SetSRID(
+                                                ST_MakePolygon(ST_MakeLine(ARRAY[
                                                         ST_MakePoint(?, ?),
                                                         ST_MakePoint(?, ?),
                                                         ST_MakePoint(?, ?),
                                                         ST_MakePoint(?, ?),
                                                         ST_MakePoint(?, ?),
                                                         ST_MakePoint(?, ?),
-                                                        ST_MakePoint(?, ?)
-                                                ])), 4326));
-                                """, tableName);
+                                                        ST_MakePoint(?, ?)])
+                                        ), 4326));
+                                """,
+                                tableName);
 
                 // Prepare dynamic queries to batch insert Hexagons into PostGIS
-                try (Connection connection = getConnection();
-                                PreparedStatement preparedStatement = connection
+                JsonObject response = new JsonObject();
+                JsonObject message = new JsonObject();
+
+                try (Connection conn = getConnection();
+                                PreparedStatement preparedStmt = conn
                                                 .prepareStatement(insertTessellationSql)) {
                         // Set autocommit off
-                        connection.setAutoCommit(false);
-
-                        // Counters
+                        conn.setAutoCommit(false);
+                        
+                        // Start time
+                        System.out.println("--- Batch execution begin..");
+                        final long startTime = System.currentTimeMillis();
+                        
+                        // Loop through hexagons and populate prepared statement
                         int batchCount = 0;
                         int batchExecutionCount = 0;
-
-                        // Start time
-                        final long startTime = System.currentTimeMillis();
-
-                        System.out.println("--- Batch execution begin..");
                         for (Hexagon hexagon : hexagons) {
                                 CubeCoordinatesIndex cci = hexagon.getCCI();
-                                preparedStatement.setInt(1, cci.getQ());
-                                preparedStatement.setInt(2, cci.getR());
-                                preparedStatement.setInt(3, cci.getS());
+                                preparedStmt.setInt(1, cci.getQ());
+                                preparedStmt.setInt(2, cci.getR());
+                                preparedStmt.setInt(3, cci.getS());
 
                                 double circumradius = hexagon.getCircumradius();
-                                preparedStatement.setDouble(4, circumradius);
+                                preparedStmt.setDouble(4, circumradius);
 
                                 Coordinates centroid = hexagon.getCentroid();
-                                preparedStatement.setDouble(5, centroid.getLongitude());
-                                preparedStatement.setDouble(6, centroid.getLatitude());
+                                preparedStmt.setDouble(5, centroid.getLongitude());
+                                preparedStmt.setDouble(6, centroid.getLatitude());
 
                                 List<Coordinates> gisVertices = hexagon.getGisVertices();
-                                preparedStatement.setDouble(7, gisVertices.get(0).getLongitude());
-                                preparedStatement.setDouble(8, gisVertices.get(0).getLatitude());
+                                preparedStmt.setDouble(7, gisVertices.get(0).getLongitude());
+                                preparedStmt.setDouble(8, gisVertices.get(0).getLatitude());
 
-                                preparedStatement.setDouble(9, gisVertices.get(1).getLongitude());
-                                preparedStatement.setDouble(10, gisVertices.get(1).getLatitude());
+                                preparedStmt.setDouble(9, gisVertices.get(1).getLongitude());
+                                preparedStmt.setDouble(10, gisVertices.get(1).getLatitude());
 
-                                preparedStatement.setDouble(11, gisVertices.get(2).getLongitude());
-                                preparedStatement.setDouble(12, gisVertices.get(2).getLatitude());
+                                preparedStmt.setDouble(11, gisVertices.get(2).getLongitude());
+                                preparedStmt.setDouble(12, gisVertices.get(2).getLatitude());
 
-                                preparedStatement.setDouble(13, gisVertices.get(3).getLongitude());
-                                preparedStatement.setDouble(14, gisVertices.get(3).getLatitude());
+                                preparedStmt.setDouble(13, gisVertices.get(3).getLongitude());
+                                preparedStmt.setDouble(14, gisVertices.get(3).getLatitude());
 
-                                preparedStatement.setDouble(15, gisVertices.get(4).getLongitude());
-                                preparedStatement.setDouble(16, gisVertices.get(4).getLatitude());
+                                preparedStmt.setDouble(15, gisVertices.get(4).getLongitude());
+                                preparedStmt.setDouble(16, gisVertices.get(4).getLatitude());
 
-                                preparedStatement.setDouble(17, gisVertices.get(5).getLongitude());
-                                preparedStatement.setDouble(18, gisVertices.get(5).getLatitude());
+                                preparedStmt.setDouble(17, gisVertices.get(5).getLongitude());
+                                preparedStmt.setDouble(18, gisVertices.get(5).getLatitude());
 
-                                preparedStatement.setDouble(19, gisVertices.get(6).getLongitude());
-                                preparedStatement.setDouble(20, gisVertices.get(6).getLatitude());
+                                preparedStmt.setDouble(19, gisVertices.get(6).getLongitude());
+                                preparedStmt.setDouble(20, gisVertices.get(6).getLatitude());
 
                                 // Add statement into batch
-                                preparedStatement.addBatch();
+                                preparedStmt.addBatch();
                                 batchCount++;
 
-                                // Commit to DB every BATCH_SIZE (default: 1000)
+                                // Commit to DB every BATCH_SIZE_LIMIT (default: 1000)
                                 if (batchCount % BATCH_SIZE_LIMIT == 0) {
                                         try {
-                                                preparedStatement.executeBatch();
-                                                connection.commit();
+                                                preparedStmt.executeBatch();
+                                                conn.commit();
                                                 batchExecutionCount++;
-                                                System.out.println("- Batch " + batchExecutionCount + "th");
+                                                System.out.println("- Batch " + batchExecutionCount + "th commited.");
                                         } catch (SQLException e) {
-                                                connection.rollback();
+                                                conn.rollback();
                                                 printSQLException(e);
                                         }
                                 }
@@ -243,12 +241,12 @@ public class PostgresJDBC {
                          * Set auto-commit back to normal and execute left over batches (batch amount <
                          * JDBC_BATCH_LIMIT)
                          */
-                        connection.setAutoCommit(true);
-                        preparedStatement.executeBatch();
+                        conn.setAutoCommit(true);
+                        preparedStmt.executeBatch();
                         batchExecutionCount++;
-                        System.out.println("- Batch " + batchExecutionCount + "th (final) executed.");
-
+                        
                         // End time when finished batch inserts
+                        System.out.println("- Final batch " + batchExecutionCount + "th executed.");
                         final long endTime = System.currentTimeMillis();
 
                         // Calculate elapsed time of batch execution
@@ -272,8 +270,8 @@ public class PostgresJDBC {
                         response.addProperty("status", "FAILED");
                         response.addProperty("error", batchUpdateException.toString());
                         printBatchUpdateException(batchUpdateException);
-
                 } catch (SQLException sqlException) {
+                        response.addProperty("status", "FAILED");
                         response.addProperty("error", sqlException.toString());
                         printSQLException(sqlException);
                 }
@@ -284,15 +282,20 @@ public class PostgresJDBC {
         public final JsonObject addPrimaryKeyIfNotExists(String tableName) {
                 JsonObject response = new JsonObject();
 
-                final String checkPrimaryKeySql = String.format("""
-                                SELECT constraint_name from information_schema.table_constraints
-                                WHERE table_name = '%s'
-                                AND constraint_type = 'PRIMARY KEY'
-                                """, tableName);
-                final String addPrimaryKeySql = String.format("""
-                                ALTER TABLE %s
-                                ADD PRIMARY KEY (ccid_q, ccid_r, ccid_s)
-                                """, tableName);
+                final String checkPrimaryKeySql = String.format(
+                        """
+                        SELECT constraint_name from information_schema.table_constraints
+                        WHERE table_name = '%s'
+                        AND constraint_type = 'PRIMARY KEY'
+                        """,
+                        tableName);
+
+                final String addPrimaryKeySql = String.format(
+                        """
+                        ALTER TABLE %s
+                        ADD PRIMARY KEY (ccid_q, ccid_r, ccid_s)
+                        """,
+                        tableName);
 
                 try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
                         ResultSet rs = statement.executeQuery(checkPrimaryKeySql);
@@ -428,9 +431,7 @@ public class PostgresJDBC {
                 }
 
                 public final Builder database(String databaseKey) {
-                        final String database = dotenv.get(databaseKey);
-                        this.database = database;
-
+                        this.database = dotenv.get(databaseKey);
                         return this;
                 }
 

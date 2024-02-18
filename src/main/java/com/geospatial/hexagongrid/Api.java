@@ -34,7 +34,6 @@ public class Api {
 				HexagonDto dto = new HexagonDto(payload);
 				GeoJsonManager manager = new GeoJsonManager(dto.getHexagon());
 				FeatureCollection collection = manager.getFeatureCollection();
-				
 				return collection;
 
 			} catch (Exception e) {
@@ -52,7 +51,6 @@ public class Api {
 				NeighborsDto dto = new NeighborsDto(payload);
 				GeoJsonManager manager = new GeoJsonManager(dto.getNeighbors());
 				FeatureCollection collection = manager.getFeatureCollection();
-
 				return collection;
 
 			} catch (Exception e) {
@@ -86,28 +84,31 @@ public class Api {
 				JsonObject payload = gson.fromJson(request.body(), JsonObject.class);
 
 				// Check payload for required keys
-				boolean validKeys = false;
-				boolean validBoundary = false;
+				boolean validPayloadKeys = false;
+				boolean validPayloadBoundary = false;
 				boolean validPayload = false;
 
 				// Required keys for the request payload
-				Set<String> requiredKeys = Set.of("administrativeName", "latitude", "longitude", "radius", "boundary");
-				if (payload.keySet().equals(requiredKeys)) {
-					// If payload has all required keys, then validKeys
-					validKeys = true;
+				Set<String> requiredKeySet = Set.of("administrativeName", "latitude", "longitude", "radius", "boundary");
+				
+				// If payload has all requiredKeySet
+				if (payload.keySet().equals(requiredKeySet)) {
+					validPayloadKeys = true;
 
 					// Continue to check members of payload key `boundary`
 					JsonObject boundary = payload.get("boundary").getAsJsonObject();
 					Set<String> requiredBoundaryKeys = Set.of("minLatitude", "minLongitude", "maxLatitude", "maxLongitude");
+
 					if (boundary.keySet().equals(requiredBoundaryKeys)) {
-						validBoundary = true;
+						validPayloadBoundary = true;
 					}
+
 				} else {
 					System.out.println("Invalid payload keys: " + payload.keySet());
 				}
 
 				// If both keys and boundary's members are valid, then the payload is valid
-				validPayload = validKeys && validBoundary;
+				validPayload = validPayloadKeys && validPayloadBoundary;
 				if (validPayload) {
 					// Start PostgresJDBC connection
 					PostgresJDBC pg = new PostgresJDBC.Builder()
@@ -115,7 +116,7 @@ public class Api {
 							.port(5432)
 							.database("POSTGRES_DATABASE")
 							.authentication("POSTGRES_USERNAME", "POSTGRES_PASSWORD")
-							.reWriteBatchedInserts(true) // Optional
+							.reWriteBatchedInserts(true) // JDBC will rewrite multiple INSERTS into a Multi-valued INSERT
 							.build();
 
 					// Extract Hexagon data from payload
@@ -147,12 +148,8 @@ public class Api {
 					// Create table name
 					System.out.println("--- Database Configs ---");
 					final String TESSELLATION_TABLE_NAME = "%s_tessellation_%sm";
-					final String administrativeName = payload.get("administrativeName")
-							.getAsString();
-					final String tableName = String.format(
-							TESSELLATION_TABLE_NAME,
-							administrativeName,
-							circumradius);
+					final String administrativeName = payload.get("administrativeName").getAsString();
+					final String tableName = String.format(TESSELLATION_TABLE_NAME, administrativeName, circumradius);
 					System.out.println("Table name: " + tableName);
 
 					// Database executions
